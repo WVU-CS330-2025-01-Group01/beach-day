@@ -1,0 +1,21 @@
+{
+  "name": "Beach Day",
+  "short_name": "BeachDay",
+  "description": "Search beaches, check weather, UV, waves, and user reports. Save favorites, add events, and get alerts.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0077b6",
+  "icons": [
+    {
+      "src": "/icons/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icons/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
