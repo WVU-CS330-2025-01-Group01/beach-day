@@ -1,11 +1,20 @@
 const express = require('express');
+
+const cookieParser = require('cookie-parser');
+require('dotenv').config();
+
 const app = express();
-const port = 8089;
+const PORT = process.env.PORT || 3000;
 
-// Calls the routes we have made
-app.use(require("./routes"));
+app.use(express.json());
+app.use(cookieParser());
 
-// Starts the server. Currently http only. Maybe we should look into https?
-app.listen(port, () => {
-    console.log(`Server started listening on port: ${port}`)
+const authRoutes = require('./routes/auth');
+const backendRoutes = require('./routes');
+
+app.use(backendRoutes);
+app.use('/auth', authRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server started listening on port: ${PORT}`);
 });
