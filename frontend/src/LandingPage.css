@@ -1,0 +1,70 @@
+/* Landing Page Styles */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full-screen height */
+  width: 100vw; /* Full width */
+  text-align: center;
+  background-color: #f4e1c1; /* Light tan/beach color */
+  color: #0066cc; /* Blue text color */
+  font-family: "Poppins", sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Title Styling */
+h1 {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Paragraph Styling */
+p {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  max-width: 600px;
+}
+
+/* Buttons Container */
+.button-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Button Styling */
+.btn {
+  padding: 15px 30px;
+  font-size: 1.5rem;
+  color: white;
+  background: #0066cc; /* Blue button */
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: transform 0.3s ease, background 0.3s ease;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+  background: #0055a5; /* Darker blue button */
+  transform: scale(1.1);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 3rem;
+  }
+  p {
+    font-size: 1.4rem;
+    padding: 0 20px;
+  }
+  .btn {
+    font-size: 1.2rem;
+    padding: 12px 25px;
+  }
+}
+
