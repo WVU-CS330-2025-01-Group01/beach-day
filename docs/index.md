@@ -2,4 +2,4 @@
 
 Test sample text
 
-[to link](link)
+[to link](link.md)

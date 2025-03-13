@@ -1,2 +1,2 @@
 # Linked markdown
-[To other](index)
+[To other](index.md)
