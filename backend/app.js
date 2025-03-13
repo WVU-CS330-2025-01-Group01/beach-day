@@ -3,10 +3,8 @@ const express = require('express');
 //const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
-console.log(process.env)
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.BEACH_DAY_BACKEND_PORT || 3010;
 
 // Allow cross origin responses
 const cors = require('cors');
