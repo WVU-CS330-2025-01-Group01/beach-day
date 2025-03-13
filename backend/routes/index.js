@@ -1,5 +1,4 @@
 const express = require('express');
-const { StatusCodes } = require('http-status-codes');
 const router = express.Router();
 
 // Modules We Made
@@ -8,7 +7,7 @@ const db = require("../dbabs/");
 
 /* Prototypical routing code
 router.get('/', (req, res, next) => {
-	return res.status(StatusCodes.OK).json({ 
+	return res.status(200).json({ 
 		message: 'Test test test' 
 	});
 });
@@ -18,7 +17,7 @@ router.get('/', (req, res, next) => {
  * Test route for testing stuff.
  */
 router.get('/a', (req, res, next) => {
-	return res.status(StatusCodes.OK).json({
+	return res.status(200).json({
 		fuckinA: 455
 	});
 });
