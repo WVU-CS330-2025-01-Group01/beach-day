@@ -17,14 +17,15 @@ function Login({ setAuthenticated }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const response = await fetch(loginURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
     const data = await response.json();
-    
-    if (data.message === 'Authentication successful') {
+
+    if (data.message === 'Login successful.') {
       // Set the authenticated state to true when login is successful
       setAuthenticated(true);
 

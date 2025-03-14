@@ -1,6 +1,6 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 
-//const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const app = express();
@@ -11,13 +11,13 @@ const cors = require('cors');
 app.use(cors());
 
 app.use(express.json());
-//app.use(cookieParser());
+app.use(cookieParser());
 
 const authRoutes = require('./routes/auth');
-const backendRoutes = require('./routes');
+const testRoutes = require('./routes/test');
 
 app.use(authRoutes);
-app.use(backendRoutes);
+app.use(testRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server started listening on port: ${PORT}`);
