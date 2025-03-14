@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate
 
+const loginURL =
+	'http://' +
+	process.env.REACT_APP_BACKEND_HOST +
+	':' +
+	process.env.REACT_APP_BACKEND_PORT +
+	'/login';
+
 function Login({ setAuthenticated }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -10,7 +17,7 @@ function Login({ setAuthenticated }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:3000/login', {
+    const response = await fetch(loginURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),

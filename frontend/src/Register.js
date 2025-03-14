@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import './Register.css';
 
+const registerURL =
+	'http://' +
+	process.env.REACT_APP_BACKEND_HOST +
+	':' +
+	process.env.REACT_APP_BACKEND_PORT +
+	'/register';
+
 function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -14,7 +21,7 @@ function Register() {
       return;
     }
 
-    const response = await fetch('http://localhost:3000/register', {
+    const response = await fetch(registerURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
