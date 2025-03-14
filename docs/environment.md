@@ -7,67 +7,67 @@ The `.env` files are files we have that allow us to declare constant variables t
 ## Frontend
 In your `frontend/` folder, you must make a `.env` file that contains the following entries. Note: Since the frontend is in React, the variables must start with `REACT_APP` otherwise React will ignore it with one exception. That exception is `PORT` which is described below.
 <details>
-    <summary>
+<summary>
 
-    `PORT`
+`PORT`
 
-    </summary>
-    <p>
+</summary>
+<p>
 
-    This environment variable is recognized by React directly and does not need implemented in the frontend code. It tells React which port to host the frontend on. If it isn't set, React defaults to 3000.
+This environment variable is recognized by React directly and does not need implemented in the frontend code. It tells React which port to host the frontend on. If it isn't set, React defaults to 3000.
 
-    </p>
+</p>
 </details>
 <details>
-    <summary>
+<summary>
 
-    `REACT_APP_BACKEND_HOST`
+`REACT_APP_BACKEND_HOST`
 
-    </summary>
-    <p>
+</summary>
+<p>
 
     This is the hostname of the backend. If this is not set, you will get weird errors. For your local development machine, you most likely want to set it to `localhost`.
 
-    </p>
+</p>
 </details>
 <details>
-    <summary>
+<summary>
 
-    `REACT_APP_BACKEND_PORT`
+`REACT_APP_BACKEND_PORT`
 
-    </summary>
-    <p>
+</summary>
+<p>
 
-    This is the port the backend is hosted on. If this is not set, you will get weird errors. You need to make sure this is the same as `BEACH_DAY_BACKEND_PORT` in your `backend/.env` file.
+This is the port the backend is hosted on. If this is not set, you will get weird errors. You need to make sure this is the same as `BEACH_DAY_BACKEND_PORT` in your `backend/.env` file.
 
-    </p>
+</p>
 </details>
 
 ## Backend
 In your `backend/` folder, you must make a `.env` file that contains the following entries.
 <details>
-    <summary>
+<summary>
 
-    `BEACH_DAY_BACKEND_PORT`
+`BEACH_DAY_BACKEND_PORT`
 
-    </summary>
-    <p>
+</summary>
+<p>
 
-    This is the port the backend will be hosted on. If this is not set, the code will select 3010 by default. You must set `REACT_APP_BACKEND_PORT` to the same value.
+This is the port the backend will be hosted on. If this is not set, the code will select 3010 by default. You must set `REACT_APP_BACKEND_PORT` to the same value.
 
-    </p>
+</p>
 </details>
 <details>
-    <summary>
+<summary>
 
-    `BEACH_DAY_JWT_SECRET`
+`BEACH_DAY_JWT_SECRET`
 
-    </summary>
-    <p>
+</summary>
+<p>
 
-    This is the value of the jwt secret. If this is not set, you will get an error. For your local development environment, its not very important what this value is set to as you should not be storing sensitive user data on your local machine. This will need to be a truly random and truly secret value on the Azure server.
+This is the value of the jwt secret. If this is not set, you will get an error. For your local development environment, its not very important what this value is set to as you should not be storing sensitive user data on your local machine. This will need to be a truly random and truly secret value on the Azure server.
 
-    </p>
+</p>
 </details>
 
 ## Example
