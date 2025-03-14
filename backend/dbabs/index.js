@@ -28,12 +28,14 @@ class IncorrectPassword extends Error {}
  */
 let userTable = new Map();
 function tempAttemptToMakeUser(username, password) {
+	console.log(`Register Request\nUsername: ${username}\nPassword ${password}\n`);
 	if (userTable.has(username))
 		throw new UserAlreadyExists();
 	let hash = bcrypt.hashSync(password, 10);
 	userTable.set(username, hash);
 }
 function tempTryLogIn(username, password) {
+	console.log(`Login Request\nUsername: ${username}\nPassword ${password}\n`);
 	if (userTable.get(username) === undefined)
 		throw new UserNotFound();
 	if (!bcrypt.compareSync(password, userTable.get(username)))

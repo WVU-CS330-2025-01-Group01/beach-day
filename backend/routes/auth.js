@@ -12,6 +12,7 @@ const db = require("../dbabs/");
  * Hashes the password using bcrypt and stores the user in the database.
  */
 router.post('/register', async (req, res) => {
+	console.log("Register route accessed");
 	const { username, password } = req.body;
 
 	try {
@@ -50,6 +51,7 @@ router.post('/register', async (req, res) => {
  * Verifies credentials, generates a JWT if valid, and sends it in an HTTP-only cookie.
  */
 router.post('/login', async (req, res) => {
+	console.log("Login route accessed");
 	const { username, password } = req.body;
 
 	try {
