@@ -45,4 +45,17 @@ router.get('/auth_test', (req, res, next) => {
 	});
 });
 
+/**
+ * Test the get_weather.py script and the runScript() function.
+ */
+router.get('/weather_test', (req, res, next) => {
+	const request = JSON.stringify({
+		request_type: "current_basic_weather",
+		zip_code: 25213,
+		country_code: "US"
+	});
+	const reply = JSON.parse(wrapper.runScript("get weather", request));
+	return res.status(200).json(reply);
+});
+
 module.exports = router;

@@ -2,23 +2,28 @@ const { execSync } = require('node:child_process');
 
 /**
  * A list of the scripts the server can run. Does not necessarily have to be
- * python. All scripts should return JSON.
+ * python.
  */
 const scripts = {
-	"test": "python3 scripts/testPython.py"
-}
+	"test": "cat",
+	"get weather": "conda run --no-capture-output -n noaa python3 NOAA_scripts/get_weather.py",
+	"update conda": "conda update -n base -c defaults conda -y",
+	"update conda env": "conda env update -f NOAA_scripts/environment.yml -n noaa --prune"
+};
 
 module.exports = {
 	/**
-	 * Takes a string as argument that is used to lookup a command in the scripts
-	 * object. This is done to prevent arbitrary shell shenanigans. This way
-	 * execSync is only ever called on one of the enumerated commands in scripts.
-	 * The function returns a javascript object that is the output of the python
-	 * script parsed as JSON. To find the details of the object returned by a given
-	 * script, consult the python script you are calling. Function may throw errors
-	 * if there is a problem with running the script.
+	 * This command takes two arguments, scriptID and stdin. scriptID is the
+	 * id of the script to be run. All commands given to the shell must come
+	 * from the scripts table to make sure they are scrutinized. stdin is a
+	 * string that is passed as standard input. No errors are handled by
+	 * this function and will be passed on to calling code. Returns the
+	 * standard output of the command called.
 	 */
-	runScript: function(scriptID) {
-		return JSON.parse(execSync(scripts[scriptID]));
+	runScript: function(scriptID, stdin) {
+		if (stdin === undefined)
+			return execSync(scripts[scriptID]);
+		else
+			return execSync(scripts[scriptID], { input: stdin });
 	}
 };

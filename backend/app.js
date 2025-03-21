@@ -10,6 +10,11 @@ const PORT = process.env.BEACH_DAY_BACKEND_PORT || 3010;
 const cors = require('cors');
 app.use(cors());
 
+// Create/Update Conda and the Environment
+const wrapper = require("./scripts/");
+wrapper.runScript("update conda");
+wrapper.runScript("update conda env");
+
 app.use(express.json());
 app.use(cookieParser());
 
