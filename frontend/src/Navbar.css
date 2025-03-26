@@ -7,27 +7,31 @@
   color: white;
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.nav-links {
-  list-style: none;
+.navbar-content {
   display: flex;
-  gap: 15px;
+  align-items: center;  /* Align the image and title vertically centered */
+  justify-content: flex-start; /* Keep both items aligned to the left */
 }
 
-.nav-links li {
-  display: inline;
+.navbar-icon {
+  width: 60px;  /* Adjust the size of the icon */
+  height: 60px; /* Adjust the size of the icon */
+  margin-right: 10px; /* Space between the icon and the title */
 }
 
-.nav-links a {
+.navbar-title {
+  color: white;
+  font-size: 1.8rem;
+  margin: 0;  /* Ensure no additional margin around the title */
+}
+
+.navbar-links a {
   color: white;
   text-decoration: none;
+  margin: 0 15px;
   font-size: 1rem;
 }
 
-.nav-links a:hover {
+.navbar-links a:hover {
   text-decoration: underline;
 }

@@ -1,19 +1,23 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css"; // Style your navbar
+import beachIcon from './beachIcon.png';  // Import your PNG image
 
 function Navbar() {
-  return (
-    <nav className="navbar">
-      <h2 className="logo">Beach Day</h2>
-      <ul className="nav-links">
-        <li><Link to="/beach-info">Home</Link></li>
-        <li><Link to="/favorites">Favorites</Link></li>
-        <li><Link to="/settings">Settings</Link></li>
-        <li><Link to="/logout">Logout</Link></li>
-      </ul>
-    </nav>
-  );
-}
-
-export default Navbar;
+    return (
+      <div className="navbar">
+        <div className="navbar-content">
+          <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
+          <h1 className="navbar-title">Beach Day</h1>
+        </div>
+        <div className="navbar-links">
+          <Link to="/beach-info">Home</Link>
+          <Link to="/favorites">Favorites</Link>
+          <Link to="/settings">Settings</Link>
+          <Link to="/logout">Logout</Link>
+        </div>
+      </div>
+    );
+  }
+  
+  export default Navbar;

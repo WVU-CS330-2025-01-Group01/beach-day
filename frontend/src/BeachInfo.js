@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "./BeachInfo.css";
 import projectphoto from "./projectphoto.png"; // Adjusted path for direct src folder
-import Navbar from "./Navbar"; // Import Navbar
 
 function BeachInfo() {
   const [beach, setBeach] = useState("");
@@ -22,7 +21,6 @@ function BeachInfo() {
 
   return (
     <div className="beach-info-container">
-      <Navbar /> {/* Add Navbar here */}
       <h1>Welcome to Beach Day!</h1>
       <p>Search for a beach to see the weather conditions.</p>
       <form onSubmit={handleSearch} className="search-form">
