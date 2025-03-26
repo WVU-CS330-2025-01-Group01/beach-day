@@ -6,7 +6,7 @@ const { execSync } = require('node:child_process');
  */
 const scripts = {
 	"test": "cat",
-	"get weather": "conda run --no-capture-output -n noaa python3 NOAA_scripts/get_weather.py",
+	"get weather": "conda run --no-capture-output -n noaa python NOAA_scripts/get_weather.py",
 	"update conda": "conda update -n base -c defaults conda -y",
 	"update conda env": "conda env update -f NOAA_scripts/environment.yml -n noaa --prune"
 };
