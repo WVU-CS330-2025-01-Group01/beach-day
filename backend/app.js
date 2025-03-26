@@ -12,7 +12,7 @@ app.use(cors());
 
 // Create/Update Conda and the Environment
 const wrapper = require("./scripts/");
-wrapper.runScript("update conda");
+// wrapper.runScript("update conda");
 wrapper.runScript("update conda env");
 
 app.use(express.json());
