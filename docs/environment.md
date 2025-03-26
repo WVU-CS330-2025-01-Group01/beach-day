@@ -73,3 +73,6 @@ REACT_APP_BACKEND_PORT=3010
 BEACH_DAY_BACKEND_PORT=3010
 BEACH_DAY_JWT_SECRET=a
 ```
+
+# Conda
+Our python script(s) rely on conda to setup an environment for them to work. You will need to install conda on your system and ensure that it can be invoked by a terminal as `conda`.
