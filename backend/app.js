@@ -20,9 +20,11 @@ app.use(cookieParser());
 
 const authRoutes = require('./routes/auth');
 const testRoutes = require('./routes/test');
+const weatherRoutes = require('./routes/weather');
 
 app.use(authRoutes);
 app.use(testRoutes);
+app.use(weatherRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server started listening on port: ${PORT}`);
