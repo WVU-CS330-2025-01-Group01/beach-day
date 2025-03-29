@@ -11,7 +11,7 @@ const cors = require('cors');
 app.use(cors());
 
 // Create/Update Conda and the Environment
-const wrapper = require("./scripts/");
+const wrapper = require("./data/");
 // wrapper.runScript("update conda");
 wrapper.runScript("update conda env");
 

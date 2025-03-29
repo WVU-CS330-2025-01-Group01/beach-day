@@ -8,7 +8,7 @@ const router = express.Router();
 // Modules We Made
 const auth = require("../auth/");
 const db = require("../dbabs/");
-const wrapper = require("../scripts/");
+const wrapper = require("../data/");
 
 /**
  * Test route for testing stuff.

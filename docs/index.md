@@ -7,3 +7,7 @@ This app has multiple moving parts and requires setup on the developer's end bef
 
 ## Routing
 Routing refers to routes hosted by the backend. All communication between the frontend and backend is done through one of these routes. Documentation for these routes can be found on the [Routing](routing.md) page.
+
+## Other Resources
+
+[Interface Documentation](interfaces.md)

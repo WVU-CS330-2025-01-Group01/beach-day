@@ -1,7 +1,0 @@
-channels:
-  - defaults
-dependencies:
-  - pip=24.2
-  - python=3.8.20
-  - pip:
-    - noaa-sdk==0.1.21
