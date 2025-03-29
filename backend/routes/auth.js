@@ -47,8 +47,8 @@ router.post('/login', (req, res) => {
 			{ expiresIn: '1h' }
 		);
 
-		res.cookie('token', token, { httpOnly: true, sameSite: 'strict' });
-		res.json({ message: 'Login successful.' });
+		// res.cookie('token', token, { httpOnly: true, sameSite: 'strict' });
+		res.json({ message: 'Login successful.', jwt: token });
 	} catch (err) {
 		if (err instanceof db.UserNotFound)
 			res.status(500).json({ message: 'This user does not exist.' });
