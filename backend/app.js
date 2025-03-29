@@ -1,5 +1,5 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 
 require('dotenv').config();
 
@@ -16,13 +16,15 @@ const wrapper = require("./data/");
 wrapper.runScript("update conda env");
 
 app.use(express.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 const authRoutes = require('./routes/auth');
 const testRoutes = require('./routes/test');
+const weatherRoutes = require('./routes/weather');
 
 app.use(authRoutes);
 app.use(testRoutes);
+app.use(weatherRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server started listening on port: ${PORT}`);

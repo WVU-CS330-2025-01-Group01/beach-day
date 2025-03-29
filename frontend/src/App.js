@@ -4,6 +4,8 @@ import Login from './Login';
 import Register from './Register';
 import LandingPage from './LandingPage';  // Import your LandingPage component
 import BeachInfo from './BeachInfo';  // Make sure you import BeachInfo
+import Navbar from "./Navbar"; // Import Navbar
+
 
 function App() {
   const [authenticated, setAuthenticated] = useState(
@@ -17,6 +19,7 @@ function App() {
 
   return (
     <Router>
+      <Navbar />
       <Routes>
         {/* Landing Page Route */}
         <Route path="/" element={<LandingPage />} />

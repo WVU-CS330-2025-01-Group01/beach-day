@@ -10,14 +10,6 @@ const auth = require("../auth/");
 const db = require("../dbabs/");
 const wrapper = require("../data/");
 
-/* Prototypical routing code
-router.get('/', (req, res, next) => {
-	return res.status(200).json({ 
-		message: 'Test test test' 
-	});
-});
-*/
-
 /**
  * Test route for testing stuff.
  */
@@ -30,19 +22,16 @@ router.get('/example_route', (req, res, next) => {
 /**
  * Auth test route.
  */
-router.get('/auth_test', (req, res, next) => {
-	console.log("Auth Test Called");
-
+router.post('/auth_test', (req, res, next) => {
 	try {
-		let payload = auth.verifyJWT(req.cookies);
-		console.log("Auth payload: " + payload);
+		const payload = auth.verifyJWT(req.body.jwt);
+		console.log("User Payload: ", payload);
 	} catch (err) {
-		console.log("Auth verify error");
+		if (err instanceof auth.InvalidToken)
+			res.status(500).json({ message: 'User authentication token absent or invalid.' });
+		else
+			res.status(500).json({ message: 'Undefined error.' });
 	}
-
-	return res.status(200).json({
-		test: 45
-	});
 });
 
 /**
