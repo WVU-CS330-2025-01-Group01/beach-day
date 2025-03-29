@@ -4,3 +4,7 @@ This is the root of the documentation for the project. Any aspect of the project
 
 ## Getting The Project Running
 This app has multiple moving parts and requires setup on the developer's end before it can be run. Instructions for getting the project running can be found on the [Setting Up](setup.md) page.
+
+## Other Resources
+
+[Interface Documentation](interfaces.md)
