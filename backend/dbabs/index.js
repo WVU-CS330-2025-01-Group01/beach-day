@@ -7,6 +7,15 @@ class UserNotFound extends Error {}
 class IncorrectPassword extends Error {}
 
 /**
+ * Currently, doesn't do anything. Should test that the database is accessable
+ * and enure, programmatically, that the table has the correct schemas and
+ * columns or whatever. If anything goes wrong, it will throw ProblemWithDB and
+ * provide details about what went wrong either in the form of a console.log or
+ * by putting a string in the exception.
+ */
+function tempInitDB() {}
+
+/**
  * Currently, userTable, tempAttemptToMakeUser(), and tempTryLogIn() are used to
  * demonstrate how the database functions should interact with the routing. They
  * are storing the usernames and password hashes to a map that is reset when the
@@ -42,31 +51,43 @@ function tempTryLogIn(username, password) {
 		throw new IncorrectPassword();
 }
 
+/**
+ * Currently, these are temporary functions for accessing/modifying the favorite
+ * beaches of a user. Authentication is done by calling code, so you can assume
+ * that the user is logged in. All functions can throw ProblemWithDB or
+ * UserNotFound.
+ */
+let favorites = new Set(["AK103349",
+		"AK103839",
+		"NC810571",
+		"WA171257",
+		"NJ828093",
+		"FL257350",
+		"MA242910",
+		"WA397523",
+		"WA815475",
+		"HI659533"]);
+function tempGetFavorites(username) {
+	return favorites;
+}
+function tempAddFavorite(username, favorite) {
+	favorites.add(favorite);
+}
+function tempRemoveFavorite(username, favorite) {
+	favorites.delete(favorite);
+}
+function tempClearFavorites(username) {
+	favorites.clear();
+}
+
 module.exports = {
-	/**
-	 * This function takes in an unsanitized username and password. If the
-	 * user already exists, it throws UserAlreadyExists. If there is a
-	 * problem adding the user to the database, it throws ProblemWithDB. If
-	 * the user is successfully added to the database, no exceptions are to
-	 * be thrown. Nothing is ever returned by this function.
-	 */
-	attemptToMakeUser: function(username, password) {
-		tempAttemptToMakeUser(username, password);
-	},
-	/**
-	 * This function takes in an unsanitized username and password. If the
-	 * user does not exist, it throws UserNotFound. If there is a problem
-	 * with the database, it throws ProblemWithDB. If the password is
-	 * incorrect, it throws IncorrectPassword. If the username exists and
-	 * the password is the correct password for that user, no exceptions are
-	 * to be thrown. Nothing is ever returned by this function.
-	 */
-	tryLogIn: function(username, password) {
-		tempTryLogIn(username, password);
-	},
-	/**
-	 * Export all the errors that can be thrown by the exported functions.
-	 */
+	initDB: tempInitDB,
+	attemptToMakeUser: tempAttemptToMakeUser,
+	tryLogIn: tempTryLogIn,
+	getFavorites: tempGetFavorites,
+	addFavorite: tempAddFavorite,
+	removeFavorite: tempRemoveFavorite,
+	clearFavorites: tempClearFavorites,
 	UserAlreadyExists: UserAlreadyExists,
 	ProblemWithDB: ProblemWithDB,
 	UserNotFound: UserNotFound,

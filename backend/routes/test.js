@@ -1,7 +1,6 @@
 /**
  * This file is for routes used to test parts of the codebase.
  */
-
 const express = require('express');
 const router = express.Router();
 
@@ -45,6 +44,20 @@ router.get('/weather_test', (req, res, next) => {
 	});
 	const reply = JSON.parse(wrapper.runScript("get weather", request));
 	return res.status(200).json(reply);
+});
+
+/**
+ * Favorites test
+ */
+router.get('/favorites_test', (req, res, next) => {
+	console.log("Default: " + Array.from(db.getFavorites("bob").values()));
+	db.addFavorite("bob", "sadfksajf");
+	console.log("Add sadfksajf: " + Array.from(db.getFavorites("bob").values()));
+	db.removeFavorite("bob", "WA815475");
+	console.log("Remove WA815475: " + Array.from(db.getFavorites("bob").values()));
+	db.clearFavorites("bob");
+	console.log("Clear: " + Array.from(db.getFavorites("bob").values()));
+	return res.status(200).json({});
 });
 
 module.exports = router;
