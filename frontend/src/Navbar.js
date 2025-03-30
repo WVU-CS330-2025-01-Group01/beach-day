@@ -1,21 +1,15 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Cookies from "js-cookie"; // Import js-cookie for managing JWT cookies
-import "./Navbar.css"; // Style your navbar
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './Navbar.css'; // Style your navbar
 import beachIcon from './beachIcon.png';  // Import your PNG image
+import Cookies from 'js-cookie'; // Import Cookies
 
-function Navbar({ setAuthenticated }) {
-  const navigate = useNavigate();
-
+function Navbar({ authenticated, setAuthenticated }) {
+  // Logout function to clear the authentication and token
   const handleLogout = () => {
-    // Remove the JWT cookie
-    Cookies.remove('jwt');
-    // Clear the authenticated state in localStorage
-    localStorage.removeItem('authenticated');
-    // Set authenticated state to false
+    // Clear cookies and update authentication state
+    Cookies.remove('token');
     setAuthenticated(false);
-    // Redirect to login page
-    navigate('/login');
   };
 
   return (
@@ -25,12 +19,16 @@ function Navbar({ setAuthenticated }) {
         <h1 className="navbar-title">Beach Day</h1>
       </div>
       <div className="navbar-links">
-        <Link to="/beach-info">Home</Link>
+        <Link to="/home">Home</Link>
         <Link to="/favorites">Favorites</Link>
         <Link to="/settings">Settings</Link>
-        <button onClick={handleLogout} className="logout-btn">
-          Logout
-        </button>
+        
+        {/* Conditionally render the Logout button */}
+        {authenticated ? (
+          <button onClick={handleLogout} className="logout-btn">Logout</button>
+        ) : (
+          <Link to="/login">Login</Link>
+        )}
       </div>
     </div>
   );
