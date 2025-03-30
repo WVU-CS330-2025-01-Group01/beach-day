@@ -6,7 +6,6 @@ import LandingPage from './LandingPage';  // Import your LandingPage component
 import BeachInfo from './BeachInfo';  // Make sure you import BeachInfo
 import Navbar from "./Navbar"; // Import Navbar
 
-
 function App() {
   const [authenticated, setAuthenticated] = useState(
     () => JSON.parse(localStorage.getItem('authenticated')) || false
@@ -19,7 +18,7 @@ function App() {
 
   return (
     <Router>
-      <Navbar />
+      <Navbar setAuthenticated={setAuthenticated} />
       <Routes>
         {/* Landing Page Route */}
         <Route path="/" element={<LandingPage />} />
