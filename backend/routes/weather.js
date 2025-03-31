@@ -16,7 +16,7 @@ const wrapper = require("../data/");
 router.post('/weather', (req, res) => {
 	console.log("Weather route accessed");
 
-	const reply = JSON.parse(wrapper.runScript("get weather", req.body));
+	const reply = JSON.parse(wrapper.runScript("get weather", JSON.stringify(req.body)));
 	return res.status(200).json(reply);
 });
 
