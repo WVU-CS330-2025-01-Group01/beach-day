@@ -188,36 +188,60 @@ module.exports = {
 	 */
 	attemptToMakeUser: function(username, password) {
 		//tempAttemptToMakeUser(username, password);
+		let errorStatus = "NULL";
+		let nestedQueryExit = false;
+
 		connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
-			if (err) throw ProblemWithDB;
-	
-			if (!(Object.keys(res).length == 0)) {
-				console.log("Error: UserExists");
-				throw new UserAlreadyExists;
-			}
 
-
-			let hash = bcrypt.hashSync(password, 10);
-	
-			connection.query(`
-				INSERT INTO
-				users (username, password)
-				VALUES 
-				(?, ?);
-				`,
-				[username, hash], (err, res) => {
-				if (err && err.code === "ER_DUP_ENTRY") {
-					console.log("Error: UserExists");
-					throw UserAlreadyExists;
-				} else if (err) {
-					console.log("Error: General");
-					throw ProblemWithDB;
-				} else {
-
+			queryBlock : {
+				if (err) {
+					errorStatus = "ProblemWithDB";
+					break queryBlock;
+					//throw ProblemWithDB;
 				}
-			
-			});
+		
+				if (!(Object.keys(res).length == 0)) {
+					console.log("Error: UserExists");
+					errorStatus = "UserAlreadyExists";
+					break queryBlock;
+					//throw new UserAlreadyExists;
+				}
+
+
+				let hash = bcrypt.hashSync(password, 10);
+		
+				connection.query(`
+					INSERT INTO
+					users (username, password)
+					VALUES 
+					(?, ?);
+					`,
+					[username, hash], (err, res) => {
+					nestedQuery : {
+						if (err && err.code === "ER_DUP_ENTRY") {
+							console.log("Error: UserExists");
+							errorStatus = "UserAlreadyExists";
+							break nestedQuery;
+							//throw UserAlreadyExists;
+						} else if (err) {
+							console.log("Error: General");
+							errorStatus = "ProblemWithDB}";
+							break nestedQuery;
+							//throw ProblemWithDB;
+						} else {
+
+						}
+					}
+				});
+			}
 		});
+
+		switch (errorStatus) {
+			case "ProblemWithDB":
+				throw ProblemWithDB;
+			case "UserAlreadyExists":
+				throw UserAlreadyExists;
+		}
 	},
 	/**
 	 * This function takes in an unsanitized username and password. If the
@@ -229,27 +253,61 @@ module.exports = {
 	 */
 	tryLogIn: function(username, password) {
 		//tempTryLogIn(username, password);
+		let errorStatus = "NULL";
+		let nestedQueryExit = false;
+
 
 		connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
-			if (err) throw ProblemWithDB;
-	
-			if (Object.keys(res).length == 0) {
-				console.log("Error: UserNotFound");
-				throw new UserNotFound;
-			}
 
-				connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
-				if (err) throw ProblemWithDB;
+			queryBlock : {
+				if (err) {
+					errorStatus = "ProblemWithDB";
+					break queryBlock;
+					//throw ProblemWithDB;
+				}
 		
+				if (Object.keys(res).length == 0) {
+					console.log("Error: UserNotFound");
+					errorStatus = "UserNotFound";
+					break queryBlock;
+					//throw new UserNotFound;
+				}
 
-		
-				if(!bcrypt.compareSync(password, res[0].password)) {
-				console.log("Error: Incorrect Password");
-				throw new IncorrectPassword;
+					connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
+					nestedQuery : {
+						if (err) {
+							errorStatus = "UserAlreadyExists";
+							nestedQueryExit = true;
+							break nestedQuery;
+							//throw ProblemWithDB;
+						}
+				
+
+				
+						if(!bcrypt.compareSync(password, res[0].password)) {
+						console.log("Error: Incorrect Password");
+						errorStatus = "IncorrectPassword";
+						nestedQueryExit = true;
+						break nestedQuery;
+						//throw new IncorrectPassword;
+						}
+						console.log("Password Correct!!!");
+					}
+				});
 			}
-				console.log("Password Correct!!!");
-			});
 		});
+
+		switch (errorStatus) {
+			case "ProblemWithDB":
+				throw ProblemWithDB;
+			case "UserAlreadyExists":
+				throw UserAlreadyExists;
+			case "IncorrectPassword":
+				throw IncorrectPassword;
+			case "UserNotFound":
+				throw UserNotFound;
+		}
+
 	},
 
 	initDB: tempInitDB,
