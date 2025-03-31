@@ -57,11 +57,11 @@ router.post('/update_favorites', (req, res, next) => {
 
 		const username = auth.verifyJWT(req.body.jwt).username;
 
-		if (req.type === 'clear')
+		if (req.body.type === 'clear')
 			db.clearFavorites(username);
-		else if (req.type === 'add')
+		else if (req.body.type === 'add')
 			db.addFavorite(username, req.body.favorite);
-		else if (req.type === 'remove')
+		else if (req.body.type === 'remove')
 			db.removeFavorite(username, req.body.favorite);
 		res.status(200).json({ message: 'Success.' });
 	} catch (err) {
