@@ -1,0 +1,66 @@
+.home-container {
+  text-align: center;
+  padding: 20px;
+  background-color: #f4e1c1; /* Tan beach background */
+  color: #0066cc; /* Blue text */
+  min-height: 100vh; /* Ensure at least 100vh space for the container */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px; /* Increased margin */
+  font-family: 'Arial', sans-serif;
+}
+
+.search-form {
+  margin-top: 30px; /* Increased margin */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 15px; /* Adds space between the search input and button */
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+input {
+  padding: 15px; /* Increased padding for input */
+  font-size: 1.2rem; /* Increased font size */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 300px; /* Increased width of search bar */
+  max-width: 100%; /* Makes input responsive */
+}
+
+button {
+  padding: 15px 25px; /* Increased padding for button */
+  font-size: 1.2rem; /* Increased font size */
+  color: white;
+  background: #0066cc;
+  border-radius: 5px;
+  margin-left: 10px;
+  cursor: pointer;
+  width: 180px; /* Adjust button width to be larger */
+  transition: background 0.3s ease; /* Smooth transition for hover effect */
+}
+
+button:hover {
+  background: #0055a5;
+}
+
+.weather-info {
+  margin-top: 30px; /* Increased margin */
+  font-size: 1.5rem; /* Larger font for weather info */
+  font-weight: bold; /* Makes the weather info stand out */
+}
+
+.beach-image {
+  width: 100%; /* Makes the image scale responsively */
+  max-width: 1000px; /* Allow the image to be larger */
+  height: auto;
+  margin-top: 30px; /* Increased margin */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Added box shadow for depth */
+}

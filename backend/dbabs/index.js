@@ -128,6 +128,15 @@ const connection = mysql.createPool({
 
 
 /**
+ * Currently, doesn't do anything. Should test that the database is accessable
+ * and enure, programmatically, that the table has the correct schemas and
+ * columns or whatever. If anything goes wrong, it will throw ProblemWithDB and
+ * provide details about what went wrong either in the form of a console.log or
+ * by putting a string in the exception.
+ */
+function tempInitDB() {}
+
+/**
  * Currently, userTable, tempAttemptToMakeUser(), and tempTryLogIn() are used to
  * demonstrate how the database functions should interact with the routing. They
  * are storing the usernames and password hashes to a map that is reset when the
@@ -147,23 +156,24 @@ const connection = mysql.createPool({
  * would be best if we put the check in this file and have an Error associated
  * with it. We can discuss that later. Same story for the password.
  */
-let userTable = new Map();
-function tempAttemptToMakeUser(username, password) {
-	console.log(`Register Request\nUsername: ${username}\nPassword ${password}\n`);
-	if (userTable.has(username))
-		throw new UserAlreadyExists();
-	let hash = bcrypt.hashSync(password, 10);
-	userTable.set(username, hash);
+// let userTable = new Map();
+// function tempAttemptToMakeUser(username, password) {
+// 	console.log(`Register Request\nUsername: ${username}\nPassword: ${password}\n`);
+// 	if (userTable.has(username))
+// 		throw new UserAlreadyExists();
+// 	let hash = bcrypt.hashSync(password, 10);
+// 	userTable.set(username, hash);
 
 
-}
-function tempTryLogIn(username, password) {
-	console.log(`Login Request\nUsername: ${username}\nPassword ${password}\n`);
-	if (userTable.get(username) === undefined)
-		throw new UserNotFound();
-	if (!bcrypt.compareSync(password, userTable.get(username)))
-		throw new IncorrectPassword();
-}
+// }
+// function tempTryLogIn(username, password) {
+// 	console.log(`Login Request\nUsername: ${username}\nPassword: ${password}\n`);
+// 	if (userTable.get(username) === undefined)
+// 		throw new UserNotFound();
+// 	if (!bcrypt.compareSync(password, userTable.get(username)))
+// 		throw new IncorrectPassword();
+// }
+
 
 
 
@@ -182,6 +192,7 @@ module.exports = {
 			if (err) throw ProblemWithDB;
 	
 			if (!(Object.keys(res).length == 0)) {
+				console.log("Error: UserExists");
 				throw new UserAlreadyExists;
 			}
 
@@ -196,8 +207,10 @@ module.exports = {
 				`,
 				[username, hash], (err, res) => {
 				if (err && err.code === "ER_DUP_ENTRY") {
+					console.log("Error: UserExists");
 					throw UserAlreadyExists;
 				} else if (err) {
+					console.log("Error: General");
 					throw ProblemWithDB;
 				} else {
 
@@ -221,6 +234,7 @@ module.exports = {
 			if (err) throw ProblemWithDB;
 	
 			if (Object.keys(res).length == 0) {
+				console.log("Error: UserNotFound");
 				throw new UserNotFound;
 			}
 
@@ -230,19 +244,66 @@ module.exports = {
 
 		
 				if(!bcrypt.compareSync(password, res[0].password)) {
+				console.log("Error: Incorrect Password");
 				throw new IncorrectPassword;
 			}
-				//console.log("Password Correct!!!");
+				console.log("Password Correct!!!");
 			});
 		});
-	
-		
 	},
-	/**
-	 * Export all the errors that can be thrown by the exported functions.
-	 */
+
+	initDB: tempInitDB,
+	getFavorites: tempGetFavorites,
+	addFavorite: tempAddFavorite,
+	removeFavorite: tempRemoveFavorite,
+	clearFavorites: tempClearFavorites,
 	UserAlreadyExists: UserAlreadyExists,
 	ProblemWithDB: ProblemWithDB,
 	UserNotFound: UserNotFound,
-	IncorrectPassword: IncorrectPassword,
+	IncorrectPassword: IncorrectPassword
 };
+	/**
+	 * Export all the errors that can be thrown by the exported functions.
+	 */
+/**
+ * Currently, these are temporary functions for accessing/modifying the favorite
+ * beaches of a user. Authentication is done by calling code, so you can assume
+ * that the user is logged in. All functions can throw ProblemWithDB or
+ * UserNotFound.
+ */
+let favorites = new Set(["AK103349",
+		"AK103839",
+		"NC810571",
+		"WA171257",
+		"NJ828093",
+		"FL257350",
+		"MA242910",
+		"WA397523",
+		"WA815475",
+		"HI659533"]);
+function tempGetFavorites(username) {
+	return favorites;
+}
+function tempAddFavorite(username, favorite) {
+	favorites.add(favorite);
+}
+function tempRemoveFavorite(username, favorite) {
+	favorites.delete(favorite);
+}
+function tempClearFavorites(username) {
+	favorites.clear();
+}
+
+// module.exports = {
+// 	initDB: tempInitDB,
+// 	attemptToMakeUser: tempAttemptToMakeUser,
+// 	tryLogIn: tempTryLogIn,
+// 	getFavorites: tempGetFavorites,
+// 	addFavorite: tempAddFavorite,
+// 	removeFavorite: tempRemoveFavorite,
+// 	clearFavorites: tempClearFavorites,
+// 	UserAlreadyExists: UserAlreadyExists,
+// 	ProblemWithDB: ProblemWithDB,
+// 	UserNotFound: UserNotFound,
+// 	IncorrectPassword: IncorrectPassword,
+// };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import Cookies from 'js-cookie';  // Import js-cookie
 
 const loginURL =
 	'http://' +
@@ -17,21 +18,32 @@ function Login({ setAuthenticated }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(loginURL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-    const data = await response.json();
-    
-    if (data.message === 'Authentication successful') {
-      // Set the authenticated state to true when login is successful
-      setAuthenticated(true);
 
-      // Navigate to the Beach Info page directly after successful login
-      navigate('/beach-info');
-    } else {
-      setMessage(data.message); // Show the error message if login fails
+    try {
+      const response = await fetch(loginURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.jwt) {
+        // Store JWT token in a cookie with a 1-day expiration
+        Cookies.set('jwt', data.jwt, { expires: 1, secure: false, sameSite: 'Strict', path: '/' });
+
+        // Set the authenticated state to true
+        setAuthenticated(true);
+
+        // Navigate to the Beach Info page (or any other page you'd like)
+        navigate('/beach-info');
+        //console.log("Issued JWT:", data.jwt);
+      } else {
+        setMessage(data.message || 'Login failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setMessage('An error occurred. Please try again later.');
     }
   };
 

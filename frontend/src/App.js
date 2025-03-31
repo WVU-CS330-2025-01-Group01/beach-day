@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
-import LandingPage from './LandingPage';  // Import your LandingPage component
-import BeachInfo from './BeachInfo';  // Make sure you import BeachInfo
+import Home from './Home';  // Import Home
+import Navbar from "./Navbar"; // Import Navbar
+import Favorites from "./Favorites"; // Import Favorites
 
 function App() {
   const [authenticated, setAuthenticated] = useState(
@@ -17,26 +18,33 @@ function App() {
 
   return (
     <Router>
+      <Navbar authenticated={authenticated} setAuthenticated={setAuthenticated} />
       <Routes>
-        {/* Landing Page Route */}
-        <Route path="/" element={<LandingPage />} />
+        {/* Redirect default route to Home if authenticated, else to Login */}
+        <Route
+          path="/"
+          element={<Navigate to="/home" />}
+        />
+
+        {/* Favorites Route */}
+        <Route path="/favorites" element={<Favorites />} />
 
         {/* Login Route */}
         <Route
           path="/login"
-          element={authenticated ? <Navigate to="/beach-info" replace /> : <Login setAuthenticated={setAuthenticated} />}
+          element={authenticated ? <Navigate to="/home" replace /> : <Login setAuthenticated={setAuthenticated} />}
         />
 
         {/* Register Route */}
         <Route
           path="/register"
-          element={authenticated ? <Navigate to="/beach-info" replace /> : <Register />}
+          element={authenticated ? <Navigate to="/home" replace /> : <Register />}
         />
 
-        {/* Beach Info Route */}
+        {/* Home Route (No authentication required) */}
         <Route
-          path="/beach-info"
-          element={authenticated ? <BeachInfo /> : <Navigate to="/login" replace />}
+          path="/home"
+          element={<Home />} // Accessible without authentication
         />
       </Routes>
     </Router>
