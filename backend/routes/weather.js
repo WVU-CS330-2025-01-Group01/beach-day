@@ -29,22 +29,11 @@ router.post('/favorites', (req, res, next) => {
 
 		console.log("User Payload: ", payload);
 
-		// Need to change this to fetch favorite beaches from the
-		// database using the username in payload. Currently, it returns
-		// dummy values.
+		const favorites = Array.from(db.getFavorites(payload.username).keys());
 
 		res.status(200).json({
 			message: 'Success.',
-			favorites: ["AK103349",
-				"AK103839",
-				"NC810571",
-				"WA171257",
-				"NJ828093",
-				"FL257350",
-				"MA242910",
-				"WA397523",
-				"WA815475",
-				"HI659533"]
+			favorites: favorites,
 		});
 	} catch (err) {
 		if (err instanceof auth.InvalidToken)
