@@ -1,10 +1,131 @@
 const bcrypt = require('bcryptjs');
+require('dotenv').config();
+const mysql = require('mysql2');
 
 // Error declarations
 class UserAlreadyExists extends Error {}
 class ProblemWithDB extends Error {}
 class UserNotFound extends Error {}
 class IncorrectPassword extends Error {}
+
+
+
+const connection = mysql.createPool({
+	host: process.env.BEACH_DAY_DB_HOST,    
+	user: process.env.BEACH_DAY_DB_USER,    
+	password: process.env.BEACH_DAY_DB_PASSWORD,
+	database: process.env.BEACH_DAY_DB_NAME,
+	port: process.env.BEACH_DAY_DB_PORT,
+	waitForConnections: true,
+  	connectionLimit: 10,
+  	queueLimit: 0
+});
+
+////////////////////All functions here are tests, code was shifted to the exports, but this is kept because they should work.\\\\\\\\\\\\\\\\\\
+//note, some of these say "userss", this is because I have two tables and didn't want to mess up my main table accidentally when testing
+
+
+
+// 	//console.log(res[1].username);
+// 	console.log(typeof res);
+// 	console.log(JSON.stringify(res));
+
+// 	//console.log(res[2].favorite_beaches.split(", "));
+// 	let userId = 1;
+
+// 	console.log(res[userId].favorite_beaches);
+// 	var favBeaches = res[userId].favorite_beaches.split(", ");
+	
+// 	console.log(favBeaches);
+// 	for(i = 0; i < favBeaches.length; i++) {
+// 		if(favBeaches[i] !== "beach2") {
+// 			//add to temp array
+// 			//once loop done, join
+// 			//actually, this is mf javascript, it has the includes()
+// 			//favBeaches.push();
+// 		}
+// 	}
+// 	var favBeachesString = favBeaches.join(', ');
+// 	console.log(favBeachesString);
+// });
+
+
+
+// function makeUserTest(username, password) {
+// 	console.log(`Register Request\nUsername: ${username}\nPassword ${password}\n`);
+
+
+// 	connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
+// 		if (err) throw err;
+
+// 		if (!(Object.keys(res).length == 0)) {
+// 			throw new UserAlreadyExists;
+// 		}
+// 	});
+	
+
+// 	//if we want, we can add an existing email error to check and throw
+	
+// 	let hash = bcrypt.hashSync(password, 10);
+
+// 	connection.query(`
+// 		INSERT INTO
+// 		users (username, password)
+// 		VALUES 
+// 		(?, ?);
+// 		`,
+// 		[username, hash], (err, res) => {
+// 		if (err) throw err;
+
+
+// 	});
+// }
+
+//tryLogInTest("passTest", "string");
+
+
+// function tryLogInTest(username, password) {
+
+// 	connection.query(`SELECT * FROM userss WHERE username = ?;`, [username], (err, res) => {
+// 		if (err) throw err;
+
+// 		if (Object.keys(res).length == 0) {
+// 			throw new UserNotFound;
+// 		}
+// 	});
+
+// 	connection.query(`SELECT * FROM userss WHERE username = ?;`, [username], (err, res) => {
+// 		if (err) throw err;
+
+// 		//console.log(res[0].password);
+
+// 		if(!bcrypt.compareSync(password, res[0].password)) {
+// 		throw new IncorrectPassword;
+// 	}
+// 		console.log("Password Correct!!!");
+// 	});
+// }
+
+
+// function getUser(username) {
+// 	connection.query(`SELECT * FROM userss WHERE username = ?;`, [username], (err, res) => {
+// 		if (err) throw err;
+
+// 		return res;
+
+// 	});
+// }
+
+// function isEmpty(username) {
+// 	connection.query(`SELECT * FROM userss WHERE username = ?;`, [username], (err, res) => {
+// 		if (err) throw err;
+
+// 		//console.log((Object.keys(res).length==0));
+// 		return (Object.keys(res).length == 0);
+// 	});
+// }
+
+
 
 /**
  * Currently, userTable, tempAttemptToMakeUser(), and tempTryLogIn() are used to
@@ -33,6 +154,8 @@ function tempAttemptToMakeUser(username, password) {
 		throw new UserAlreadyExists();
 	let hash = bcrypt.hashSync(password, 10);
 	userTable.set(username, hash);
+
+
 }
 function tempTryLogIn(username, password) {
 	console.log(`Login Request\nUsername: ${username}\nPassword ${password}\n`);
@@ -41,6 +164,9 @@ function tempTryLogIn(username, password) {
 	if (!bcrypt.compareSync(password, userTable.get(username)))
 		throw new IncorrectPassword();
 }
+
+
+
 
 module.exports = {
 	/**
@@ -51,7 +177,34 @@ module.exports = {
 	 * be thrown. Nothing is ever returned by this function.
 	 */
 	attemptToMakeUser: function(username, password) {
-		tempAttemptToMakeUser(username, password);
+		//tempAttemptToMakeUser(username, password);
+		connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
+			if (err) throw ProblemWithDB;
+	
+			if (!(Object.keys(res).length == 0)) {
+				throw new UserAlreadyExists;
+			}
+
+
+			let hash = bcrypt.hashSync(password, 10);
+	
+			connection.query(`
+				INSERT INTO
+				users (username, password)
+				VALUES 
+				(?, ?);
+				`,
+				[username, hash], (err, res) => {
+				if (err && err.code === "ER_DUP_ENTRY") {
+					throw UserAlreadyExists;
+				} else if (err) {
+					throw ProblemWithDB;
+				} else {
+
+				}
+			
+			});
+		});
 	},
 	/**
 	 * This function takes in an unsanitized username and password. If the
@@ -62,7 +215,28 @@ module.exports = {
 	 * to be thrown. Nothing is ever returned by this function.
 	 */
 	tryLogIn: function(username, password) {
-		tempTryLogIn(username, password);
+		//tempTryLogIn(username, password);
+
+		connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
+			if (err) throw ProblemWithDB;
+	
+			if (Object.keys(res).length == 0) {
+				throw new UserNotFound;
+			}
+
+				connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
+				if (err) throw ProblemWithDB;
+		
+
+		
+				if(!bcrypt.compareSync(password, res[0].password)) {
+				throw new IncorrectPassword;
+			}
+				//console.log("Password Correct!!!");
+			});
+		});
+	
+		
 	},
 	/**
 	 * Export all the errors that can be thrown by the exported functions.
@@ -70,5 +244,5 @@ module.exports = {
 	UserAlreadyExists: UserAlreadyExists,
 	ProblemWithDB: ProblemWithDB,
 	UserNotFound: UserNotFound,
-	IncorrectPassword: IncorrectPassword
+	IncorrectPassword: IncorrectPassword,
 };
