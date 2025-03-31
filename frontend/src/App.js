@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
-import Home from './Home';  // Updated import for the renamed Home component
+import Home from './Home';  // Import Home
 import Navbar from "./Navbar"; // Import Navbar
+import Favorites from "./Favorites"; // Import Favorites
 
 function App() {
   const [authenticated, setAuthenticated] = useState(
@@ -24,6 +25,9 @@ function App() {
           path="/"
           element={<Navigate to="/home" />}
         />
+
+        {/* Favorites Route */}
+        <Route path="/favorites" element={<Favorites />} />
 
         {/* Login Route */}
         <Route

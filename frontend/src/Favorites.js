@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Favorites.css'; // Import the CSS file for styling
 import Cookies from 'js-cookie'; // Import js-cookie to manage cookies
+import { Navigate } from 'react-router-dom';
 
 const favoritesURL =
     'http://' +
@@ -18,19 +19,19 @@ function Favorites() {
     useEffect(() => {
         // Retrieve the JWT from cookies
         const token = Cookies.get('jwt'); // Get JWT from cookies
-
+    
         if (token) {
             fetch(favoritesURL, {
-                method: 'GET',
+                method: 'POST',  // Change the method to POST
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`, // Send JWT with Authorization header
                 },
+                body: JSON.stringify({ jwt: token })  // Send the JWT in the body
             })
                 .then(response => response.json())
                 .then(data => {
                     console.log('Fetched data:', data);
-                    const favoritesData = Array.isArray(data) ? data : [];
+                    const favoritesData = Array.isArray(data.favorites) ? data.favorites : [];
                     setFavorites(favoritesData);
                     setLoading(false); // Stop loading
                 })
@@ -44,6 +45,11 @@ function Favorites() {
             setLoading(false); // Stop loading
         }
     }, []);
+
+    // If no JWT token, redirect to login page
+    if (!Cookies.get('jwt')) {
+        return <Navigate to="/login" replace />;
+    }
 
     return (
         <div className="favorites-container">
@@ -64,8 +70,7 @@ function Favorites() {
                     {favorites.length > 0 ? (
                         favorites.map((beach, index) => (
                             <div key={index} className="favorite-item">
-                                <h3>{beach.name}</h3>
-                                <p>🌍 Location: {beach.location}</p>
+                                <h3>{beach}</h3> {/* Display the beach ID */}
                             </div>
                         ))
                     ) : (

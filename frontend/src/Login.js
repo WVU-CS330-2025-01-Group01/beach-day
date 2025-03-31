@@ -30,13 +30,14 @@ function Login({ setAuthenticated }) {
 
       if (response.ok && data.jwt) {
         // Store JWT token in a cookie with a 1-day expiration
-        Cookies.set('jwt', data.jwt, { expires: 1, secure: false, sameSite: 'Strict' });
+        Cookies.set('jwt', data.jwt, { expires: 1, secure: false, sameSite: 'Strict', path: '/' });
 
         // Set the authenticated state to true
         setAuthenticated(true);
 
         // Navigate to the Beach Info page (or any other page you'd like)
         navigate('/beach-info');
+        //console.log("Issued JWT:", data.jwt);
       } else {
         setMessage(data.message || 'Login failed. Please try again.');
       }

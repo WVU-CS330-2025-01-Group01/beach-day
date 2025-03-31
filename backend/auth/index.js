@@ -1,5 +1,6 @@
 // Error Declarations
 class InvalidToken extends Error {}
+const jwt = require('jsonwebtoken');
 
 /**
  * This function takes the user's token as the only parameter. This token is

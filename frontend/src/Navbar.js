@@ -8,7 +8,7 @@ function Navbar({ authenticated, setAuthenticated }) {
   // Logout function to clear the authentication and token
   const handleLogout = () => {
     // Clear cookies and update authentication state
-    Cookies.remove('token');
+    Cookies.remove('jwt');
     setAuthenticated(false);
   };
 
