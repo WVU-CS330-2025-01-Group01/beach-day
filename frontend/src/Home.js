@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "./BeachInfo.css";
+import "./Home.css"; // Make sure to rename the CSS file to Home.css
 import projectphoto from "./projectphoto.png"; // Adjusted path for direct src folder
 
-function BeachInfo() {
+function Home() {
   const [beach, setBeach] = useState("");
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState("");
@@ -20,7 +20,7 @@ function BeachInfo() {
   };
 
   return (
-    <div className="beach-info-container">
+    <div className="home-container">
       <h1>Welcome to Beach Day!</h1>
       <p>Search for a beach to see the weather conditions.</p>
       <form onSubmit={handleSearch} className="search-form">
@@ -43,4 +43,4 @@ function BeachInfo() {
   );
 }
 
-export default BeachInfo;
+export default Home;
