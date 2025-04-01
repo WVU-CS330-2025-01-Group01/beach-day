@@ -9,6 +9,10 @@ class UserNotFound extends Error {}
 class IncorrectPassword extends Error {}
 
 
+// process.on('uncaughtException', (err) => {
+//     console.error('Uncaught Exception:', err);
+	
+// });
 
 const connection = mysql.createPool({
 	host: process.env.BEACH_DAY_DB_HOST,    
@@ -19,7 +23,7 @@ const connection = mysql.createPool({
 	waitForConnections: true,
   	connectionLimit: 10,
   	queueLimit: 0
-});
+}).promise();
 
 ////////////////////All functions here are tests, code was shifted to the exports, but this is kept because they should work.\\\\\\\\\\\\\\\\\\
 //note, some of these say "userss", this is because I have two tables and didn't want to mess up my main table accidentally when testing
@@ -125,6 +129,93 @@ const connection = mysql.createPool({
 // 	});
 // }
 
+async function getUserData(username) {
+
+	try {
+
+		const [user] = await connection.query(`SELECT * FROM users WHERE username = ?;`, [username]);
+
+		if(user.length == 0) {
+					errorCode = "UserNotFound"
+					throw new UserNotFound();
+				}
+
+		return user[0];
+
+
+
+	} catch (e) {
+		//console.log(e);
+		if(e instanceof UserNotFound) {
+			throw new UserNotFound();
+		} else {
+			throw new ProblemWithDB()
+		}
+	}
+}
+
+async function userExists(username) {
+
+    try {
+
+        const [user] = await connection.query(`SELECT * FROM users WHERE username = ?;`, [username]);
+
+        if (user.length != 0) {
+            return true;
+        }
+
+        return false;
+
+    } catch (e) {
+        //console.log(e);
+        throw new ProblemWithDB();
+    }
+}
+
+
+
+// async function aLogInTest(username, enteredPassword) {
+
+
+// 	try {
+// 	const user = await getUserData(username);
+
+// 	const password = await bcrypt.compare(enteredPassword, user.password);
+	
+// 	if(!password) {
+// 		console.log("Wrong Password");
+// 		throw new IncorrectPassword();
+// 	}
+
+// 	console.log("Password Works");
+
+
+// 	} catch (e) {
+// 		console.log(e);
+// 		if(e instanceof UserNotFound) {
+// 			throw new UserNotFound();
+// 		} else if(e instanceof IncorrectPassword){
+// 			throw new IncorrectPassword();
+// 		} else {
+// 			throw new ProblemWithDB()
+// 		}
+// 	}
+// }
+
+async function printUser(username) {
+	const test = await getUserData(username);
+	console.log(test);
+}
+
+//console.log("ran getuser");
+//printUser("npmTest");
+
+//console.log("no Running login");
+//aLogInTest("npmTest", "screwYou");
+//console.log(printUser("npmTests"));
+//console.log(await getUserData("npmTest"));
+
+
 
 
 /**
@@ -186,61 +277,33 @@ module.exports = {
 	 * the user is successfully added to the database, no exceptions are to
 	 * be thrown. Nothing is ever returned by this function.
 	 */
-	attemptToMakeUser: function(username, password) {
-		//tempAttemptToMakeUser(username, password);
-		let errorStatus = "NULL";
-		let nestedQueryExit = false;
+	attemptToMakeUser: async function(username, password) {
 
-		connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
-
-			queryBlock : {
-				if (err) {
-					errorStatus = "ProblemWithDB";
-					break queryBlock;
-					//throw ProblemWithDB;
-				}
-		
-				if (!(Object.keys(res).length == 0)) {
-					console.log("Error: UserExists");
-					errorStatus = "UserAlreadyExists";
-					break queryBlock;
-					//throw new UserAlreadyExists;
-				}
-
-
-				let hash = bcrypt.hashSync(password, 10);
-		
-				connection.query(`
-					INSERT INTO
-					users (username, password)
-					VALUES 
-					(?, ?);
-					`,
-					[username, hash], (err, res) => {
-					nestedQuery : {
-						if (err && err.code === "ER_DUP_ENTRY") {
-							console.log("Error: UserExists");
-							errorStatus = "UserAlreadyExists";
-							break nestedQuery;
-							//throw UserAlreadyExists;
-						} else if (err) {
-							console.log("Error: General");
-							errorStatus = "ProblemWithDB}";
-							break nestedQuery;
-							//throw ProblemWithDB;
-						} else {
-
-						}
-					}
-				});
+		try {
+			//const user = await getUserData(username);
+	
+			if (await userExists(username)) {
+				throw new UserAlreadyExists();
 			}
-		});
-
-		switch (errorStatus) {
-			case "ProblemWithDB":
-				throw ProblemWithDB;
-			case "UserAlreadyExists":
-				throw UserAlreadyExists;
+	
+			const hash = await bcrypt.hash(password, 10);
+	
+			await connection.query(`
+			INSERT INTO
+			users (username, password)
+			VALUES 
+			(?, ?);
+			`,
+			[username, hash]);
+	
+	
+		} catch (e) {
+			//console.log(e);
+			if (e instanceof UserAlreadyExists) {
+				throw new UserAlreadyExists();
+			} else {
+				throw new ProblemWithDB()
+			}
 		}
 	},
 	/**
@@ -251,64 +314,136 @@ module.exports = {
 	 * the password is the correct password for that user, no exceptions are
 	 * to be thrown. Nothing is ever returned by this function.
 	 */
-	tryLogIn: function(username, password) {
-		//tempTryLogIn(username, password);
-		let errorStatus = "NULL";
-		let nestedQueryExit = false;
-
-
-		connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
-
-			queryBlock : {
-				if (err) {
-					errorStatus = "ProblemWithDB";
-					break queryBlock;
-					//throw ProblemWithDB;
-				}
+	//tryLogIn: async function(username, password) {
 		
-				if (Object.keys(res).length == 0) {
-					console.log("Error: UserNotFound");
-					errorStatus = "UserNotFound";
-					break queryBlock;
-					//throw new UserNotFound;
-				}
+		
+		
+		
+		//tempTryLogIn(username, password);
+		// let errorStatus = "NULL";
+		// let nestedQueryExit = false;
 
-					connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
-					nestedQuery : {
-						if (err) {
-							errorStatus = "UserAlreadyExists";
-							nestedQueryExit = true;
-							break nestedQuery;
-							//throw ProblemWithDB;
-						}
+
+		// await connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
+
+		// 	queryBlock : {
+		// 		if (err) {
+		// 			errorStatus = "ProblemWithDB";
+		// 			break queryBlock;
+		// 			//throw ProblemWithDB;
+		// 		}
+		
+		// 		if (Object.keys(res).length == 0) {
+		// 			console.log("Error: UserNotFound");
+		// 			errorStatus = "UserNotFound";
+		// 			break queryBlock;
+		// 			//throw new UserNotFound;
+		// 		}
+
+		// 			connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
+		// 			nestedQuery : {
+		// 				if (err) {
+		// 					errorStatus = "UserAlreadyExists";
+		// 					nestedQueryExit = true;
+		// 					break nestedQuery;
+		// 					//throw ProblemWithDB;
+		// 				}
 				
 
 				
-						if(!bcrypt.compareSync(password, res[0].password)) {
-						console.log("Error: Incorrect Password");
-						errorStatus = "IncorrectPassword";
-						nestedQueryExit = true;
-						break nestedQuery;
-						//throw new IncorrectPassword;
-						}
-						console.log("Password Correct!!!");
-					}
-				});
+		// 				if(!bcrypt.compareSync(password, res[0].password)) {
+		// 				console.log("Error: Incorrect Password");
+		// 				errorStatus = "IncorrectPassword";
+		// 				nestedQueryExit = true;
+		// 				break nestedQuery;
+		// 				//throw new IncorrectPassword;
+		// 				}
+		// 				console.log("Password Correct!!!");
+		// 			}
+		// 		});
+		// 	}
+		// });
+		// console.log("RAN: " + errorStatus);
+
+		// switch (errorStatus) {
+		// 	case "ProblemWithDB":
+		// 		throw new ProblemWithDB();
+		// 	case "UserAlreadyExists":
+		// 		throw new UserAlreadyExists();
+		// 	case "IncorrectPassword":
+		// 		console.log("ATTEMPTED THROW");
+		// 		throw new IncorrectPassword();
+		// 	case "UserNotFound":
+		// 		throw new UserNotFound();
+		// }
+
+	//},
+
+	tryLogIn: async function(username, enteredPassword) {
+		try {
+			const user = await getUserData(username);
+		
+			const password = await bcrypt.compare(enteredPassword, user.password);
+			
+			if(!password) {
+				console.log("Wrong Password");
+				throw new IncorrectPassword();
 			}
-		});
+		
+			console.log("Password Works");
+		
+		
+			} catch (e) {
+				//console.log(e);
+				if(e instanceof UserNotFound) {
+					throw new UserNotFound();
+				} else if(e instanceof IncorrectPassword){
+					console.log("Pass Error Throw");
+					throw new IncorrectPassword();
+				} else {
+					throw new ProblemWithDB()
+				}
+			}
+        
+		
+		
+	// 	//tempTryLogIn(username, password);
+    //     let errorStatus = "NULL";
+    //     //let nestedQueryExit = false;
 
-		switch (errorStatus) {
-			case "ProblemWithDB":
-				throw ProblemWithDB;
-			case "UserAlreadyExists":
-				throw UserAlreadyExists;
-			case "IncorrectPassword":
-				throw IncorrectPassword;
-			case "UserNotFound":
-				throw UserNotFound;
-		}
+    //     try{
+    //     const[res] = await connection.promise().query(`SELECT * FROM users WHERE username = ?;`, [username], async (err, res) => {
+	// 		console.log(res[0]);
+    //         if(res.length === 0){
+    //             console.log("Error: UserNotFound");
+    //                 errorStatus = "UserNotFound";
+    //                 throw new UserNotFound();
+    //         }
 
-	},
+    //         const user = res[0];
+
+    //         const password = await bcrypt.compare(password, res[0].password);
+    //         if(!bcrypt.compare(password, res[0].password)) { //ASYNC EDIT
+    //             console.log("Error: Incorrect Password");
+    //             errorStatus = "IncorrectPassword";
+    //             throw new IncorrectPassword();
+    //         }
+	// 	});
+	// 	} catch(err){
+
+    //     // switch (errorStatus) {
+    //     //     case "ProblemWithDB":
+    //     //         throw new ProblemWithDB();
+    //     //     case "UserAlreadyExists":
+    //     //         throw new UserAlreadyExists();
+    //     //     case "IncorrectPassword":
+    //     //         console.log("ATTEMPTED THROW");
+    //     //         throw new IncorrectPassword();
+    //     //     case "UserNotFound":
+    //     //         throw new UserNotFound();
+    //     // }
+    // }
+    },
 
 	initDB: tempInitDB,
 	getFavorites: tempGetFavorites,
