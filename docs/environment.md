@@ -60,6 +60,57 @@ This is the value of the jwt secret. If this is not set, you will get an error. 
 
 </details>
 
+<details>
+<summary>
+
+##### `BEACH_DAY_DB_HOST`
+
+</summary>
+
+This is the name of your MySQL connection HostName.  For your local development environment, you will have set this when creating your SQL connection.  Without it, the code and database can not communicate.
+
+</details>
+<details>
+<summary>
+
+##### `BEACH_DAY_BD_USER`
+
+</summary>
+
+This is the name of the user that is linked with the MySQL connection.  For your local development environment, you will have set this when creating your SQL connection.  These are more credentials needed to link the connection.
+
+</details>
+<details>
+<summary>
+
+##### `BEACH_DAY_DB_PASSWORD`
+
+</summary>
+
+This is the password used to open your MySQL connection. For your local development environment, you will have set this when creating your SQL connection.  These are more credentials needed to link the connection. 
+
+</details>
+<details>
+<summary>
+
+##### `BEACH_DAY_DB_NAME`
+
+</summary>
+
+This is the name of the database found in your MySQL connection.  These are needed to link the connection.  For now, we are using arbitrary but consistent name.  We have kept it as `authdb` for ease.
+
+</details>
+<details>
+<summary>
+
+##### `BEACH_DAY_DB_PORT`
+
+</summary>
+
+This is the port that links the MySQL connection to the code.  The default we opted to use is `3306`. This may possible be set during install of MySQL.  
+
+</details>
+
 ## Example
 The following is an example of what your `frontend/.env` and `backend/.env` should look like.
 ```
@@ -72,6 +123,11 @@ REACT_APP_BACKEND_PORT=3010
 # backend
 BEACH_DAY_BACKEND_PORT=3010
 BEACH_DAY_JWT_SECRET=a
+BEACH_DAY_DB_HOST=localhost
+BEACH_DAY_DB_USER=root
+BEACH_DAY_DB_PASSWORD=password
+BEACH_DAY_DB_NAME=authdb
+BEACH_DAY_DB_PORT=3306
 ```
 
 # Conda
