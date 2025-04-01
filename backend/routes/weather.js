@@ -43,4 +43,37 @@ router.post('/favorites', (req, res, next) => {
 	}
 });
 
+/**
+ * Allows frontend to modify favorited beaches.
+ */
+router.post('/update_favorites', (req, res, next) => {
+	try {
+		if (req.body.jwt === undefined || req.body.type === undefined
+				|| (req.body.type !== 'clear'
+				&& req.body.favorite === undefined)) {
+			res.status(500).json({ message: 'Invalid request.' });
+			return;
+		}
+
+		const username = auth.verifyJWT(req.body.jwt).username;
+
+		if (req.body.type === 'clear')
+			db.clearFavorites(username);
+		else if (req.body.type === 'add')
+			db.addFavorite(username, req.body.favorite);
+		else if (req.body.type === 'remove')
+			db.removeFavorite(username, req.body.favorite);
+		res.status(200).json({ message: 'Success.' });
+	} catch (err) {
+		if (err instanceof auth.InvalidToken)
+			res.status(500).json({ message: 'User authentication token absent or invalid.' });
+		else if (err instanceof db.ProblemWithDB)
+			res.status(500).json({ message: 'Problem updating database.' });
+		else if (err instanceof db.UserNotFound)
+			res.status(500).json({ message: 'User not found.' });
+		else
+			res.status(500).json({ message: 'Undefined error.' });
+	}
+});
+
 module.exports = router;

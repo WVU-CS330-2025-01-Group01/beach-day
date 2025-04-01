@@ -88,6 +88,7 @@ The request should be a JSON object of the following form.
 | `jwt` | The json web token of the user whose favorites to access. |
 
 #### Response
+
 The response should be a JSON object of the following form.
 
 | Key | Value |
@@ -101,6 +102,38 @@ The following are the status codes and `message`s of the possible outcomes.
 | --- | --- | --- |
 | Success | 200 | `Success.` |
 | Token Problem | 500 | `User authentication token absent or invalid.` |
+| Other Error | 500 | `Undefined error.` |
+
+### `/update_favorites`
+This is a POST route. It allows frontend to modify a user's favorited beaches.
+
+#### Request
+
+The request should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `jwt` | The json web token of the user whose favorites to modify. |
+| `type` | The type of request. Should be one of `clear`, `add`, or `remove`. |
+| `favorite` | The beach id of the beach to add or remove. Not required to be present for clear. |
+
+#### Response
+
+The response should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `message` | String describing if the registration succeeded or what went wrong. |
+
+The following are the status codes and `message`s of the possible outcomes.
+
+| Outcome | Status Code | `message` value |
+| --- | --- | --- |
+| Success | 200 | `Success.` |
+| Invalid Request | 500 | `Invalid request.` |
+| Token Problem | 500 | `User authentication token absent or invalid.` |
+| Database Problem | 500 | `Problem updating database.` |
+| User Doesn't Exist | 500 | `User not found.` |
 | Other Error | 500 | `Undefined error.` |
 
 ## `routes/test.js`
