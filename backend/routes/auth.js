@@ -13,12 +13,12 @@ const db = require("../dbabs/");
 /**
  * Registers a new user.
  */
-router.post('/register', (req, res) => {
+router.post('/register', async function(req, res) {
 	console.log("Register route accessed");
 	const { username, password } = req.body;
 
 	try {
-		db.attemptToMakeUser(username, password);
+		await db.attemptToMakeUser(username, password);
 		res.status(201).json({ message: 'User registered successfully.' });
 	} catch (err) {
 		if (err instanceof db.UserAlreadyExists)
@@ -34,12 +34,12 @@ router.post('/register', (req, res) => {
  * Logs in a user.
  * Verifies credentials, generates a JWT if valid, and sends it in an HTTP-only cookie.
  */
-router.post('/login', (req, res) => {
+router.post('/login', async function(req, res) {
 	console.log("Login route accessed");
 	const { username, password } = req.body;
 
 	try {
-		db.tryLogIn(username, password);
+		await db.tryLogIn(username, password);
 
 		const token = jwt.sign(
 			{ username: username },

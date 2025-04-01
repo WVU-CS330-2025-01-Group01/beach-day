@@ -136,7 +136,7 @@ async function getUserData(username) {
 		const [user] = await connection.query(`SELECT * FROM users WHERE username = ?;`, [username]);
 
 		if(user.length == 0) {
-					errorCode = "UserNotFound"
+					//errorCode = "UserNotFound"
 					throw new UserNotFound();
 				}
 
