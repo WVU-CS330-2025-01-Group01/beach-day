@@ -1,7 +1,10 @@
+@import './colors.css';
+
 .favorites-container {
     padding: 20px;
     text-align: center;
-    background-color: #f4e1c1; /* Light tan/beach color */
+    background-color: var(--secondary-color); /* Light tan/beach color */
+    min-height: calc(100vh - 120px); 
   }
   
   .favorites-header {
@@ -16,11 +19,15 @@
     padding: 8px 16px;
     border: none;
     cursor: pointer;
-    background-color: #0077b6;
+    background-color: var(--primary-color);
     color: white;
     border-radius: 5px;
   }
   
+   .clear-btn {
+    background-color: var(--primary-color);
+   }
+
   .favorites-list {
     display: flex;
     flex-wrap: wrap;
