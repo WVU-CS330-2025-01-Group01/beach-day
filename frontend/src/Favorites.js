@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './Favorites.css'; // Import the CSS file for styling
 import Cookies from 'js-cookie'; // Import js-cookie to manage cookies
 import { Navigate } from 'react-router-dom';
+import './Favorites.css'; // Import the CSS file for styling
 
 const favoritesURL =
     'http://' +
@@ -9,6 +9,13 @@ const favoritesURL =
     ':' +
     process.env.REACT_APP_BACKEND_PORT +
     '/favorites';
+
+    const updateFavoritesURL =
+    'http://' +
+    process.env.REACT_APP_BACKEND_HOST +
+    ':' +
+    process.env.REACT_APP_BACKEND_PORT +
+    '/update_favorites';
 
 function Favorites() {
     const [favorites, setFavorites] = useState([]); // Store favorite beaches
@@ -46,6 +53,60 @@ function Favorites() {
         }
     }, []);
 
+    const clearFavorites = async () => {
+        const token = Cookies.get('jwt');
+
+        if (!token) {
+            setError('You need to be logged in to modify favorites.');
+            return;
+        }
+
+        try {
+            const response = await fetch(updateFavoritesURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ jwt: token, type: 'clear' }),
+            });
+
+            const data = await response.json();
+
+            if (data.message === 'Success.') {
+                setFavorites([]); // Clear the UI after successful request
+            } else {
+                setError(data.message);
+            }
+        } catch (error) {
+            console.error('Error clearing favorites:', error);
+            setError('Failed to clear favorites. Please try again later.');
+        }
+    };
+
+    const removeFavorite = async (beachId) => {
+        const token = Cookies.get('jwt');
+
+        if (!token) {
+            setError('You need to be logged in to modify favorites.');
+            return;
+        }
+
+        try {
+          const response = await fetch(updateFavoritesURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jwt: token, type: 'remove', favorite: beachId })
+          });
+    
+          if (response.ok) {
+            // Update the UI by removing the deleted beach
+            setFavorites(favorites.filter(fav => fav !== beachId));
+          } else {
+            console.error('Failed to remove favorite');
+          }
+        } catch (error) {
+          console.error('Error removing favorite:', error);
+        }
+      };
+
     // If no JWT token, redirect to login page
     if (!Cookies.get('jwt')) {
         return <Navigate to="/login" replace />;
@@ -59,6 +120,7 @@ function Favorites() {
                     <button onClick={() => setViewMode('list')}>List</button>
                     <button onClick={() => setViewMode('grid')}>Grid</button>
                 </div>
+                <button onClick={clearFavorites} className="clear-btn">Clear Favorites</button>
             </div>
 
             {loading ? (
@@ -71,6 +133,7 @@ function Favorites() {
                         favorites.map((beach, index) => (
                             <div key={index} className="favorite-item">
                                 <h3>{beach}</h3> {/* Display the beach ID */}
+                                <button onClick={() => removeFavorite(beach)} style={{ marginLeft: '10px' }}></button>
                             </div>
                         ))
                     ) : (

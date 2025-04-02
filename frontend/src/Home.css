@@ -1,9 +1,11 @@
+@import './colors.css';
+
 .home-container {
   text-align: center;
   padding: 20px;
-  background-color: #f4e1c1; /* Tan beach background */
+  background-color: var(--secondary-color); /* Tan beach background */
   color: #0066cc; /* Blue text */
-  min-height: 100vh; /* Ensure at least 100vh space for the container */
+  min-height: calc(100vh - 120px); /* Ensure at least 100vh space for the container */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

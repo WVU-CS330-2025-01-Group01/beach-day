@@ -1,8 +1,10 @@
+@import './colors.css';
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #0077b6;
+  background-color: var(--primary-color);
   padding: 10px 20px;
   color: white;
 }
