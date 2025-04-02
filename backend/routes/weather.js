@@ -29,7 +29,7 @@ router.post('/favorites', async function(req, res, next) {
 
 		console.log("User Payload: ", payload);
 
-		const favorites = Array.from(await db.getFavorites(payload.username).keys());
+		const favorites = await db.getFavorites(payload.username);
 
 		res.status(200).json({
 			message: 'Success.',

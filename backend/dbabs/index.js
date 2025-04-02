@@ -125,6 +125,7 @@ async function getFavorites(username) {
 	}
 }
 	//TESTING GET FAVORITES FUNCTION
+	/*
 	const username = 'favTest'; // Replace with the actual username
 	getFavorites(username)
 	  .then(favorites => {
@@ -133,7 +134,7 @@ async function getFavorites(username) {
 	  .catch(error => {
 		console.error('Error getting favorites:', error); // Handle errors
 	  });
-
+	*/
 
 
 
@@ -240,7 +241,7 @@ let favorites = new Set(["AK103349",
 		"WA815475",
 		"HI659533"]);
 function tempGetFavorites(username) {
-	return favorites;
+	return Array.from(favorites.keys());
 }
 function tempAddFavorite(username, favorite) {
 	favorites.add(favorite);
