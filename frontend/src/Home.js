@@ -1,67 +1,125 @@
 import React, { useState } from "react";
 import "./Home.css";
-import projectphoto from "./projectphoto.png"; // Adjusted path for direct src folder
+import projectphoto from "./projectphoto.png";
 
 function Home() {
-  const [beach, setBeach] = useState("");
+  const [searchType, setSearchType] = useState("zipcode");
+  const [zipCode, setZipCode] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState("");
 
   const handleSearch = async (e) => {
     e.preventDefault();
-  
-    if (!beach.trim()) {
-      setError("Please enter a ZIP code.");
-      return;
+
+    let requestBody;
+    if (searchType === "zipcode") {
+      if (!zipCode.trim()) {
+        setError("Please enter a ZIP code.");
+        return;
+      }
+      requestBody = {
+        request_type: "current_basic_weather",
+        zip_code: zipCode,
+        country_code: "US",
+      };
+    } else {
+      if (!latitude.trim() || !longitude.trim()) {
+        setError("Please enter both latitude and longitude.");
+        return;
+      }
+      requestBody = {
+        request_type: "current_basic_weather",
+        latitude: latitude,
+        longitude: longitude,
+      };
     }
-  
-    setError(""); // Clear error on valid search
-  
+
+    setError("");
+
     try {
       const response = await fetch("http://localhost:3010/weather", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          request_type: "current_basic_weather", // Required request type
-          zip_code: beach, // Zip code entered by the user
-          country_code: "US", 
-        }),
+        body: JSON.stringify(requestBody),
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to fetch weather data");
       }
-  
+
       const data = await response.json();
-  
+
       if (data.temperature) {
-        setWeather(`Temperature: ${data.temperature}°F at ${beach}`);
+        setWeather({
+          temperature: `${data.temperature}°F`,
+          probPrecip: data.probPrecip ? `${data.probPrecip}%` : "N/A",
+          relHumidity: data.relHumidity ? `${data.relHumidity}%` : "N/A",
+          windSpeed: data.windSpeed || "N/A",
+          windDirection: data.windDirection || "N/A",
+          forecastSummary: data.forecastSummary || "No summary available",
+        });
       } else {
-        setError("No weather data available for this ZIP code.");
+        setError("No weather data available for this location.");
       }
     } catch (error) {
       setError("Error fetching weather data");
     }
   };
-  
 
   return (
     <div className="home-container">
       <h1>Welcome to Beach Day!</h1>
-      <p>Enter a beach's ZIP code to see the weather conditions.</p>
+      <p>Search for beach weather by ZIP code or latitude/longitude.</p>
       <form onSubmit={handleSearch} className="search-form">
-        <input
-          type="text"
-          placeholder="Enter ZIP code..."
-          value={beach}
-          onChange={(e) => setBeach(e.target.value)}
-        />
+        <select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
+          <option value="zipcode">ZIP Code</option>
+          <option value="latlon">Latitude/Longitude</option>
+        </select>
+
+        {searchType === "zipcode" ? (
+          <input
+            type="text"
+            placeholder="Enter ZIP code..."
+            value={zipCode}
+            onChange={(e) => setZipCode(e.target.value)}
+          />
+        ) : (
+          <>
+            <input
+              type="text"
+              placeholder="Latitude"
+              value={latitude}
+              onChange={(e) => setLatitude(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Longitude"
+              value={longitude}
+              onChange={(e) => setLongitude(e.target.value)}
+            />
+          </>
+        )}
+
         <button type="submit">Search</button>
       </form>
+
       {error && <p className="error-message">{error}</p>}
-      {weather && <p className="weather-info">{weather}</p>}
+
+      {weather && (
+        <div className="weather-info">
+          <p><strong>Temperature:</strong> {weather.temperature}</p>
+          <p><strong>Chance of Rain:</strong> {weather.probPrecip}</p>
+          <p><strong>Humidity:</strong> {weather.relHumidity}</p>
+          <p><strong>Wind Speed:</strong> {weather.windSpeed}</p>
+          <p><strong>Wind Direction:</strong> {weather.windDirection}</p>
+          <p><strong>Forecast:</strong> {weather.forecastSummary}</p>
+        </div>
+      )}
+
       <img src={projectphoto} alt="Beach drawing" className="beach-image" />
     </div>
   );
