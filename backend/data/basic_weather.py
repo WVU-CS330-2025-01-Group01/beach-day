@@ -67,6 +67,16 @@ def get_basic_weather_zip(zip_code, country_code):
 
 # Get weather info at a latitude, longitude
 def get_basic_weather_latlon(lat, lon):
+    # Check if latitude or longitude is "N/A"
+    if lat == "N/A" or lon == "N/A":
+        result = {
+            "code": "ERROR",
+            "error_type": "invalid_coordinates",
+            "message": "Latitude or Longitude is missing or invalid."
+        }
+        print(json.dumps(result, indent=4))
+        return result  # Return the error response instead of making a request
+    
     res = N.points_forecast(lat, lon, type="forecast")
     now = res['properties']['periods'][0]
 

@@ -1,11 +1,12 @@
-/* Login Page Styles */
+@import './colors.css';
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f4e1c1; /* Light tan/beach color */
-  color: #0066cc; /* Blue text color */
+  height: calc(100vh - 80px);
+  background-color: var(--secondary-color); /* Light tan/beach color */
+  color: var(----primary-color); /* Blue text color */
   font-family: "Poppins", sans-serif;
   text-align: center;
 }
@@ -26,7 +27,7 @@
 h1 {
   font-size: 2.8rem; /* Slightly larger for prominence */
   margin-bottom: 20px;
-  color: #0066cc;
+  color: var(--primary-color);
   font-weight: bold;
 }
 
