@@ -77,7 +77,7 @@ function Home() {
       <form onSubmit={handleSearch} className="search-form">
         <select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
           <option value="zipcode">ZIP Code</option>
-          <option value="latlon">Latitude/Longitude</option>
+          <option value="latlon">Lat/Long</option>
         </select>
 
         {searchType === "zipcode" ? (
@@ -109,15 +109,21 @@ function Home() {
 
       {error && <p className="error-message">{error}</p>}
 
+      <h2 className="weather-header">
+            Weather Info for{" "}
+            {searchType === "zipcode" ? `Zip Code ${zipCode}` : `Latitude/Longitude: ${latitude}, ${longitude}`}
+          </h2>
+
       {weather && (
-        <div className="weather-info">
-          <p><strong>Temperature:</strong> {weather.temperature}</p>
-          <p><strong>Chance of Rain:</strong> {weather.probPrecip}</p>
-          <p><strong>Humidity:</strong> {weather.relHumidity}</p>
-          <p><strong>Wind Speed:</strong> {weather.windSpeed}</p>
-          <p><strong>Wind Direction:</strong> {weather.windDirection}</p>
-          <p><strong>Forecast:</strong> {weather.forecastSummary}</p>
-        </div>
+        <div className="weather-info-container">
+        <p className="weather-info">Temperature: {weather.temperature}</p>
+        <p className="weather-info">Humidity: {weather.relHumidity}</p>
+        <p className="weather-info">Wind Speed: {weather.windSpeed} </p>
+        <p className="weather-info">Wind Direction: {weather.windDirection}</p>
+        <p className="weather-info">Forecast: {weather.forecastSummary}</p>
+        <p className="weather-info">Precipitation: {weather.probPrecip}</p>
+      </div>
+      
       )}
 
       <img src={projectphoto} alt="Beach drawing" className="beach-image" />
