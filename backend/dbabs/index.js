@@ -468,12 +468,7 @@ let favorites = new Set(["AK103349",
 		"AK103839",
 		"NC810571",
 		"WA171257",
-		"NJ828093",
-		"FL257350",
-		"MA242910",
-		"WA397523",
-		"WA815475",
-		"HI659533"]);
+		"NJ828093"]);
 function tempGetFavorites(username) {
 	return favorites;
 }

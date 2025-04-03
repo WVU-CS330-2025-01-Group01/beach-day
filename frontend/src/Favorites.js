@@ -10,12 +10,19 @@ const favoritesURL =
     process.env.REACT_APP_BACKEND_PORT +
     '/favorites';
 
-    const updateFavoritesURL =
+const updateFavoritesURL =
     'http://' +
     process.env.REACT_APP_BACKEND_HOST +
     ':' +
     process.env.REACT_APP_BACKEND_PORT +
     '/update_favorites';
+
+const beachInfoURL =
+    'http://' +
+    process.env.REACT_APP_BACKEND_HOST +
+    ':' +
+    process.env.REACT_APP_BACKEND_PORT +
+    '/weather';
 
 function Favorites() {
     const [favorites, setFavorites] = useState([]); // Store favorite beaches
@@ -26,7 +33,7 @@ function Favorites() {
     useEffect(() => {
         // Retrieve the JWT from cookies
         const token = Cookies.get('jwt'); // Get JWT from cookies
-    
+
         if (token) {
             fetch(favoritesURL, {
                 method: 'POST',  // Change the method to POST
@@ -39,8 +46,16 @@ function Favorites() {
                 .then(data => {
                     console.log('Fetched data:', data);
                     const favoritesData = Array.isArray(data.favorites) ? data.favorites : [];
-                    setFavorites(favoritesData);
-                    setLoading(false); // Stop loading
+
+                    // Fetch beach info for each favorite beach ID
+                    Promise.all(favoritesData.map(async (id) => {
+                        const beachInfo = await fetchBeachInfoWithWeather(id); // Fetch beach info with weather
+                        return { id, ...beachInfo }; // Return the beach ID along with the additional info
+                    }))
+                        .then(updatedFavorites => {
+                            setFavorites(updatedFavorites); // Update the state with updated beach info
+                            setLoading(false); // Stop loading
+                        });
                 })
                 .catch(error => {
                     console.error('Error fetching favorites:', error);
@@ -90,22 +105,61 @@ function Favorites() {
         }
 
         try {
-          const response = await fetch(updateFavoritesURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ jwt: token, type: 'remove', favorite: beachId })
-          });
-    
-          if (response.ok) {
-            // Update the UI by removing the deleted beach
-            setFavorites(favorites.filter(fav => fav !== beachId));
-          } else {
-            console.error('Failed to remove favorite');
-          }
+            const response = await fetch(updateFavoritesURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ jwt: token, type: 'remove', favorite: beachId })
+            });
+
+            if (response.ok) {
+                // Update the UI by removing the deleted beach
+                setFavorites(favorites.filter(fav => fav !== beachId));
+            } else {
+                console.error('Failed to remove favorite');
+            }
         } catch (error) {
-          console.error('Error removing favorite:', error);
+            console.error('Error removing favorite:', error);
         }
-      };
+    };
+
+    const fetchBeachInfoWithWeather = async (beachId) => {
+        try {
+            const response = await fetch(beachInfoURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ request_type: 'dummy_get_beach_info_weather_by_id', beach_id: beachId })
+            });
+
+            const result = await response.json();  // Capture the response JSON
+
+            // Check if the response has the expected structure
+            if (result.code === "dummy_get_beach_info_weather_by_id") {
+                // Destructure the necessary properties
+                const { beach_name, beach_county, beach_state, weather } = result;
+
+                // If weather data exists, return the necessary values; otherwise, fallback to 'N/A'
+                return {
+                    name: beach_name || 'Unknown Beach',
+                    county: beach_county || 'Unknown County',
+                    state: beach_state || 'Unknown State',
+                    temperature: weather?.temperature || 'N/A',
+                    forecast: weather?.forecastSummary || 'No forecast available',
+                };
+            } else {
+                throw new Error('Failed to fetch beach info with weather');
+            }
+        } catch (error) {
+            console.error('Error fetching beach info and weather:', error);
+            // Fallback values for missing data
+            return {
+                name: 'Unknown',
+                county: 'Unknown',
+                state: 'Unknown',
+                temperature: 'N/A',
+                forecast: 'N/A',
+            };
+        }
+    };
 
     // If no JWT token, redirect to login page
     if (!Cookies.get('jwt')) {
@@ -132,8 +186,11 @@ function Favorites() {
                     {favorites.length > 0 ? (
                         favorites.map((beach, index) => (
                             <div key={index} className="favorite-item">
-                                <h3>{beach}</h3> {/* Display the beach ID */}
-                                <button onClick={() => removeFavorite(beach)} style={{ marginLeft: '10px' }}></button>
+                                <h3>{beach.name}</h3> {/* Display the beach name */}
+                                <p>{beach.county}, {beach.state}</p> {/* Display county and state */}
+                                <p>Temperature: {beach.temperature === 'N/A' ? 'Data not available' : `${beach.temperature}°F`}</p>
+                                <p>Forecast: {beach.forecast === 'N/A' ? 'Data not available' : beach.forecast}</p>
+                                <button onClick={() => removeFavorite(beach.id)} style={{ marginLeft: '10px' }}>Remove</button>
                             </div>
                         ))
                     ) : (
