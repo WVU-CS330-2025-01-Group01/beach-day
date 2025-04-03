@@ -98,27 +98,34 @@ function Favorites() {
 
     const removeFavorite = async (beachId) => {
         const token = Cookies.get('jwt');
-
+    
         if (!token) {
             setError('You need to be logged in to modify favorites.');
             return;
         }
-
+    
         try {
+            // Optimistically update the UI
+            setFavorites(favorites.filter(fav => fav.id !== beachId));
+    
             const response = await fetch(updateFavoritesURL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ jwt: token, type: 'remove', favorite: beachId })
             });
-
+    
             if (response.ok) {
-                // Update the UI by removing the deleted beach
-                setFavorites(favorites.filter(fav => fav !== beachId));
+                console.log('Favorite removed successfully');
             } else {
                 console.error('Failed to remove favorite');
+                // Revert the UI update if the removal fails
+                const updatedFavorites = await response.json();
+                setFavorites(updatedFavorites);
             }
         } catch (error) {
             console.error('Error removing favorite:', error);
+            // In case of an error, revert to the previous state
+            setFavorites(favorites);
         }
     };
 
