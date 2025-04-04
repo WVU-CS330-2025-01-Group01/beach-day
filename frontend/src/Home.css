@@ -1,9 +1,11 @@
+@import './colors.css';
+
 .home-container {
   text-align: center;
   padding: 20px;
-  background-color: #f4e1c1; /* Tan beach background */
+  background-color: var(--secondary-color); /* Tan beach background */
   color: #0066cc; /* Blue text */
-  min-height: 100vh; /* Ensure at least 100vh space for the container */
+  min-height: calc(100vh - 120px); /* Ensure at least 100vh space for the container */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -14,14 +16,23 @@ h1 {
   font-size: 2.5rem;
   margin-bottom: 20px; /* Increased margin */
   font-family: 'Arial', sans-serif;
+   /* Adds a thin line under each row */
+
+}
+
+h2 {
+  font-size: 2.0rem;
+  margin-bottom: 10px; /* Increased margin */
+  font-family: 'Arial', sans-serif;
+  color: #000000;
+  border-bottom: 1px solid #000000;
 }
 
 .search-form {
-  margin-top: 30px; /* Increased margin */
   display: flex;
   flex-direction: row;
   justify-content: center;
-  gap: 15px; /* Adds space between the search input and button */
+  gap: 10px; /* Adds space between the search input and button */
   flex-wrap: wrap; /* Allows wrapping on smaller screens */
 }
 
@@ -32,6 +43,16 @@ input {
   border-radius: 5px;
   width: 300px; /* Increased width of search bar */
   max-width: 100%; /* Makes input responsive */
+}
+
+select {
+  padding: 8px 12px; /* Adjust padding for drop-down to make it less tall */
+  font-size: 1.1rem; /* Slightly smaller font for better balance */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 125px; /* Set a fixed width for the drop-down menu */
+  background-color: #fff;
+  color: #0066cc; /* Matching text color */
 }
 
 button {
@@ -50,10 +71,27 @@ button:hover {
   background: #0055a5;
 }
 
+.weather-info-container {
+  margin-top: 10px; /* Increased margin */
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns for weather info */
+  gap: 10px; /* Reduced gap between columns */
+  text-align: justify;
+  width: 80%; /* Adjust container width */
+  max-width: 1000px;
+}
+
 .weather-info {
-  margin-top: 30px; /* Increased margin */
   font-size: 1.5rem; /* Larger font for weather info */
   font-weight: bold; /* Makes the weather info stand out */
+  margin: 0; /* No margin */
+  padding: 5px 0; /* Added padding for spacing */
+  border-bottom: 1px solid #ddd; /* Adds a thin line under each row */
+}
+
+.weather-info p {
+  margin: 0; /* Remove default paragraph margin */
+  padding: 5px 0; /* Add some spacing between lines */
 }
 
 .beach-image {
