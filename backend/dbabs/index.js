@@ -7,6 +7,7 @@ class UserAlreadyExists extends Error {}
 class ProblemWithDB extends Error {}
 class UserNotFound extends Error {}
 class IncorrectPassword extends Error {}
+class BeachAlreadyFavorited extends Error {}
 
 
 // process.on('uncaughtException', (err) => {
@@ -30,104 +31,6 @@ const connection = mysql.createPool({
 
 
 
-// 	//console.log(res[1].username);
-// 	console.log(typeof res);
-// 	console.log(JSON.stringify(res));
-
-// 	//console.log(res[2].favorite_beaches.split(", "));
-// 	let userId = 1;
-
-// 	console.log(res[userId].favorite_beaches);
-// 	var favBeaches = res[userId].favorite_beaches.split(", ");
-	
-// 	console.log(favBeaches);
-// 	for(i = 0; i < favBeaches.length; i++) {
-// 		if(favBeaches[i] !== "beach2") {
-// 			//add to temp array
-// 			//once loop done, join
-// 			//actually, this is mf javascript, it has the includes()
-// 			//favBeaches.push();
-// 		}
-// 	}
-// 	var favBeachesString = favBeaches.join(', ');
-// 	console.log(favBeachesString);
-// });
-
-
-
-// function makeUserTest(username, password) {
-// 	console.log(`Register Request\nUsername: ${username}\nPassword ${password}\n`);
-
-
-// 	connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
-// 		if (err) throw err;
-
-// 		if (!(Object.keys(res).length == 0)) {
-// 			throw new UserAlreadyExists;
-// 		}
-// 	});
-	
-
-// 	//if we want, we can add an existing email error to check and throw
-	
-// 	let hash = bcrypt.hashSync(password, 10);
-
-// 	connection.query(`
-// 		INSERT INTO
-// 		users (username, password)
-// 		VALUES 
-// 		(?, ?);
-// 		`,
-// 		[username, hash], (err, res) => {
-// 		if (err) throw err;
-
-
-// 	});
-// }
-
-//tryLogInTest("passTest", "string");
-
-
-// function tryLogInTest(username, password) {
-
-// 	connection.query(`SELECT * FROM userss WHERE username = ?;`, [username], (err, res) => {
-// 		if (err) throw err;
-
-// 		if (Object.keys(res).length == 0) {
-// 			throw new UserNotFound;
-// 		}
-// 	});
-
-// 	connection.query(`SELECT * FROM userss WHERE username = ?;`, [username], (err, res) => {
-// 		if (err) throw err;
-
-// 		//console.log(res[0].password);
-
-// 		if(!bcrypt.compareSync(password, res[0].password)) {
-// 		throw new IncorrectPassword;
-// 	}
-// 		console.log("Password Correct!!!");
-// 	});
-// }
-
-
-// function getUser(username) {
-// 	connection.query(`SELECT * FROM userss WHERE username = ?;`, [username], (err, res) => {
-// 		if (err) throw err;
-
-// 		return res;
-
-// 	});
-// }
-
-// function isEmpty(username) {
-// 	connection.query(`SELECT * FROM userss WHERE username = ?;`, [username], (err, res) => {
-// 		if (err) throw err;
-
-// 		//console.log((Object.keys(res).length==0));
-// 		return (Object.keys(res).length == 0);
-// 	});
-// }
 
 async function getUserData(username) {
 
@@ -173,50 +76,92 @@ async function userExists(username) {
 }
 
 
-
-// async function aLogInTest(username, enteredPassword) {
-
-
-// 	try {
-// 	const user = await getUserData(username);
-
-// 	const password = await bcrypt.compare(enteredPassword, user.password);
-	
-// 	if(!password) {
-// 		console.log("Wrong Password");
-// 		throw new IncorrectPassword();
-// 	}
-
-// 	console.log("Password Works");
+/*These are helper functions with initDB.  They are only used if needed, and are expected to ONLY be called by the developer.
+* These means that they do not protect against SQL injection as it's impossible to run some of these queries without it.
+* The code is written in a in a more hard defined manner as it's not meant to be variable. This is only a developer tool to check DBs.
+* The function should entirely be deprecated once the DB is on the server.
+* More functions can be added in the same fashion as the others.
+*/
 
 
-// 	} catch (e) {
-// 		console.log(e);
-// 		if(e instanceof UserNotFound) {
-// 			throw new UserNotFound();
-// 		} else if(e instanceof IncorrectPassword){
-// 			throw new IncorrectPassword();
-// 		} else {
-// 			throw new ProblemWithDB()
-// 		}
-// 	}
-// }
-
-async function printUser(username) {
-	const test = await getUserData(username);
-	console.log(test);
+async function dropColumn(columnName) { 
+	//just drops the column, no SQL Injection protection, only ran by initDB
+	await connection.query(
+		"ALTER TABLE users DROP COLUMN "+columnName+";"
+	);
+	//no error is caught either as that should be handled in initDB
 }
 
-//console.log("ran getuser");
-//printUser("npmTest");
+async function getFieldAttributes(field, databaseName) {
+	//no SQL Injection protection, only ran by initDB
+	//no error is caught either as that should be handled in initDB
+	const [attributes] = await connection.query(
+		`
+		SELECT * FROM information_schema.columns
+		WHERE COLUMN_NAME = ? AND TABLE_SCHEMA = ?;
+		`
+	, [field, databaseName]);
+	
+	return attributes[0];
+}
 
-//console.log("no Running login");
-//aLogInTest("npmTest", "screwYou");
-//console.log(printUser("npmTests"));
-//console.log(await getUserData("npmTest"));
+async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAllowed, isAutoInc, colKey, def) {
+	//no SQL Injection protection, only ran by initDB
+	//no error is caught either as that should be handled in initDB
+	if(attributes.ORDINAL_POSITION != ordinalPos) { console.error("Table ordered wrong, no conflicts should arise however."); }
+
+	//This is a string that will be ran as a query. With the syntax of SQL, you can essentially build a command on top of old ones.
+	//It can be quite strict, but this runs conditions whether the field needs new/updated attributes and finally runs that command.
+	//Every condition just adds an extra relevant attribute to the query if ran
+	let neededQuery = 'ALTER TABLE users MODIFY COLUMN '+fieldName+' '+varType;
+
+	if(isNullAllowed && attributes.IS_NULLABLE === "NO") {
+		neededQuery += ' NULL'
+	} else if ((!isNullAllowed) && attributes.IS_NULLABLE !== "NO" && (colKey !== "PRI" && colKey !== "UNI")) {
+		neededQuery += ' NOT NULL'
+	}
 
 
+	if(isAutoInc && attributes.EXTRA !== "auto_increment") { //these are joined because you cannot autoincrement and have a default value
+		neededQuery += ' AUTO_INCREMENT';
+	} else if(def !== "NO_DEFAULT") {
+		let tempDefault = def;
+		if(isNaN(parseInt(def)) && !(def.substring(0,1) === "(" && def.substring(def.length-1) === ")")) {tempDefault = '"' + def + '"'; }
+		neededQuery += ' DEFAULT '+tempDefault;
+	}
 
+	await connection.query(neededQuery);
+	
+	//These are constraints, or more rather the important ones.  They can be added and dropped in a statement unlike the built query from above.
+	//The order shouldn't entirely matter with how the code is written, but I believe this is better.
+	//Primary is handled much differently, and less programatically.  This is due to the EXTREMELY strict behavior of Primary Keys (PK).
+	//Thus, the only error should be if your ID still has the PK. We will NOT shift Primary Around as it should not be ever again.
+	if(colKey === "PRI" && attributes.COLUMN_KEY !== "PRI") {
+		console.log(fieldName);
+
+		const idAttributes = await getFieldAttributes("id", "authdb");
+		if(idAttributes.COLUMN_KEY === "PRI") { 
+			await connection.query(
+				`
+				ALTER TABLE users
+				DROP PRIMARY KEY,
+				MODIFY id INT NOT NULL UNIQUE,
+				ADD PRIMARY KEY (username);
+				`
+			)
+		} else {
+			await connection.query(
+				"ALTER TABLE users ADD PRIMARY KEY ("+fieldName+");"
+			);//technically, this should only EVER apply to username.  That's why this case is more hardcoded.  It's purely on the chance you still have the original ID as Primary Key.
+		}//Primary keys are extremely fickle, most likely they should NEVER change.  This is here for one case only.
+	}
+
+	if(colKey === "UNI" && attributes.COLUMN_KEY !== "UNI") {
+		await connection.query(
+			"ALTER TABLE users ADD UNIQUE ("+fieldName+");"
+		);
+	}
+}
 
 /**
  * Currently, doesn't do anything. Should test that the database is accessable
@@ -225,7 +170,39 @@ async function printUser(username) {
  * provide details about what went wrong either in the form of a console.log or
  * by putting a string in the exception.
  */
-function tempInitDB() {}
+
+
+function validateInputAlphaNumeric(input) {
+    const regex = /^[a-zA-Z0-9_]*$/;
+    return regex.test(input);
+}
+
+
+//debug functions
+async function functionTester(){
+
+	const [rowsBefore] = await connection.query(
+		`SELECT * FROM users;`
+	)
+	//the 4 is just whichever user I was testing, your index won't match mine
+
+	//console.log(rowsBefore[4].favorite_beaches);
+
+
+	//await tryClearFavorites("personal");
+	//await tryAddFavorites("dropThisUser", "\"\".etes\"\"");
+	//await tryAddFavorites("dropThisUser", "beach4");
+	//await tryAddFavorites("dropThisUser", "beach2");
+	//await tryClearFavorites("dropThisUser");
+
+	const [rowsAfter] = await connection.query(
+		`SELECT * FROM users;`
+	)
+
+	//console.log(rowsAfter[4].favorite_beaches);
+}
+
+functionTester();
 
 /**
  * Currently, userTable, tempAttemptToMakeUser(), and tempTryLogIn() are used to
@@ -257,13 +234,7 @@ function tempInitDB() {}
 
 
 // }
-// function tempTryLogIn(username, password) {
-// 	console.log(`Login Request\nUsername: ${username}\nPassword: ${password}\n`);
-// 	if (userTable.get(username) === undefined)
-// 		throw new UserNotFound();
-// 	if (!bcrypt.compareSync(password, userTable.get(username)))
-// 		throw new IncorrectPassword();
-// }
+
 
 
 
@@ -314,71 +285,7 @@ module.exports = {
 	 * the password is the correct password for that user, no exceptions are
 	 * to be thrown. Nothing is ever returned by this function.
 	 */
-	//tryLogIn: async function(username, password) {
-		
-		
-		
-		
-		//tempTryLogIn(username, password);
-		// let errorStatus = "NULL";
-		// let nestedQueryExit = false;
-
-
-		// await connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
-
-		// 	queryBlock : {
-		// 		if (err) {
-		// 			errorStatus = "ProblemWithDB";
-		// 			break queryBlock;
-		// 			//throw ProblemWithDB;
-		// 		}
-		
-		// 		if (Object.keys(res).length == 0) {
-		// 			console.log("Error: UserNotFound");
-		// 			errorStatus = "UserNotFound";
-		// 			break queryBlock;
-		// 			//throw new UserNotFound;
-		// 		}
-
-		// 			connection.query(`SELECT * FROM users WHERE username = ?;`, [username], (err, res) => {
-		// 			nestedQuery : {
-		// 				if (err) {
-		// 					errorStatus = "UserAlreadyExists";
-		// 					nestedQueryExit = true;
-		// 					break nestedQuery;
-		// 					//throw ProblemWithDB;
-		// 				}
-				
-
-				
-		// 				if(!bcrypt.compareSync(password, res[0].password)) {
-		// 				console.log("Error: Incorrect Password");
-		// 				errorStatus = "IncorrectPassword";
-		// 				nestedQueryExit = true;
-		// 				break nestedQuery;
-		// 				//throw new IncorrectPassword;
-		// 				}
-		// 				console.log("Password Correct!!!");
-		// 			}
-		// 		});
-		// 	}
-		// });
-		// console.log("RAN: " + errorStatus);
-
-		// switch (errorStatus) {
-		// 	case "ProblemWithDB":
-		// 		throw new ProblemWithDB();
-		// 	case "UserAlreadyExists":
-		// 		throw new UserAlreadyExists();
-		// 	case "IncorrectPassword":
-		// 		console.log("ATTEMPTED THROW");
-		// 		throw new IncorrectPassword();
-		// 	case "UserNotFound":
-		// 		throw new UserNotFound();
-		// }
-
-	//},
-
+	
 	tryLogIn: async function(username, enteredPassword) {
 		try {
 			const user = await getUserData(username);
@@ -393,67 +300,301 @@ module.exports = {
 			console.log("Password Works");
 		
 		
-			} catch (e) {
-				//console.log(e);
-				if(e instanceof UserNotFound) {
-					throw new UserNotFound();
-				} else if(e instanceof IncorrectPassword){
-					console.log("Pass Error Throw");
-					throw new IncorrectPassword();
-				} else {
-					throw new ProblemWithDB()
-				}
+		} catch (e) {
+			//console.log(e);
+			if(e instanceof UserNotFound) {
+				throw new UserNotFound();
+			} else if(e instanceof IncorrectPassword){
+				throw new IncorrectPassword();
+			} else {
+				throw new ProblemWithDB()
 			}
-        
-		
-		
-	// 	//tempTryLogIn(username, password);
-    //     let errorStatus = "NULL";
-    //     //let nestedQueryExit = false;
-
-    //     try{
-    //     const[res] = await connection.promise().query(`SELECT * FROM users WHERE username = ?;`, [username], async (err, res) => {
-	// 		console.log(res[0]);
-    //         if(res.length === 0){
-    //             console.log("Error: UserNotFound");
-    //                 errorStatus = "UserNotFound";
-    //                 throw new UserNotFound();
-    //         }
-
-    //         const user = res[0];
-
-    //         const password = await bcrypt.compare(password, res[0].password);
-    //         if(!bcrypt.compare(password, res[0].password)) { //ASYNC EDIT
-    //             console.log("Error: Incorrect Password");
-    //             errorStatus = "IncorrectPassword";
-    //             throw new IncorrectPassword();
-    //         }
-	// 	});
-	// 	} catch(err){
-
-    //     // switch (errorStatus) {
-    //     //     case "ProblemWithDB":
-    //     //         throw new ProblemWithDB();
-    //     //     case "UserAlreadyExists":
-    //     //         throw new UserAlreadyExists();
-    //     //     case "IncorrectPassword":
-    //     //         console.log("ATTEMPTED THROW");
-    //     //         throw new IncorrectPassword();
-    //     //     case "UserNotFound":
-    //     //         throw new UserNotFound();
-    //     // }
-    // }
+		}
     },
 
-	initDB: tempInitDB,
+	//If any of this can somehow be destructive to a db other than authdb/dbName, I will gladly sign the waver for Caden to be able to kill me.
+	initDB: async function() {
+		const dbName = "authdb"; //in case we don't standardize the name, this can be set to a param or process.env
+
+	try {
+			const [db] = await connection.query(`SHOW DATABASES LIKE ?;`, [dbName]);
+			if(db == undefined) {
+				console.error("Database Doesn't Exist");
+				await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName};`); //THIS DOES NOT PROTECT AGAINST MYSQL INJECTION. Most of this doesn't.  Only a Developer should run initDB.
+				await connection.query(
+				`
+				CREATE TABLE users (
+				username VARCHAR(50) PRIMARY KEY,
+				password VARCHAR(255) NOT NULL,
+				email VARCHAR(50) UNIQUE,
+				favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH",
+				timezone VARCHAR(3) DEFAULT "GMT",
+				notifications_enabled TINYINT(1) NOT NULL DEFAULT 0,
+				id INT NOT NULL UNIQUE AUTO_INCREMENT,
+				register_date DATE DEFAULT (CURRENT_DATE())
+				);
+				`
+			);
+			return;
+
+			} else {
+			//Current Checks, DataBase Exists: Yes.  Next Check, Table Exists:Pending
+			const [table] = await connection.query(
+				`
+				SELECT table_name
+				FROM information_schema.tables
+				WHERE table_schema = ?
+				AND table_name = 'users';
+				`
+			, [dbName]);
+
+			if(table == undefined) {
+				console.error("users table does not exist");
+				await connection.query(
+					`
+					CREATE TABLE users (
+					username VARCHAR(50) PRIMARY KEY,
+					password VARCHAR(255) NOT NULL,
+					email VARCHAR(50) UNIQUE,
+					favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH",
+					timezone VARCHAR(3) DEFAULT "GMT",
+					notifications_enabled TINYINT(1) NOT NULL DEFAULT 0,
+					id INT NOT NULL UNIQUE AUTO_INCREMENT,
+					register_date DATE DEFAULT (CURRENT_DATE())
+					);
+					`
+				);
+				return;
+				}
+			} 
+			//Current Checks, DataBase Exists: YES. Table Exists:YES.  Next Check: Every Field
+
+
+			const usernameField = await getFieldAttributes("username", dbName); //all existing fields follow this pattern.  Grab the metadata
+			if(usernameField == undefined) { //Check if column exists
+				await connection.query( //if not, create it with all proper attributes
+					`
+					ALTER TABLE users
+					ADD username VARCHAR(50) PRIMARY KEY;
+					`
+				)
+			} else { //if it DOES exist, reinitialize the field with whatever needs to change.  If all attributes are correct, it will run a query that modifys/changes the current column's vartype to it's vartype, otherwise nothing changing.
+				await updateFields("username", usernameField, 1, "varchar(50)", false, false, "PRI", "NO_DEFAULT");
+			}
+			//IF we have a table column we removed later and old tables might have it, we can check for it existing, and call the dropColumn(columnName)
+			//There are currently none of those, so the function is unused.
+
+
+			//the rest of the function follows the pattern above
+			const passwordField = await getFieldAttributes("password", dbName);
+
+			if(passwordField == undefined) {
+				await connection.query(
+					`
+					ALTER TABLE users
+					ADD password VARCHAR(255) NOT NULL;
+					`
+				)
+			} else { 
+				await updateFields("password", passwordField, 2, "varchar(255)", false, false, "NO_COLKEY", "NO_DEFAULT");
+			}
+
+			const emailField = await getFieldAttributes("email", dbName);
+
+			if(emailField == undefined) {
+				await connection.query(
+					`
+					ALTER TABLE users
+					ADD email VARCHAR(50) UNIQUE;
+					`
+				);
+			} else { 
+				await updateFields("email", emailField, 3, "varchar(50)", false, false, "UNI", "NO_DEFAULT");
+			}
+
+			const favBeachField = await getFieldAttributes("favorite_beach", dbName);
+
+			if(favBeachField !== undefined) {
+				await connection.query(
+					`
+						ALTER TABLE users 
+						RENAME COLUMN favorite_beach TO favorites_beaches;
+					`
+				);
+			}
+
+
+			const favBeachesField = await getFieldAttributes("favorite_beaches", dbName);
+
+			if(favBeachesField == undefined) {
+				await connection.query(
+					`
+					ALTER TABLE users
+					ADD favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH";
+					`
+				);
+			} else {
+				await updateFields("favorite_beaches", favBeachesField, 4, "varchar(3000)", true, false, "NO_COLKEY", "NULL_BEACH");
+			}
+
+			const timezoneField = await getFieldAttributes("timezone", dbName);
+
+			if(timezoneField == undefined) {
+				await connection.query(
+					`
+					ALTER TABLE users
+					ADD timezone VARCHAR(3) DEFAULT "GMT";
+					`
+				);
+			} else {
+				await updateFields("timezone", timezoneField, 5, "varchar(3)", true, false, "NO_COLKEY", "GMT");
+			}
+
+			const notificationsField = await getFieldAttributes("notifications_enabled", dbName);
+
+			if(notificationsField == undefined) {
+				await connection.query(
+					`
+					ALTER TABLE users
+					ADD notifications_enabled TINYINT(1) NOT NULL DEFAULT 0;
+					`
+				);
+			} else {
+				await updateFields("notifications_enabled", notificationsField, 6, "tinyint(1)", false, false, "NO_COLKEY", "0");
+			}
+
+			const idField = await getFieldAttributes("id", dbName);
+
+			if(idField == undefined) {
+				await connection.query(
+					`
+					ALTER TABLE users
+					ADD id INT NOT NULL UNIQUE AUTO_INCREMENT;
+					`
+				);
+			} else {
+				await updateFields("id", idField, 7, "int", false, true, "NO_COLKEY", "NO_DEFAULT");
+			}
+
+			const registerField = await getFieldAttributes("register_date", dbName);
+
+			if(registerField  == undefined) {
+				await connection.query(
+					`
+					ALTER TABLE users
+					ADD register_date DATE DEFAULT (CURRENT_DATE());
+					`
+				);
+			} else {
+				await updateFields("register_date", registerField, 8, "date", true, false, "NO_COLKEY", "(CURRENT_DATE())");
+			}
+		} catch (e) {
+			//console.log(e);
+			if(e instanceof UserNotFound) {
+				throw new UserNotFound();
+			} else if(e instanceof UserAlreadyExists){
+				throw new UserAlreadyExists();
+			} else {
+				throw new ProblemWithDB()
+			}
+		} 
+	},
+
+	addFavorite: async function(username, beach) {
+		try {
+		
+			const user = await getUserData(username);
+	
+			if(!validateInputAlphaNumeric(beach)) {
+				console.log("That input ain't right dawg");
+				throw new ProblemWithDB();
+			}
+	
+			if (user.favorite_beaches === "NULL_BEACH") {
+				await connection.query(
+					`
+					UPDATE users
+					SET favorite_beaches = ?
+					WHERE username = ?;
+					`,
+					[beach, username]
+				);
+				return;
+			}
+			let favBeachesArr = (user.favorite_beaches).split(",");
+			let existsFlag = false;
+	
+			for(i = 0; i < favBeachesArr.length; i++) {
+				if(favBeachesArr[i] === beach) {
+					existsFlag = true;
+					break;
+				}
+			}
+	
+			if(!existsFlag) {
+				favBeachesArr.push(beach);
+			} else {
+				//if we want an error for beach already exists
+				throw new BeachAlreadyFavorited();
+			}
+	
+			let favBeachesStringCSV = favBeachesArr.join(",");
+			//console.log(favBeachesStringCSV);
+	
+			await connection.query(
+				`
+				UPDATE users
+				SET favorite_beaches = ?
+				WHERE username = ?;
+				`,
+				[favBeachesStringCSV, username]
+			);
+	
+				
+	
+		} catch (e) {
+			console.log(e);
+			if(e instanceof UserNotFound) {
+				throw new UserNotFound();
+			} else if (e instanceof BeachAlreadyFavorited) {
+				throw new BeachAlreadyFavorited();
+			} else {
+				throw new ProblemWithDB()
+			}
+		} 
+	},
+
+	clearFavorites: async function(username) {
+		try {
+			if(!userExists) {
+				throw new UserNotFound();
+			}
+	
+		await connection.query(
+			`
+			UPDATE users
+			SET favorite_beaches = "NULL_BEACH"
+			WHERE username = ?;
+			`,
+			[username]
+		);
+		} catch (e) {
+			//console.log(e);
+			if(e instanceof UserNotFound) {
+				throw new UserNotFound();
+			} else {
+				throw new ProblemWithDB()
+			}
+		} 
+	},
 	getFavorites: tempGetFavorites,
 	addFavorite: tempAddFavorite,
 	removeFavorite: tempRemoveFavorite,
-	clearFavorites: tempClearFavorites,
 	UserAlreadyExists: UserAlreadyExists,
 	ProblemWithDB: ProblemWithDB,
 	UserNotFound: UserNotFound,
-	IncorrectPassword: IncorrectPassword
+	IncorrectPassword: IncorrectPassword,
+	BeachAlreadyFavorited: BeachAlreadyFavorited
 };
 	/**
 	 * Export all the errors that can be thrown by the exported functions.

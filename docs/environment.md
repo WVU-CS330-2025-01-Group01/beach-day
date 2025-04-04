@@ -67,7 +67,7 @@ This is the value of the jwt secret. If this is not set, you will get an error. 
 
 </summary>
 
-This is the name of your MySQL connection HostName.  For your local development environment, you will have set this when creating your SQL connection.  Without it, the code and database can not communicate.
+This is the name of your MySQL connection HostName.  For your local development environment, you will have set this when creating your SQL connection.  Without it, the code and database can not communicate. Typically for a local environment, you call it localhost.  However, this sometimes does not resolve properly.  If that's an issue, or you want to try this first, enter it as `127.0.0.1` .  This is equivelent to localhost.
 
 </details>
 <details>
@@ -123,7 +123,7 @@ REACT_APP_BACKEND_PORT=3010
 # backend
 BEACH_DAY_BACKEND_PORT=3010
 BEACH_DAY_JWT_SECRET=a
-BEACH_DAY_DB_HOST=localhost
+BEACH_DAY_DB_HOST=127.0.0.1
 BEACH_DAY_DB_USER=root
 BEACH_DAY_DB_PASSWORD=password
 BEACH_DAY_DB_NAME=authdb
