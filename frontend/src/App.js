@@ -27,7 +27,7 @@ function App() {
         />
 
         {/* Favorites Route */}
-        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/favorites" element={<Favorites authenticated={authenticated} />} />
 
         {/* Login Route */}
         <Route
