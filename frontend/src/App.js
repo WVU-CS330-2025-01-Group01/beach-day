@@ -26,7 +26,7 @@ function App() {
       />
       <Routes>
         <Route path="/" element={<Navigate to="/home" />} />
-        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/favorites" element={<Favorites authenticated={authenticated} />} />
         <Route
           path="/login"
           element={authenticated ? <Navigate to="/home" replace /> : <Login setAuthenticated={setAuthenticated} />}
