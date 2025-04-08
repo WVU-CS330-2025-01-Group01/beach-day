@@ -2,6 +2,7 @@
 
 .navbar {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   background-color: var(--primary-color);
@@ -11,26 +12,33 @@
 
 .navbar-content {
   display: flex;
-  align-items: center;  /* Align the image and title vertically centered */
-  justify-content: flex-start; /* Keep both items aligned to the left */
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .navbar-icon {
-  width: 60px;  /* Adjust the size of the icon */
-  height: 60px; /* Adjust the size of the icon */
-  margin-right: 10px; /* Space between the icon and the title */
+  width: 60px;
+  height: 60px;
+  margin-right: 10px;
 }
 
 .navbar-title {
   color: white;
   font-size: 1.8rem;
-  margin: 0;  /* Ensure no additional margin around the title */
+  margin: 0;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
 }
 
 .navbar-links a {
   color: white;
   text-decoration: none;
-  margin: 0 15px;
   font-size: 1rem;
 }
 
@@ -41,7 +49,7 @@
 .logout-btn {
   border: none;
   cursor: pointer;
-  background-color: #f44336; /* Red for logout */
+  background-color: #f44336;
   color: white;
   border-radius: 5px;
   padding: 10px 20px;
@@ -49,5 +57,55 @@
 }
 
 .logout-btn:hover {
-  background-color: #d32f2f; /* Darker red when hovered */
+  background-color: #d32f2f;
+}
+
+.custom-search-form {
+  display: flex;
+  justify-content: center; /* Centers the search bar */
+  flex-grow: 1;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 30px;
+  padding: 6px 12px;
+  position: relative;
+  width: 600px; /* Adjust the width as needed */
+  max-width: 90%;
+}
+
+.search-dropdown {
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  margin-right: 8px;
+  color: #333;
+  outline: none;
+  width: 150px; /* Adjust the width of the dropdown */
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  font-size: 1rem;
+  padding: 4px 10px 10px ;
+  outline: none;
+  margin-bottom: 0px;
+  color: #333;
+}
+
+.search-icon {
+  width: 30px;
+  height: 30px;
+  margin-left: 0px; /* Adds space between the input field and icon */
+  pointer-events: none; /* Ensures the icon does not block input interaction */
+}
+
+.error-message {
+  color: #ffb3b3;
+  font-size: 0.9rem;
+  margin-left: 15px;
 }
