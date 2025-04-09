@@ -71,6 +71,10 @@ router.post('/update_favorites', async function (req, res, next) {
 			res.status(500).json({ message: 'Problem updating database.' });
 		else if (err instanceof db.UserNotFound)
 			res.status(500).json({ message: 'User not found.' });
+		else if (err instanceof db.BeachAlreadyFavorited)
+			res.status(500).json({ message: 'Beach is already in favorites.' });
+		else if (err instanceof db.BeachNotPresent)
+			res.status(500).json({ message: 'Attempted to remove beach not in favorites.' });
 		else
 			res.status(500).json({ message: 'Undefined error.' });
 	}
