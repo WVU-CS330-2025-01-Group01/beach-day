@@ -19,7 +19,8 @@ ProblemWithDB
 </dt>
 <dd>
 
-This is thrown if there are any issues accessing the database or updating its columns and schemas.
+This is thrown if there are any issues accessing the database or updating its columns and schemas.  This uses database name as "authdb" and table "users".  Primary keys should never be changed again for the scope of the progress.  That being said, if you have anything set to primary key that
+is not usernames (if ID, it may correct itself), initDB will fail.  This cannot delete/account for columns you made that are not known by us.  It can delete extra columns that have been deprecated by us.
 
 </dd>
 </dl>
@@ -154,7 +155,7 @@ username
 </dt>
 <dd>
 
-The uesrname of the user whose favorites to access.
+The username of the user whose favorites to access.
 
 </dd>
 </dl>
@@ -198,7 +199,7 @@ username
 </dt>
 <dd>
 
-The uesrname of the user whose favorite to add.
+The username of the user whose favorite to add.
 
 </dd>
 <dt>
@@ -238,6 +239,16 @@ ProblemWithDB
 This is exception is thrown if there are issues reading from the database.
 
 </dd>
+<dt>
+
+BeachAlreadyFavorited
+
+</dt>
+<dd>
+
+This exception is thrown if the user favorites a beach already favorited.
+
+</dd>
 </dl>
 
 ## `removeFavorite(username, favorite)`
@@ -252,7 +263,7 @@ username
 </dt>
 <dd>
 
-The uesrname of the user whose favorite to remove.
+The username of the user whose favorite to remove.
 
 </dd>
 <dt>
@@ -306,7 +317,7 @@ username
 </dt>
 <dd>
 
-The uesrname of the user whose favorited beaches to clear.
+The username of the user whose favorited beaches to clear.
 
 </dd>
 </dl>
