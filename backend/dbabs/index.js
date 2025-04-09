@@ -8,6 +8,7 @@ class ProblemWithDB extends Error {}
 class UserNotFound extends Error {}
 class IncorrectPassword extends Error {}
 class BeachAlreadyFavorited extends Error {}
+class BeachNotPresent extends Error {}
 
 
 // process.on('uncaughtException', (err) => {
@@ -30,6 +31,21 @@ const connection = mysql.createPool({
 //note, some of these say "userss", this is because I have two tables and didn't want to mess up my main table accidentally when testing
 
 
+async function testDatabaseConnection() {
+    let connect;
+    try {
+      connect = await connection.getConnection(); // Get a connection from the pool
+    } catch (err) {
+      console.error('Error connecting to the database:', err.message || err);
+      throw err; // Exit if there’s an error, no need to release connection
+    } finally {
+      if (connect) {
+        connect.release(); // Release the connection back to the pool
+      }
+    }
+  }
+  
+  testDatabaseConnection();
 
 
 async function getUserData(username) {
@@ -235,6 +251,45 @@ functionTester();
 
 // }
 
+async function removeFavorites(username, beach){
+	try {
+	const user = await getUserData(username);
+	
+	if(!validateInputAlphaNumeric(beach)) {
+	console.log("That input ain't right dawg");
+	throw new ProblemWithDB();
+	}
+	
+	if (user.favorite_beaches === "NULL_BEACH") {
+	console.log("No beach found")
+	throw new BeachNotPresent();
+	}
+	let beaches = user.favorite_beaches.split(",");
+	if(!beaches.includes(beach)){
+	//console.log("Beach is not found");
+	throw new BeachNotPresent();
+	//return;
+	}
+	beaches = beaches.filter(beaches => beaches !== beach);
+	if (beaches.length === 0){
+	beaches = ["NULL_BEACH"];
+	}
+	let CSVbeaches = beaches.join(",");
+	await connection.query(
+				`UPDATE users SET favorite_beaches = ? WHERE username = ?;`,[CSVbeaches, username]
+			);
+	} catch (e) {
+	console.log(e);
+	if (e instanceof UserNotFound) {
+	throw new UserNotFound();
+	} else if (e instanceof BeachNotPresent) {
+	throw new BeachNotPresent();
+	}
+	else {
+	throw new ProblemWithDB();
+	}
+	}
+	}
 
 
 
@@ -594,7 +649,8 @@ module.exports = {
 	ProblemWithDB: ProblemWithDB,
 	UserNotFound: UserNotFound,
 	IncorrectPassword: IncorrectPassword,
-	BeachAlreadyFavorited: BeachAlreadyFavorited
+	BeachAlreadyFavorited: BeachAlreadyFavorited,
+	BeachNotPresent: BeachNotPresent
 };
 	/**
 	 * Export all the errors that can be thrown by the exported functions.
