@@ -160,7 +160,7 @@ The uesrname of the user whose favorites to access.
 </dl>
 
 ### Returns
-This function returns a `Set` of strings where the strings are beach ids of the user's favorited beaches.
+This function returns an array of strings where the strings are beach ids of the user's favorited beaches.
 
 ### Exceptions
 <dl>
