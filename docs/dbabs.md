@@ -300,7 +300,17 @@ ProblemWithDB
 </dt>
 <dd>
 
-This is exception is thrown if there are issues modifying the database.
+This exception is thrown if there are issues modifying the database.
+
+</dd>
+<dt>
+
+BeachNotPresent
+
+</dt>
+<dd>
+
+This exception is thrown when attempting to remove a beach not in favorited beaches.
 
 </dd>
 </dl>
