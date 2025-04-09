@@ -11,61 +11,44 @@ class BeachAlreadyFavorited extends Error {}
 class BeachNotPresent extends Error {}
 
 
-// process.on('uncaughtException', (err) => {
-//     console.error('Uncaught Exception:', err);
-	
-// });
-
 const connection = mysql.createPool({
-	host: process.env.BEACH_DAY_DB_HOST,    
-	user: process.env.BEACH_DAY_DB_USER,    
+	host: process.env.BEACH_DAY_DB_HOST,
+	user: process.env.BEACH_DAY_DB_USER,
 	password: process.env.BEACH_DAY_DB_PASSWORD,
 	database: process.env.BEACH_DAY_DB_NAME,
 	port: process.env.BEACH_DAY_DB_PORT,
 	waitForConnections: true,
-  	connectionLimit: 10,
-  	queueLimit: 0
+	connectionLimit: 10,
+	queueLimit: 0
 }).promise();
 
-////////////////////All functions here are tests, code was shifted to the exports, but this is kept because they should work.\\\\\\\\\\\\\\\\\\
-//note, some of these say "userss", this is because I have two tables and didn't want to mess up my main table accidentally when testing
-
-
 async function testDatabaseConnection() {
-    let connect;
-    try {
-      connect = await connection.getConnection(); // Get a connection from the pool
-    } catch (err) {
-      console.error('Error connecting to the database:', err.message || err);
-      throw err; // Exit if there’s an error, no need to release connection
-    } finally {
-      if (connect) {
-        connect.release(); // Release the connection back to the pool
-      }
-    }
-  }
-  
-  testDatabaseConnection();
+	let connect;
+	try {
+		connect = await connection.getConnection(); // Get a connection from the pool
+	} catch (err) {
+		console.error('Error connecting to the database:', err.message || err);
+		throw err; // Exit if there’s an error, no need to release connection
+	} finally {
+		if (connect) {
+			connect.release(); // Release the connection back to the pool
+		}
+	}
+}
 
+testDatabaseConnection();
 
 async function getUserData(username) {
 
 	try {
-
 		const [user] = await connection.query(`SELECT * FROM users WHERE username = ?;`, [username]);
 
-		if(user.length == 0) {
-					//errorCode = "UserNotFound"
-					throw new UserNotFound();
-				}
-
+		if (user.length == 0) {
+			throw new UserNotFound();
+		}
 		return user[0];
-
-
-
 	} catch (e) {
-		//console.log(e);
-		if(e instanceof UserNotFound) {
+		if (e instanceof UserNotFound) {
 			throw new UserNotFound();
 		} else {
 			throw new ProblemWithDB()
@@ -75,20 +58,20 @@ async function getUserData(username) {
 
 async function userExists(username) {
 
-    try {
+	try {
 
-        const [user] = await connection.query(`SELECT * FROM users WHERE username = ?;`, [username]);
+		const [user] = await connection.query(`SELECT * FROM users WHERE username = ?;`, [username]);
 
-        if (user.length != 0) {
-            return true;
-        }
+		if (user.length != 0) {
+			return true;
+		}
 
-        return false;
+		return false;
 
-    } catch (e) {
-        //console.log(e);
-        throw new ProblemWithDB();
-    }
+	} catch (e) {
+		//console.log(e);
+		throw new ProblemWithDB();
+	}
 }
 
 
@@ -153,7 +136,6 @@ async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAl
 	//Primary is handled much differently, and less programatically.  This is due to the EXTREMELY strict behavior of Primary Keys (PK).
 	//Thus, the only error should be if your ID still has the PK. We will NOT shift Primary Around as it should not be ever again.
 	if(colKey === "PRI" && attributes.COLUMN_KEY !== "PRI") {
-		console.log(fieldName);
 
 		const idAttributes = await getFieldAttributes("id", "authdb");
 		if(idAttributes.COLUMN_KEY === "PRI") { 
@@ -193,33 +175,6 @@ function validateInputAlphaNumeric(input) {
     return regex.test(input);
 }
 
-
-//debug functions
-async function functionTester(){
-
-	const [rowsBefore] = await connection.query(
-		`SELECT * FROM users;`
-	)
-	//the 4 is just whichever user I was testing, your index won't match mine
-
-	//console.log(rowsBefore[4].favorite_beaches);
-
-
-	//await tryClearFavorites("personal");
-	//await tryAddFavorites("dropThisUser", "\"\".etes\"\"");
-	//await tryAddFavorites("dropThisUser", "beach4");
-	//await tryAddFavorites("dropThisUser", "beach2");
-	//await tryClearFavorites("dropThisUser");
-
-	const [rowsAfter] = await connection.query(
-		`SELECT * FROM users;`
-	)
-
-	//console.log(rowsAfter[4].favorite_beaches);
-}
-
-functionTester();
-
 /**
  * Currently, userTable, tempAttemptToMakeUser(), and tempTryLogIn() are used to
  * demonstrate how the database functions should interact with the routing. They
@@ -240,60 +195,11 @@ functionTester();
  * would be best if we put the check in this file and have an Error associated
  * with it. We can discuss that later. Same story for the password.
  */
-// let userTable = new Map();
-// function tempAttemptToMakeUser(username, password) {
-// 	console.log(`Register Request\nUsername: ${username}\nPassword: ${password}\n`);
-// 	if (userTable.has(username))
-// 		throw new UserAlreadyExists();
-// 	let hash = bcrypt.hashSync(password, 10);
-// 	userTable.set(username, hash);
 
-
-// }
-
-async function removeFavorites(username, beach){
-	try {
-	const user = await getUserData(username);
-	
-	if(!validateInputAlphaNumeric(beach)) {
-	console.log("That input ain't right dawg");
-	throw new ProblemWithDB();
-	}
-	
-	if (user.favorite_beaches === "NULL_BEACH") {
-	console.log("No beach found")
-	throw new BeachNotPresent();
-	}
-	let beaches = user.favorite_beaches.split(",");
-	if(!beaches.includes(beach)){
-	//console.log("Beach is not found");
-	throw new BeachNotPresent();
-	//return;
-	}
-	beaches = beaches.filter(beaches => beaches !== beach);
-	if (beaches.length === 0){
-	beaches = ["NULL_BEACH"];
-	}
-	let CSVbeaches = beaches.join(",");
-	await connection.query(
-				`UPDATE users SET favorite_beaches = ? WHERE username = ?;`,[CSVbeaches, username]
-			);
-	} catch (e) {
-	console.log(e);
-	if (e instanceof UserNotFound) {
-	throw new UserNotFound();
-	} else if (e instanceof BeachNotPresent) {
-	throw new BeachNotPresent();
-	}
-	else {
-	throw new ProblemWithDB();
-	}
-	}
-	}
-
-
-
-
+async function printUser(username) {
+	const test = await getUserData(username);
+	console.log(test);
+}
 
 module.exports = {
 	/**
@@ -303,26 +209,25 @@ module.exports = {
 	 * the user is successfully added to the database, no exceptions are to
 	 * be thrown. Nothing is ever returned by this function.
 	 */
-	attemptToMakeUser: async function(username, password) {
+	attemptToMakeUser: async function (username, password) {
 
 		try {
-			//const user = await getUserData(username);
-	
+
 			if (await userExists(username)) {
 				throw new UserAlreadyExists();
 			}
-	
+
 			const hash = await bcrypt.hash(password, 10);
-	
+
 			await connection.query(`
 			INSERT INTO
 			users (username, password)
 			VALUES 
 			(?, ?);
 			`,
-			[username, hash]);
-	
-	
+				[username, hash]);
+
+
 		} catch (e) {
 			//console.log(e);
 			if (e instanceof UserAlreadyExists) {
@@ -340,24 +245,21 @@ module.exports = {
 	 * the password is the correct password for that user, no exceptions are
 	 * to be thrown. Nothing is ever returned by this function.
 	 */
-	
-	tryLogIn: async function(username, enteredPassword) {
+	tryLogIn: async function (username, enteredPassword) {
 		try {
 			const user = await getUserData(username);
-		
+
 			const password = await bcrypt.compare(enteredPassword, user.password);
-			
-			if(!password) {
+
+			if (!password) {
 				console.log("Wrong Password");
 				throw new IncorrectPassword();
 			}
-		
+
 			console.log("Password Works");
-		
-		
 		} catch (e) {
 			//console.log(e);
-			if(e instanceof UserNotFound) {
+			if (e instanceof UserNotFound) {
 				throw new UserNotFound();
 			} else if(e instanceof IncorrectPassword){
 				throw new IncorrectPassword();
@@ -365,7 +267,66 @@ module.exports = {
 				throw new ProblemWithDB()
 			}
 		}
+
     },
+
+	getFavorites: async function (username) {
+		try {
+			const [favoritesColumn] = await connection.query('SELECT favorite_beaches FROM users WHERE username = ?', [username]);
+			if (favoritesColumn.length === 0) {
+				throw new UserNotFound;
+			}
+			let userFavorite = favoritesColumn[0].favorite_beaches;
+
+			if (userFavorite === "NULL_BEACH" || userFavorite.trim() === "") {
+				return [];
+			}
+			return userFavorite.split(',').map(beach => beach.trim()).filter(beach => beach !== "");
+		} catch (e) {
+
+			if (e instanceof UserNotFound) {
+				throw new UserNotFound();
+			} else {
+				throw new ProblemWithDB();
+			}
+		}
+	},
+
+	removeFavorites: async function (username, beach) {
+		try {
+			const user = await getUserData(username);
+
+			if (!validateInputAlphaNumeric(beach)) {
+				throw new ProblemWithDB();
+			}
+
+			if (user.favorite_beaches === "NULL_BEACH") {
+				throw new BeachNotPresent();
+			}
+			let beaches = user.favorite_beaches.split(",");
+			if (!beaches.includes(beach)) {
+				throw new BeachNotPresent();
+			}
+			beaches = beaches.filter(beaches => beaches !== beach);
+			if (beaches.length === 0) {
+				beaches = ["NULL_BEACH"];
+			}
+			let CSVbeaches = beaches.join(",");
+			await connection.query(
+				`UPDATE users SET favorite_beaches = ? WHERE username = ?;`, [CSVbeaches, username]
+			);
+		} catch (e) {
+			console.log(e);
+			if (e instanceof UserNotFound) {
+				throw new UserNotFound();
+			} else if (e instanceof BeachNotPresent) {
+				throw new BeachNotPresent();
+			}
+			else {
+				throw new ProblemWithDB();
+			}
+		}
+	},
 
 	//If any of this can somehow be destructive to a db other than authdb/dbName, I will gladly sign the waver for Caden to be able to kill me.
 	initDB: async function() {
@@ -561,7 +522,6 @@ module.exports = {
 			const user = await getUserData(username);
 	
 			if(!validateInputAlphaNumeric(beach)) {
-				console.log("That input ain't right dawg");
 				throw new ProblemWithDB();
 			}
 	
@@ -589,12 +549,10 @@ module.exports = {
 			if(!existsFlag) {
 				favBeachesArr.push(beach);
 			} else {
-				//if we want an error for beach already exists
 				throw new BeachAlreadyFavorited();
 			}
 	
 			let favBeachesStringCSV = favBeachesArr.join(",");
-			//console.log(favBeachesStringCSV);
 	
 			await connection.query(
 				`
@@ -642,9 +600,6 @@ module.exports = {
 			}
 		} 
 	},
-	getFavorites: tempGetFavorites,
-	addFavorite: tempAddFavorite,
-	removeFavorite: tempRemoveFavorite,
 	UserAlreadyExists: UserAlreadyExists,
 	ProblemWithDB: ProblemWithDB,
 	UserNotFound: UserNotFound,
@@ -652,20 +607,17 @@ module.exports = {
 	BeachAlreadyFavorited: BeachAlreadyFavorited,
 	BeachNotPresent: BeachNotPresent
 };
-	/**
-	 * Export all the errors that can be thrown by the exported functions.
-	 */
-/**
- * Currently, these are temporary functions for accessing/modifying the favorite
- * beaches of a user. Authentication is done by calling code, so you can assume
- * that the user is logged in. All functions can throw ProblemWithDB or
- * UserNotFound.
- */
+
 let favorites = new Set(["AK103349",
-		"AK103839",
-		"NC810571",
-		"WA171257",
-		"NJ828093"]);
+	"AK103839",
+	"NC810571",
+	"WA171257",
+	"NJ828093",
+	"FL257350",
+	"MA242910",
+	"WA397523",
+	"WA815475",
+	"HI659533"]);
 function tempGetFavorites(username) {
 	return favorites;
 }
@@ -679,16 +631,4 @@ function tempClearFavorites(username) {
 	favorites.clear();
 }
 
-// module.exports = {
-// 	initDB: tempInitDB,
-// 	attemptToMakeUser: tempAttemptToMakeUser,
-// 	tryLogIn: tempTryLogIn,
-// 	getFavorites: tempGetFavorites,
-// 	addFavorite: tempAddFavorite,
-// 	removeFavorite: tempRemoveFavorite,
-// 	clearFavorites: tempClearFavorites,
-// 	UserAlreadyExists: UserAlreadyExists,
-// 	ProblemWithDB: ProblemWithDB,
-// 	UserNotFound: UserNotFound,
-// 	IncorrectPassword: IncorrectPassword,
-// };
+

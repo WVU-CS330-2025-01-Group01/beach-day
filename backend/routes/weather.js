@@ -23,13 +23,13 @@ router.post('/weather', (req, res) => {
 /**
  * Returns a list of a users favorite beaches.
  */
-router.post('/favorites', (req, res, next) => {
+router.post('/favorites', async function(req, res, next) {
 	try {
 		const payload = auth.verifyJWT(req.body.jwt);
 
 		console.log("User Payload: ", payload);
 
-		const favorites = Array.from(db.getFavorites(payload.username).keys());
+		const favorites = await db.getFavorites(payload.username);
 
 		res.status(200).json({
 			message: 'Success.',
@@ -46,7 +46,7 @@ router.post('/favorites', (req, res, next) => {
 /**
  * Allows frontend to modify favorited beaches.
  */
-router.post('/update_favorites', (req, res, next) => {
+router.post('/update_favorites', async function (req, res, next) {
 	try {
 		if (req.body.jwt === undefined || req.body.type === undefined
 				|| (req.body.type !== 'clear'
@@ -58,11 +58,11 @@ router.post('/update_favorites', (req, res, next) => {
 		const username = auth.verifyJWT(req.body.jwt).username;
 
 		if (req.body.type === 'clear')
-			db.clearFavorites(username);
+			await db.clearFavorites(username);
 		else if (req.body.type === 'add')
-			db.addFavorite(username, req.body.favorite);
+			await db.addFavorite(username, req.body.favorite);
 		else if (req.body.type === 'remove')
-			db.removeFavorite(username, req.body.favorite);
+			await db.removeFavorite(username, req.body.favorite);
 		res.status(200).json({ message: 'Success.' });
 	} catch (err) {
 		if (err instanceof auth.InvalidToken)
