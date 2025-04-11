@@ -1,14 +1,8 @@
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const mysql = require('mysql2');
+const dbErrors = require('./db-errors');
 
-// Error declarations
-class UserAlreadyExists extends Error {}
-class ProblemWithDB extends Error {}
-class UserNotFound extends Error {}
-class IncorrectPassword extends Error {}
-class BeachAlreadyFavorited extends Error {}
-class BeachNotPresent extends Error {}
 
 
 const connection = mysql.createPool({
@@ -44,14 +38,14 @@ async function getUserData(username) {
 		const [user] = await connection.query(`SELECT * FROM users WHERE username = ?;`, [username]);
 
 		if (user.length == 0) {
-			throw new UserNotFound();
+			throw new dbErrors.UserNotFound();
 		}
 		return user[0];
 	} catch (e) {
-		if (e instanceof UserNotFound) {
-			throw new UserNotFound();
+		if (e instanceof dbErrors.UserNotFound) {
+			throw new dbErrors.UserNotFound();
 		} else {
-			throw new ProblemWithDB()
+			throw new dbErrors.ProblemWithDB()
 		}
 	}
 }
@@ -70,7 +64,7 @@ async function userExists(username) {
 
 	} catch (e) {
 		//console.log(e);
-		throw new ProblemWithDB();
+		throw new dbErrors.ProblemWithDB();
 	}
 }
 
@@ -214,7 +208,7 @@ module.exports = {
 		try {
 
 			if (await userExists(username)) {
-				throw new UserAlreadyExists();
+				throw new dbErrors.UserAlreadyExists();
 			}
 
 			const hash = await bcrypt.hash(password, 10);
@@ -230,10 +224,10 @@ module.exports = {
 
 		} catch (e) {
 			//console.log(e);
-			if (e instanceof UserAlreadyExists) {
-				throw new UserAlreadyExists();
+			if (e instanceof dbErrors.UserAlreadyExists) {
+				throw new dbErrors.UserAlreadyExists();
 			} else {
-				throw new ProblemWithDB()
+				throw new dbErrors.ProblemWithDB()
 			}
 		}
 	},
@@ -253,18 +247,18 @@ module.exports = {
 
 			if (!password) {
 				console.log("Wrong Password");
-				throw new IncorrectPassword();
+				throw new dbErrors.IncorrectPassword();
 			}
 
 			console.log("Password Works");
 		} catch (e) {
 			//console.log(e);
-			if (e instanceof UserNotFound) {
-				throw new UserNotFound();
-			} else if(e instanceof IncorrectPassword){
-				throw new IncorrectPassword();
+			if (e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
+			} else if(e instanceof dbErrors.IncorrectPassword){
+				throw new dbErrors.IncorrectPassword();
 			} else {
-				throw new ProblemWithDB()
+				throw new dbErrors.ProblemWithDB()
 			}
 		}
 
@@ -274,7 +268,7 @@ module.exports = {
 		try {
 			const [favoritesColumn] = await connection.query('SELECT favorite_beaches FROM users WHERE username = ?', [username]);
 			if (favoritesColumn.length === 0) {
-				throw new UserNotFound;
+				throw new dbErrors.UserNotFound;
 			}
 			let userFavorite = favoritesColumn[0].favorite_beaches;
 
@@ -284,10 +278,10 @@ module.exports = {
 			return userFavorite.split(',').map(beach => beach.trim()).filter(beach => beach !== "");
 		} catch (e) {
 
-			if (e instanceof UserNotFound) {
-				throw new UserNotFound();
+			if (e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
 			} else {
-				throw new ProblemWithDB();
+				throw new dbErrors.ProblemWithDB();
 			}
 		}
 	},
@@ -297,15 +291,15 @@ module.exports = {
 			const user = await getUserData(username);
 
 			if (!validateInputAlphaNumeric(beach)) {
-				throw new ProblemWithDB();
+				throw new dbErrors.ProblemWithDB();
 			}
 
 			if (user.favorite_beaches === "NULL_BEACH") {
-				throw new BeachNotPresent();
+				throw new dbErrors.BeachNotPresent();
 			}
 			let beaches = user.favorite_beaches.split(",");
 			if (!beaches.includes(beach)) {
-				throw new BeachNotPresent();
+				throw new dbErrors.BeachNotPresent();
 			}
 			beaches = beaches.filter(beaches => beaches !== beach);
 			if (beaches.length === 0) {
@@ -317,13 +311,13 @@ module.exports = {
 			);
 		} catch (e) {
 			console.log(e);
-			if (e instanceof UserNotFound) {
-				throw new UserNotFound();
-			} else if (e instanceof BeachNotPresent) {
-				throw new BeachNotPresent();
+			if (e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
+			} else if (e instanceof dbErrors.BeachNotPresent) {
+				throw new dbErrors.BeachNotPresent();
 			}
 			else {
-				throw new ProblemWithDB();
+				throw new dbErrors.ProblemWithDB();
 			}
 		}
 	},
@@ -506,12 +500,12 @@ module.exports = {
 			}
 		} catch (e) {
 			//console.log(e);
-			if(e instanceof UserNotFound) {
-				throw new UserNotFound();
-			} else if(e instanceof UserAlreadyExists){
-				throw new UserAlreadyExists();
+			if(e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
+			} else if(e instanceof dbErrors.UserAlreadyExists){
+				throw new dbErrors.UserAlreadyExists();
 			} else {
-				throw new ProblemWithDB()
+				throw new dbErrors.ProblemWithDB()
 			}
 		} 
 	},
@@ -522,7 +516,7 @@ module.exports = {
 			const user = await getUserData(username);
 	
 			if(!validateInputAlphaNumeric(beach)) {
-				throw new ProblemWithDB();
+				throw new dbErrors.ProblemWithDB();
 			}
 	
 			if (user.favorite_beaches === "NULL_BEACH") {
@@ -549,7 +543,7 @@ module.exports = {
 			if(!existsFlag) {
 				favBeachesArr.push(beach);
 			} else {
-				throw new BeachAlreadyFavorited();
+				throw new dbErrors.BeachAlreadyFavorited();
 			}
 	
 			let favBeachesStringCSV = favBeachesArr.join(",");
@@ -567,12 +561,12 @@ module.exports = {
 	
 		} catch (e) {
 			console.log(e);
-			if(e instanceof UserNotFound) {
-				throw new UserNotFound();
-			} else if (e instanceof BeachAlreadyFavorited) {
-				throw new BeachAlreadyFavorited();
+			if(e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
+			} else if (e instanceof dbErrors.BeachAlreadyFavorited) {
+				throw new dbErrors.BeachAlreadyFavorited();
 			} else {
-				throw new ProblemWithDB()
+				throw new dbErrors.ProblemWithDB()
 			}
 		} 
 	},
@@ -580,7 +574,7 @@ module.exports = {
 	clearFavorites: async function(username) {
 		try {
 			if(!userExists) {
-				throw new UserNotFound();
+				throw new dbErrors.UserNotFound();
 			}
 	
 		await connection.query(
@@ -593,19 +587,19 @@ module.exports = {
 		);
 		} catch (e) {
 			//console.log(e);
-			if(e instanceof UserNotFound) {
-				throw new UserNotFound();
+			if(e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
 			} else {
-				throw new ProblemWithDB()
+				throw new dbErrors.ProblemWithDB()
 			}
 		} 
 	},
-	UserAlreadyExists: UserAlreadyExists,
-	ProblemWithDB: ProblemWithDB,
-	UserNotFound: UserNotFound,
-	IncorrectPassword: IncorrectPassword,
-	BeachAlreadyFavorited: BeachAlreadyFavorited,
-	BeachNotPresent: BeachNotPresent
+	UserAlreadyExists: dbErrors.UserAlreadyExists,
+	ProblemWithDB: dbErrors.ProblemWithDB,
+	UserNotFound: dbErrors.UserNotFound,
+	IncorrectPassword: dbErrors.IncorrectPassword,
+	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
+	BeachNotPresent: dbErrors.BeachNotPresent
 };
 
 let favorites = new Set(["AK103349",
