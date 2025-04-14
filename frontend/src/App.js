@@ -5,6 +5,8 @@ import Register from './Register';
 import Home from './Home';
 import Navbar from './Navbar';
 import Favorites from './Favorites';
+import Settings from './Settings';
+import BeachInfo from './BeachInfo';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(
@@ -38,6 +40,14 @@ function App() {
         <Route
           path="/home"
           element={<Home weather={weather} />} // Pass weather to Home
+        />
+        <Route
+          path="/settings"
+          element={<Settings />} // Add route for Settings page
+        />
+        <Route
+          path="/beach-info"
+          element={<BeachInfo />}
         />
       </Routes>
     </Router>

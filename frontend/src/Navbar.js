@@ -1,6 +1,5 @@
-// Navbar.js
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import beachIcon from './beachIcon.png';
 import Cookies from 'js-cookie';
@@ -12,6 +11,8 @@ function Navbar({ authenticated, setAuthenticated, onWeatherData }) {
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [error, setError] = useState("");
+
+  const navigate = useNavigate(); // ✅ Add navigator
 
   const handleLogout = () => {
     Cookies.remove('jwt');
@@ -76,6 +77,7 @@ function Navbar({ authenticated, setAuthenticated, onWeatherData }) {
           longitude
         };
         onWeatherData(weatherData);
+        navigate("/home"); // ✅ Navigate to Home after setting weather
       } else {
         setError("No weather data available for this location.");
       }
