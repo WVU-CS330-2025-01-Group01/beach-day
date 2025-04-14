@@ -52,9 +52,137 @@ In either case, the response looks like:
 
 ---
 
+## Beach Info
+
+Get info about a beach by ID. This is the final interface. This should be used instead of the dummy requests.
+
+### Request format
+
+```JSON
+{
+    "request_type": "get_beach_info_by_id",
+    "beach_id": "{requested beach id}"
+}
+```
+
+### Response Format
+
+```JSON
+{
+    "code": "get_beach_info_by_id",
+    "beach_name": "{the registered name of the beach}",
+    "beach_county": "{the county the beach is in}",
+    "beach_state": "{the state the beach is in}",
+    "beach_tribe": "{the indigenous tribe associated with the beach *}",
+    "beach_length": "{the length of the beach in miles}",
+    "beach_access": "{'Public' if the beach is open to the public, 'Private' otherwise}",
+    "latitude": "{the latitude of the beach}",
+    "longitude": "{the longitude of the beach}",
+    "joinkey": "{a key for accessing this beach in the database}"
+}
+```
+
+---
+
+## Beach Info With Weather
+
+Get info about a beach by ID. Identical to the `"get_beach_info_by_id"`, but has an additional key that is the result of calling the weather info request with latitude and longitude.
+
+### Request format
+
+```JSON
+{
+    "request_type": "get_beach_info_weather_by_id",
+    "beach_id": "{requested beach id}"
+}
+```
+
+### Response Format
+
+```JSON
+{
+    "code": "get_beach_info_by_id",
+    "beach_name": "{the registered name of the beach}",
+    "beach_county": "{the county the beach is in}",
+    "beach_state": "{the state the beach is in}",
+    "beach_tribe": "{the indigenous tribe associated with the beach *}",
+    "beach_length": "{the length of the beach in miles}",
+    "beach_access": "{'Public' if the beach is open to the public, 'Private' otherwise}",
+    "latitude": "{the latitude of the beach}",
+    "longitude": "{the longitude of the beach}",
+    "joinkey": "{a key for accessing this beach in the database}",
+    "weather": {
+        "startTime": "{start time for the forecast block}",
+        "endTime": "{end time for the forecast block}",
+        "isDaytime": "{'true' if daytime, 'false' otherwise}",
+        "temperature": "{current temperature}",
+        "probPrecip": "{probability of precipitation in % *}",
+        "relHumidity": "{relative humidity in % *}",
+        "windSpeed": "{wind speed **}",
+        "windDirection": "{direction wind is coming from}",
+        "forecastSummary": "{short phrase describing the weather}"
+    }
+}
+```
+
+\*: These are unreliable if you request by latitude and longitude. If they aren't found, you will receive an empty string instead.
+
+\*\*: The way this is formatted is strange. It seems to be formatted for human readability, but only sometimes. Some responses will just have a number, which is presumably in mph, while others will say something like, "2 to 7 mph". Use with care.
+
+---
+
+## Beach Info With Weather (Batch Mode)
+
+Get beach information for multiple beaches at once. This reduces some overhead, but is still bottlenecked by the speed of the NOAA weather endpoint. Similar to the Beach Info With Weather request type, but modified to support multiple. The "beach_ids" key is *NOT* a JSON list because the Python JSON library sometimes handles them strangely. It should be a comma-separated list of beach ids in a string: "NJ291547,NJ291533". The result contains one key for each beach, identified by the given beach id. The contents of each entry is basically equivalent to calling "get_beach_info_weather_by_id" on that beach alone.
+
+### Request format
+
+```JSON
+{
+    "request_type": "get_beach_info_weather_by_id",
+    "beach_ids": "{beach_1},{beach_2},{...}"
+}
+```
+
+### Response Format
+
+```JSON
+{
+    "{beach_1}": {
+        "beach_name": "{the registered name of the beach}",
+        "beach_county": "{the county the beach is in}",
+        "beach_state": "{the state the beach is in}",
+        "beach_tribe": "{the indigenous tribe associated with the beach *}",
+        "beach_length": "{the length of the beach in miles}",
+        "beach_access": "{'Public' if the beach is open to the public, 'Private' otherwise}",
+        "latitude": "{the latitude of the beach}",
+        "longitude": "{the longitude of the beach}",
+        "joinkey": "{a key for accessing this beach in the database}",
+        "weather": {
+            ...see above
+        }
+    },
+    "{beach_2}": {
+        "beach_name": "{the registered name of the beach}",
+        "beach_county": "{the county the beach is in}",
+        "beach_state": "{the state the beach is in}",
+        "beach_tribe": "{the indigenous tribe associated with the beach *}",
+        "beach_length": "{the length of the beach in miles}",
+        "beach_access": "{'Public' if the beach is open to the public, 'Private' otherwise}",
+        "latitude": "{the latitude of the beach}",
+        "longitude": "{the longitude of the beach}",
+        "joinkey": "{a key for accessing this beach in the database}",
+        "weather": {
+            ...see above
+        }
+    },
+    ...etc.
+}
+```
+
 ## Dummy Beach Info
 
-Get info about a beach by ID. This uses a really simple beach database that may be swapped out, which may require switching our ID system, so it is temporary.
+Get info about a beach by ID. [Deprecated]
 
 ### Request format
 
