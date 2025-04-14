@@ -358,3 +358,47 @@ This is exception is thrown if there are issues modifying the database.
 
 </dd>
 </dl>
+
+## `getNotificationCount(username)`
+Get a total number of notifcations for a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user whose notifications to count.
+
+</dd>
+</dl>
+
+### Returns
+Notification Amount.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+</dl>
