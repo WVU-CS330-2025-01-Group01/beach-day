@@ -68,7 +68,7 @@ function Login({ setAuthenticated }) {
         // Set the authenticated state to true
         setAuthenticated(true);
 
-        // Navigate to teh home page
+        // Navigate to the home page
         navigate('/home');
 
         // Fetch and cache favorites

@@ -15,6 +15,7 @@ function Navbar({ authenticated, setAuthenticated, onWeatherData }) {
 
   const handleLogout = () => {
     Cookies.remove('jwt');
+    localStorage.removeItem('cachedFavorites');
     setAuthenticated(false);
   };
 
