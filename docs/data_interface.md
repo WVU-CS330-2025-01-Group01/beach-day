@@ -139,7 +139,7 @@ Get beach information for multiple beaches at once. This reduces some overhead, 
 
 ```JSON
 {
-    "request_type": "get_beach_info_weather_by_id",
+    "request_type": "get_beach_info_weather_by_id_batch",
     "beach_ids": "{beach_1},{beach_2},{...}"
 }
 ```
