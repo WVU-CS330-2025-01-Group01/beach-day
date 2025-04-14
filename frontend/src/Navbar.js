@@ -1,6 +1,5 @@
-// Navbar.js
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import beachIcon from './beachIcon.png';
 import Cookies from 'js-cookie';
@@ -12,6 +11,8 @@ function Navbar({ authenticated, setAuthenticated, onWeatherData }) {
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [error, setError] = useState("");
+
+  const navigate = useNavigate(); // ✅ Add navigator
 
   const handleLogout = () => {
     Cookies.remove('jwt');
@@ -75,6 +76,7 @@ function Navbar({ authenticated, setAuthenticated, onWeatherData }) {
           longitude
         };
         onWeatherData(weatherData);
+        navigate("/home"); // ✅ Navigate to Home after setting weather
       } else {
         setError("No weather data available for this location.");
       }
@@ -89,16 +91,16 @@ function Navbar({ authenticated, setAuthenticated, onWeatherData }) {
         <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
         <h1 className="navbar-title">Beach Day</h1>
       </div>
-        <form onSubmit={handleSearch} className="custom-search-form">
-          <div className="search-box">
-            <select
-              className="search-dropdown"
-              value={searchType}
-              onChange={(e) => setSearchType(e.target.value)}
-            >
-              <option value="zipcode">ZIP Code</option>
-              <option value="latlon">Coordinates</option>
-            </select>
+      <form onSubmit={handleSearch} className="custom-search-form">
+        <div className="search-box">
+          <select
+            className="search-dropdown"
+            value={searchType}
+            onChange={(e) => setSearchType(e.target.value)}
+          >
+            <option value="zipcode">ZIP Code</option>
+            <option value="latlon">Coordinates</option>
+          </select>
 
           {searchType === "zipcode" ? (
             <input
@@ -127,8 +129,8 @@ function Navbar({ authenticated, setAuthenticated, onWeatherData }) {
             </>
           )}
           <img src={searchIcon} alt="Search" className="search-icon" />
-          </div>
-        </form>
+        </div>
+      </form>
 
       {error && <p className="error-message">{error}</p>}
 
