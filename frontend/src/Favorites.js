@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Navigate } from 'react-router-dom'; // Import Navigate for redirection
 import { useContext } from 'react';
 import { UserContext } from './UserContext';
-import { fetchBeachInfoWithWeather, cacheFavorites } from './utils';
+import { fetchBeachInfoWithWeather, cacheFavorites, refreshWeatherData } from './utils';
 import Cookies from 'js-cookie';
 import './Favorites.css';
 import { API } from './api';
@@ -22,6 +22,12 @@ function Favorites() {
   const [newBeachId, setNewBeachId] = useState(''); // Beach ID for adding new favorites
   const [adding, setAdding] = useState(false); // State to manage adding new beach
 
+  // updates favorites used within interval
+  const favoritesRef = useRef(favorites);
+  useEffect(() => {
+    favoritesRef.current = favorites;
+  }, [favorites]);
+
   // Occurs on page mount
   useEffect(() => {
     const cachedFavorites = localStorage.getItem('cachedFavorites');
@@ -37,9 +43,7 @@ function Favorites() {
 
     // Auto-refetch every 10 minutes
     const interval = setInterval(() => {
-      if (jwtToken) {
-        cacheFavorites(jwtToken, setLoadingFavorites, setFavorites);
-      }
+      refreshWeatherData(favoritesRef.current, setFavorites);
     }, tenMinutes);
 
     return () => clearInterval(interval); // Clean up when component unmounts
@@ -172,7 +176,7 @@ function Favorites() {
 
       <div className={`favorites-list ${viewMode}`}>
         {favorites.map((beach, index) => (
-          <div key={index} className="favorite-item">
+          <div key={beach.id} className="favorite-item">
             <h3>{beach.name}</h3>
             <p>{beach.county ? `${beach.county}, ` : ''}{beach.state}</p>
             <p>Temperature: {beach.temperature === 'N/A' ? 'Data not available' : `${beach.temperature}°F`}</p>

@@ -24,7 +24,7 @@ export async function fetchBeachInfoWithWeather(beachId) {
     }
 };
 
-export const cacheFavorites = async (jwtToken, setLoadingFavorites, setFavorites, favorites) => {
+export async function cacheFavorites(jwtToken, setLoadingFavorites, setFavorites, favorites) {
     try {
         setLoadingFavorites(true);
         const response = await fetch(API.FAVORITES, {
@@ -56,3 +56,24 @@ export const cacheFavorites = async (jwtToken, setLoadingFavorites, setFavorites
         setLoadingFavorites(false);
     }
 };
+
+export async function refreshWeatherData(favorites, setFavorites) {
+    if (!favorites.length) return;
+  
+    try {
+      const updatedFavorites = await Promise.all(
+        favorites.map(async (beach) => {
+          const weather = await fetchBeachInfoWithWeather(beach.id); // Your fetchWeatherData function
+          return {
+            ...beach,
+            temperature: weather.temperature,
+            forecast: weather.forecast,
+          };
+        })
+      );
+  
+      setFavorites(updatedFavorites); // Replace with updated weather, but same names/IDs
+    } catch (err) {
+      console.error("Error refreshing weather data:", err);
+    }
+  };
