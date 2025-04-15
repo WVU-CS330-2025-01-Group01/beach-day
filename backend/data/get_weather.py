@@ -49,14 +49,79 @@ try:
         print(json.dumps(result, indent=4))
         exit()
 
-    # Dummy beach info (should roughly mimic the real beach info access)
-    elif request_type == "dummy_get_beach_info_by_id":
-        import beaches_dummy
+    # Beach info
+    elif request_type == "get_beach_info_by_id":
+        import beaches
         import basic_weather
 
         beach_id = input_params["beach_id"]
 
-        beach_info = beaches_dummy.get_dummy_beach_info_by_id(beach_id)
+        beach_info = beaches.get_beach_info_by_id(beach_id)
+
+        result = beach_info
+        result["code"] = "get_beach_info_by_id"
+
+        print(json.dumps(result, indent=4))
+        exit()
+
+    # Beach info with weather included
+    elif request_type == "get_beach_info_weather_by_id":
+        import beaches
+        import basic_weather
+
+        beach_id = input_params["beach_id"]
+       
+        beach_info = beaches.get_beach_info_by_id(beach_id)
+        
+        lat = beach_info["latitude"]
+        lon = beach_info["longitude"]
+        beach_weather = basic_weather.get_basic_weather_latlon(lat, lon)
+
+        result = beach_info
+        result["weather"] = beach_weather
+        result["code"] = "get_beach_info_weather_by_id"
+        
+        print(json.dumps(result, indent=4))
+        exit()
+    
+    
+    # Beach info (batch mode)
+    elif request_type == "get_beach_info_weather_by_id_batch":
+        import beaches
+        import basic_weather
+
+        beaches_input = map(lambda x: x.strip(), input_params["beach_ids"].split(","))
+
+        beaches_info = {}
+
+        for key in beaches_input:
+            beach_info = beaches.get_beach_info_by_id(key)
+
+            lat = beach_info["latitude"]
+            lon = beach_info["longitude"]
+            beach_weather = basic_weather.get_basic_weather_latlon(lat, lon)
+
+            beach_info["weather"] = beach_weather
+
+            beaches_info[key] = beach_info
+        
+        result = beaches_info
+        result["code"] = "get_beach_info_weather_by_id_batch"
+
+        print(json.dumps(result, indent=4))
+        exit()
+    
+    
+
+    # Dummy request types from testing. Will still work, but should be avoided
+    # Dummy beach info (should roughly mimic the real beach info access)
+    elif request_type == "dummy_get_beach_info_by_id":
+        import beaches
+        import basic_weather
+
+        beach_id = input_params["beach_id"]
+
+        beach_info = beaches.get_dummy_beach_info_by_id(beach_id)
 
         result = beach_info
         result["code"] = "dummy_get_beach_info_by_id"
@@ -66,12 +131,12 @@ try:
 
     # Dummy beach info (should roughly mimic the real beach info access) with weather included
     elif request_type == "dummy_get_beach_info_weather_by_id":
-        import beaches_dummy
+        import beaches
         import basic_weather
 
         beach_id = input_params["beach_id"]
        
-        beach_info = beaches_dummy.get_dummy_beach_info_by_id(beach_id)
+        beach_info = beaches.get_dummy_beach_info_by_id(beach_id)
         
         lat = beach_info["latitude"]
         lon = beach_info["longitude"]
