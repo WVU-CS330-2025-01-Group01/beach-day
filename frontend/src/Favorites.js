@@ -35,10 +35,6 @@ function Favorites() {
       setLoadingFavorites(false); // Immediately show cached data
     }
 
-    if (authenticated && jwtToken && shouldRefresh) {
-      cacheFavorites(jwtToken, setLoadingFavorites, setFavorites, favorites);
-    }
-
     // Auto-refetch every 10 minutes
     const interval = setInterval(() => {
       if (jwtToken) {

@@ -39,7 +39,7 @@ function Login() {
 
         setAuthenticated(true);
         navigate('/home');
-
+        setFavorites([]); // Clear the old favorites before adding new ones incrementally
         await cacheFavorites(data.jwt, setLoadingFavorites, setFavorites, favorites);
       } else {
         setMessage(data.message || 'Login failed. Please try again.');

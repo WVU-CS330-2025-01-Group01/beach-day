@@ -26,37 +26,33 @@ export async function fetchBeachInfoWithWeather(beachId) {
 
 export const cacheFavorites = async (jwtToken, setLoadingFavorites, setFavorites, favorites) => {
     try {
-      setLoadingFavorites(true);
-      const response = await fetch(API.FAVORITES, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jwt: jwtToken }),
-      });
-  
-      const data = await response.json();
-      const favoriteIds = Array.isArray(data.favorites) ? data.favorites : [];
-      setFavorites([]); // Clear the old favorites before adding new ones incrementally
+        setLoadingFavorites(true);
+        const response = await fetch(API.FAVORITES, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ jwt: jwtToken }),
+        });
 
-    // Fetch each favorite one at a time and update state incrementally
-    for (const id of favoriteIds) {
-      const info = await fetchBeachInfoWithWeather(id);
-      if (info) {
-        setFavorites(prev => [...prev, { id, ...info }]);
-      }
-    }
+        const data = await response.json();
+        const favoriteIds = Array.isArray(data.favorites) ? data.favorites : [];
 
-    // Cache all once done
-    const finalFavorites = favoriteIds.map(id => ({
-      id,
-      ...favorites.find(f => f.id === id)
-    }));
-  
-      localStorage.setItem('cachedFavorites', JSON.stringify(finalFavorites));
-      localStorage.setItem('lastUpdated', Date.now());
-      setFavorites(finalFavorites);
+        const updatedFavorites = [];
+
+        // Fetch each favorite one at a time and update state incrementally
+        for (const id of favoriteIds) {
+            const info = await fetchBeachInfoWithWeather(id);
+            if (info) {
+                const fullBeach = { id, ...info };
+                updatedFavorites.push(fullBeach);
+                setFavorites((prev) => [...prev, fullBeach]); // update UI progressively
+            }
+        }
+
+        localStorage.setItem('cachedFavorites', JSON.stringify(updatedFavorites));
+        localStorage.setItem('lastUpdated', Date.now());
     } catch (err) {
-      console.error('Error caching favorites:', err);
+        console.error('Error caching favorites:', err);
     } finally {
-      setLoadingFavorites(false);
+        setLoadingFavorites(false);
     }
-  };
+};
