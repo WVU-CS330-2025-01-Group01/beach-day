@@ -5,8 +5,9 @@ import Register from './Register';
 import Home from './Home';
 import Navbar from './Navbar';
 import Favorites from './Favorites';
-import Settings from './Settings';
-import BeachInfo from './BeachInfo';
+import Settings from './Settings'; 
+import BeachInfo from './BeachInfo'; 
+
 
 function App() {
   const [authenticated, setAuthenticated] = useState(
@@ -49,8 +50,12 @@ function App() {
           path="/beach-info"
           element={<BeachInfo />}
         />
+        <Route 
+          path="/beach-info" 
+          element={<BeachInfo />} 
+          />
       </Routes>
-    </Router>
+      </Router>
   );
 }
 
