@@ -23,10 +23,33 @@
     color: white;
     border-radius: 5px;
   }
-  
-   .clear-btn {
+
+  .remove-btn {
     background-color: red;
-   }
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .remove-btn:hover {
+    background-color: darkred;
+  }
+  
+  .clear-btn {
+    background-color: red;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .clear-btn:hover {
+    background-color: darkred; /* Or use #b22222 for a softer red */
+  }
 
   .favorites-list {
     display: flex;

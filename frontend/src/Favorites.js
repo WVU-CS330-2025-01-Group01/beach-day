@@ -158,7 +158,16 @@ function Favorites() {
           <button onClick={() => setViewMode('list')}>List</button>
           <button onClick={() => setViewMode('grid')}>Grid</button>
         </div>
-        <button onClick={clearFavorites} className="clear-btn">Clear Favorites</button>
+        <button
+          onClick={() => {
+            if (window.confirm("Are you sure you want to clear all favorite beaches?")) {
+              clearFavorites();
+            }
+          }}
+          className="clear-btn"
+        >
+          Clear Favorites
+        </button>
       </div>
 
       <div className={`favorites-list ${viewMode}`}>
@@ -168,7 +177,7 @@ function Favorites() {
             <p>{beach.county ? `${beach.county}, ` : ''}{beach.state}</p>
             <p>Temperature: {beach.temperature === 'N/A' ? 'Data not available' : `${beach.temperature}°F`}</p>
             <p>Forecast: {beach.forecast === 'N/A' ? 'Data not available' : beach.forecast}</p>
-            <button onClick={() => removeFavorite(beach.id)} style={{ marginLeft: '10px' }}>Remove</button>
+            <button onClick={() => removeFavorite(beach.id)} className="remove-btn">Remove</button>
           </div>
         ))}
 
