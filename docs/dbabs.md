@@ -453,7 +453,7 @@ ZeroNotifications
 </dt>
 <dd>
 
-This is exception is thrown if there zero notifications at specified paramaters.  If desired, it can be changed to not throw an error.
+This is exception is thrown if there are zero notifications at specified paramaters.  If desired, it can be changed to not throw an error.
 
 </dd>
 <dt>
@@ -570,7 +570,7 @@ ZeroNotifications
 </dt>
 <dd>
 
-This is exception is thrown if there zero notifications at specified paramaters.  If desired, it can be changed to return an empty array.
+This is exception is thrown if there are zero notifications at specified paramaters.  If desired, it can be changed to return an empty array.
 
 </dd>
 <dt>
@@ -583,3 +583,140 @@ ProblemWithDB
 This is exception is thrown if there are issues accessing the database.
 
 </dd>
+
+## `removeAllNotificationsFromUser(username)`
+Removes all notifications for a user, regardless of pending status.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who remove the notifications from.
+
+</dd>
+
+### Returns
+Nothing
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `removeNotificationFromID(notificationID)`
+Removes a notification of given Notification ID, regardless of pending status.
+
+### Arguments
+<dl>
+<dt>
+
+notificationID
+
+</dt>
+<dd>
+
+The id of the notification to remove.
+
+</dd>
+
+### Returns
+Nothing
+
+### Exceptions
+<dl>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `getNotificationFromID(notificationID)`
+Access a notification of a given Notification ID, regardless of pending status.
+
+### Arguments
+<dl>
+<dt>
+
+notificationID
+
+</dt>
+<dd>
+
+The id of the notification to grab.
+
+</dd>
+
+### Returns
+An object containing the notification's details.
+
+### Exceptions
+<dl>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+

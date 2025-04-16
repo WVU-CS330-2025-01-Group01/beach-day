@@ -129,6 +129,24 @@ async function initDB() {
 
     testDatabaseConnection();
 
+    //These are the proper location/index for each field on their respective table. Because we grab objects and use keys, order doesn't matter.  Used for debugging.
+    const ordinalPositions = Object.freeze({
+        USERNAME: 1,
+        PASSWORD: 2,
+        EMAIL: 3,
+        FAVORITE_BEACHES: 4,
+        TIMEZONE: 5,
+        NOTIFICATIONS_EN: 6,
+        ID: 7,
+        REGISTER: 8,
+        NOTIFICATION_ID: 1,
+        CREATION_TIME: 2,
+        TITLE: 3,
+        MESSAGE: 4,
+        WAS_REC: 5,
+        NOTIFICATION_USERNAME: 6
+    });
+
     try {
         const [db] = await connection.query(`SHOW DATABASES LIKE ?;`, [dbName]);
         if (db.length <= 0) {
@@ -231,7 +249,7 @@ async function initDB() {
                 `
             )
         } else { //if it DOES exist, reinitialize the field with whatever needs to change.  If all attributes are correct, it will run a query that modifys/changes the current column's vartype to it's vartype, otherwise nothing changing.
-            await updateFields("username", usernameField, 1, "varchar(50)", false, false, "PRI", "NO_DEFAULT", "users");
+            await updateFields("username", usernameField, ordinalPositions.USERNAME, "varchar(50)", false, false, "PRI", "NO_DEFAULT", "users");
         }
         //IF we have a table column we removed later and old tables might have it, we can check for it existing, and call the dropColumn(columnName)
         //There are currently none of those, so the function is unused.
@@ -248,7 +266,7 @@ async function initDB() {
                 `
             )
         } else {
-            await updateFields("password", passwordField, 2, "varchar(255)", false, false, "NO_COLKEY", "NO_DEFAULT", "users");
+            await updateFields("password", passwordField, ordinalPositions.PASSWORD, "varchar(255)", false, false, "NO_COLKEY", "NO_DEFAULT", "users");
         }
 
         const emailField = await getFieldAttributes("email", dbName, "users");
@@ -261,7 +279,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("email", emailField, 3, "varchar(50)", false, false, "UNI", "NO_DEFAULT", "users");
+            await updateFields("email", emailField, ordinalPositions.EMAIL, "varchar(50)", false, false, "UNI", "NO_DEFAULT", "users");
         }
 
         const favBeachField = await getFieldAttributes("favorite_beach", dbName, "users");
@@ -286,7 +304,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("favorite_beaches", favBeachesField, 4, "varchar(3000)", true, false, "NO_COLKEY", "NULL_BEACH", "users");
+            await updateFields("favorite_beaches", favBeachesField, ordinalPositions.FAVORITE_BEACHES, "varchar(3000)", true, false, "NO_COLKEY", "NULL_BEACH", "users");
         }
 
         const timezoneField = await getFieldAttributes("timezone", dbName, "users");
@@ -299,7 +317,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("timezone", timezoneField, 5, "varchar(3)", true, false, "NO_COLKEY", "GMT", "users");
+            await updateFields("timezone", timezoneField, ordinalPositions.TIMEZONE, "varchar(3)", true, false, "NO_COLKEY", "GMT", "users");
         }
 
         const notificationsField = await getFieldAttributes("notifications_enabled", dbName, "users");
@@ -312,7 +330,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("notifications_enabled", notificationsField, 6, "tinyint(1)", false, false, "NO_COLKEY", "0", "users");
+            await updateFields("notifications_enabled", notificationsField, ordinalPositions.NOTIFICATIONS_EN, "tinyint(1)", false, false, "NO_COLKEY", "0", "users");
         }
 
         const idField = await getFieldAttributes("id", dbName, "users");
@@ -325,7 +343,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("id", idField, 7, "int", false, true, "NO_COLKEY", "NO_DEFAULT", "users");
+            await updateFields("id", idField, ordinalPositions.ID, "int", false, true, "NO_COLKEY", "NO_DEFAULT", "users");
         }
 
         const registerField = await getFieldAttributes("register_date", dbName, "users");
@@ -338,7 +356,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("register_date", registerField, 8, "date", true, false, "NO_COLKEY", "(CURRENT_DATE())", "users");
+            await updateFields("register_date", registerField, ordinalPositions.REGISTER, "date", true, false, "NO_COLKEY", "(CURRENT_DATE())", "users");
         }
         //All user table fields have been checked, now checking notification table fields
         const creationField = await getFieldAttributes("creation_time", dbName, "notifications");
@@ -351,7 +369,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("creation_time", creationField, 2, "DATETIME", true, false, "NO_COLKEY", "(NOW())", "notifications");
+            await updateFields("creation_time", creationField, ordinalPositions.CREATION_TIME, "DATETIME", true, false, "NO_COLKEY", "(NOW())", "notifications");
         }
 
         const notificationTitleField = await getFieldAttributes("notification_title", dbName, "notifications");
@@ -364,7 +382,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("notification_title", notificationTitleField, 3, "VARCHAR(300)", true, false, "NO_COLKEY", "NO_DEFAULT", "notifications");
+            await updateFields("notification_title", notificationTitleField, ordinalPositions.TITLE, "VARCHAR(300)", true, false, "NO_COLKEY", "NO_DEFAULT", "notifications");
         }
 
         const messageField = await getFieldAttributes("message", dbName, "notifications");
@@ -377,7 +395,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("message", messageField, 4, "MEDIUMTEXT", true, false, "NO_COLKEY", "NO_DEFAULT", "notifications");
+            await updateFields("message", messageField, ordinalPositions.MESSAGE, "MEDIUMTEXT", true, false, "NO_COLKEY", "NO_DEFAULT", "notifications");
         }
 
         const wasReceivedField = await getFieldAttributes("wasReceived", dbName, "notifications");
@@ -390,7 +408,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("wasReceived", wasReceivedField, 5, "TINYINT(1)", false, false, "NO_COLKEY", "0", "notifications");
+            await updateFields("wasReceived", wasReceivedField, ordinalPositions.WAS_REC, "TINYINT(1)", false, false, "NO_COLKEY", "0", "notifications");
         }
 
         const notificationsUsernameField = await getFieldAttributes("username", dbName, "notifications");
@@ -404,7 +422,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("username", notificationsUsernameField, 6, "VARCHAR(50)", false, false, "MUL", "NO_DEFAULT", "notifications");
+            await updateFields("username", notificationsUsernameField, ordinalPositions.NOTIFICATION_USERNAME, "VARCHAR(50)", false, false, "MUL", "NO_DEFAULT", "notifications");
         }
 
     } catch (e) {

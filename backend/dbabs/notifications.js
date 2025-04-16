@@ -125,5 +125,79 @@ module.exports = {
                 throw new dbErrors.ProblemWithDB()
             }
         }
+    },
+
+    removeAllNotificationsFromUser: async function(username) {
+        try {
+    
+            if(!(await dbHelper.userExists(username))) {
+                throw new dbErrors.UserNotFound();
+            }
+    
+            await getUserNotifications(username);
+    
+            await connection.query(
+                `
+                    DELETE FROM notifications
+                    WHERE username = ?
+                `
+                , [username]
+            );
+        } catch (e) {
+            if(e instanceof dbErrors.ZeroNotifications) {
+                throw new dbErrors.ZeroNotifications();
+            } else if (e instanceof dbErrors.UserNotFound) {
+                throw new dbErrors.UserNotFound();
+            } else {
+                throw new dbErrors.ProblemWithDB()
+            }
+        }
+    },
+
+    removeNotificationFromID: async function(notificationID) {
+        try {
+    
+            await getNotificationFromID(notificationID);
+    
+            await connection.query(
+                `
+                    DELETE FROM notifications
+                    WHERE notification_id = ?
+                `
+                , [notificationID]
+            );
+        } catch (e) {
+            if(e instanceof dbErrors.ZeroNotifications) {
+                throw new dbErrors.ZeroNotifications();
+            } else {
+                throw new dbErrors.ProblemWithDB()
+            }
+        }
+    },
+
+    getNotificationFromID: async function(notificationID) {
+        try {
+    
+            const [notification] = await connection.query(
+                `
+                    SELECT * FROM notifications
+                    WHERE notification_id = ?
+                `
+                , [notificationID]
+            )
+    
+            if(notification.length <= 0) {
+                throw new dbErrors.ZeroNotifications();
+            }
+    
+            return notification[0];
+    
+        } catch (e) {
+            if(e instanceof dbErrors.ZeroNotifications) {
+                throw new dbErrors.ZeroNotifications();
+            } else {
+                throw new dbErrors.ProblemWithDB()
+            }
+        }
     }
 };
