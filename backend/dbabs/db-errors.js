@@ -4,6 +4,7 @@ class UserNotFound extends Error {}
 class IncorrectPassword extends Error {}
 class BeachAlreadyFavorited extends Error {}
 class BeachNotPresent extends Error {}
+class ZeroNotifications extends Error {}
 
 
 module.exports = {
@@ -13,5 +14,6 @@ module.exports = {
 	UserNotFound: UserNotFound,
 	IncorrectPassword: IncorrectPassword,
 	BeachAlreadyFavorited: BeachAlreadyFavorited,
-	BeachNotPresent: BeachNotPresent
+	BeachNotPresent: BeachNotPresent,
+    ZeroNotifications: ZeroNotifications
 };

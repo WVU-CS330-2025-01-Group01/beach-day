@@ -402,3 +402,184 @@ This is exception is thrown if there are issues accessing the database.
 
 </dd>
 </dl>
+
+## `receivedNotification(username, notification_id)`
+Marks a notifcation as received and will no longer be accessed when grabbing all notifications of a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user whose notifications to access.  Could be considered redundant, but is incorporated so that the one to call the function needs to know the user too, making it a bit more secure.
+
+</dd>
+
+<dt>
+
+notification_id
+
+</dt>
+<dd>
+
+The exact id of the notification to mark as received.
+
+</dd>
+</dl>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there zero notifications at specified paramaters.  If desired, it can be changed to not throw an error.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+</dl>
+
+## `addNotification(username, title, message)`
+Adds a pending notification for a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who to add the given notification to.
+
+</dd>
+
+<dt>
+
+title
+
+</dt>
+<dd>
+
+The header of the new notification.
+
+</dd>
+<dt>
+
+message
+
+</dt>
+<dd>
+
+The main content of the notification.
+
+</dd>
+</dl>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `getUserNotifications(username)`
+Retrives all pending notifications for a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who retrive the notifications from.
+
+</dd>
+
+### Returns
+An array of objects in which each object is its own notification.  It contains the time the notifcation was created, its given title, message.  It also contains the notification id, corresponding email, whether they have notifications enabled, and username if needed.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there zero notifications at specified paramaters.  If desired, it can be changed to return an empty array.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
