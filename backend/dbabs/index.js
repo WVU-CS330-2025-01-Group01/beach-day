@@ -25,7 +25,7 @@ const connection = mysql.createPool({
 function initDB() {
 	console.log("DB Initialized (placeholder)");
 	// Optionally, create tables or run setup queries here
-}
+} //iycf
 
 async function testDatabaseConnection() {
 	let connect;
