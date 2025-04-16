@@ -22,6 +22,11 @@ const connection = mysql.createPool({
 	queueLimit: 0
 }).promise();
 
+function initDB() {
+	console.log("DB Initialized (placeholder)");
+	// Optionally, create tables or run setup queries here
+}
+
 async function testDatabaseConnection() {
 	let connect;
 	try {
@@ -147,6 +152,35 @@ async function getFavorites(username) {
 		}
 	}
 }
+async function setEmail (username, email) {
+	try {
+		const user = getUserData(username);
+		await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
+	} catch (e) {
+		if (e instanceof UserNotFound) {
+			throw new UserNotFound();
+		} else {
+			throw new ProblemWithDB();
+		}
+	}
+}
+
+async function setEmailTester(){
+
+	const [rowsBefore] = await connection.query('SELECT * FROM users WHERE username = ?', ["testuser"]);
+	//the 4 is just whichever user I was testing, your index won't match mine
+	
+	console.log(rowsBefore[0].email);
+	
+	await setEmail("testuser", "goofy2email@example.com");
+	
+	const [rowsAfter] = await connection.query(
+	`SELECT * FROM users WHERE username = ?`, ['testuser']
+	);
+	
+	console.log(rowsAfter[0].email);
+	}
+	setEmailTester();
 
 module.exports = {
 	/**
@@ -156,6 +190,8 @@ module.exports = {
 	 * the user is successfully added to the database, no exceptions are to
 	 * be thrown. Nothing is ever returned by this function.
 	 */
+	initDB, 
+
 	attemptToMakeUser: async function (username, password) {
 
 		try {
@@ -278,29 +314,44 @@ module.exports = {
 		}
 	},
 
-	initDB: tempInitDB,
-	getFavorites: tempGetFavorites,
-	addFavorite: tempAddFavorite,
-	removeFavorite: tempRemoveFavorite,
-	clearFavorites: tempClearFavorites,
-	UserAlreadyExists: UserAlreadyExists,
-	ProblemWithDB: ProblemWithDB,
-	UserNotFound: UserNotFound,
-	IncorrectPassword: IncorrectPassword,
-	BeachNotPresent: BeachNotPresent,
+	setEmail: async function (username, email) {
+		try {
+			const user = getUserData(username);
+			if (!validateInputAlphaNumeric(email)) {
+				throw new Error("Wrong email!");
+			}
+			await connection.query(`UPDATE users SET email = ? WHERE username = ?;`, [email, username]);
+		} catch (e) {
+			if (e instanceof UserNotFound) {
+				throw new UserNotFound();
+			} else {
+				throw new ProblemWithDB();
+			}
+		}
+	},
+		initDB,
+		getFavorites: tempGetFavorites,
+		addFavorite: tempAddFavorite,
+		removeFavorite: tempRemoveFavorite,
+		clearFavorites: tempClearFavorites,
+		UserAlreadyExists: UserAlreadyExists,
+		ProblemWithDB: ProblemWithDB,
+		UserNotFound: UserNotFound,
+		IncorrectPassword: IncorrectPassword,
+		BeachNotPresent: BeachNotPresent,
 };
 
-let favorites = new Set(["AK103349",
-	"AK103839",
-	"NC810571",
-	"WA171257",
-	"NJ828093",
-	"FL257350",
-	"MA242910",
-	"WA397523",
-	"WA815475",
-	"HI659533"]);
-function tempGetFavorites(username) {
+	let favorites = new Set(["AK103349",
+		"AK103839",
+		"NC810571",
+		"WA171257",
+		"NJ828093",
+		"FL257350",
+		"MA242910",
+		"WA397523",
+		"WA815475",
+		"HI659533"]);
+	function tempGetFavorites(username) {
 	return favorites;
 }
 function tempAddFavorite(username, favorite) {
