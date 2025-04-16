@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { UserContext } from './UserContext';
 import './Navbar.css';
 import beachIcon from './beachIcon.png';
 import Cookies from 'js-cookie';
 import searchIcon from './search.png';
 
-function Navbar({ authenticated, setAuthenticated, onWeatherData }) {
+function Navbar({ onWeatherData }) {
+  const {
+    authenticated,
+    setAuthenticated
+  } = useContext(UserContext);
+
   const [searchType, setSearchType] = useState("zipcode");
   const [zipCode, setZipCode] = useState("");
   const [latitude, setLatitude] = useState("");
@@ -16,6 +23,8 @@ function Navbar({ authenticated, setAuthenticated, onWeatherData }) {
 
   const handleLogout = () => {
     Cookies.remove('jwt');
+    localStorage.removeItem('cachedFavorites');
+    localStorage.removeItem('lastUpdated');
     setAuthenticated(false);
   };
 
