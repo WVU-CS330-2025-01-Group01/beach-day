@@ -44,31 +44,31 @@ async function dropColumn(columnName) {
 	//no error is caught either as that should be handled in initDB
 }
 
-async function getFieldAttributes(field, databaseName) {
+async function getFieldAttributes(field, databaseName, tableName) {
 	//no SQL Injection protection, only ran by initDB
 	//no error is caught either as that should be handled in initDB
 	const [attributes] = await connection.query(
 		`
 		SELECT * FROM information_schema.columns
-		WHERE COLUMN_NAME = ? AND TABLE_SCHEMA = ? AND TABLE_NAME = "users";
+		WHERE COLUMN_NAME = ? AND TABLE_SCHEMA = ? AND TABLE_NAME = ?;
 		`
-	, [field, databaseName]
+	, [field, databaseName, tableName]
     );
 	
 	return attributes[0];
 }
 
-async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAllowed, isAutoInc, colKey, def) {
+async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAllowed, isAutoInc, colKey, def, tableName) {
 	//no SQL Injection protection, only ran by initDB
 	//no error is caught either as that should be handled in initDB
 	if(attributes.ORDINAL_POSITION != ordinalPos) { 
-        console.error(fieldName + ordinalPos + ":" + attributes.ORDINAL_POSITION + "Table ordered wrong, no conflicts should arise however."); 
+        console.error(" " + fieldName +" position "+  ordinalPos + ", should be " + attributes.ORDINAL_POSITION + " Table ordered wrong, no conflicts should arise however."); 
     }
 
 	//This is a string that will be ran as a query. With the syntax of SQL, you can essentially build a command on top of old ones.
 	//It can be quite strict, but this runs conditions whether the field needs new/updated attributes and finally runs that command.
 	//Every condition just adds an extra relevant attribute to the query if ran
-	let neededQuery = 'ALTER TABLE users MODIFY COLUMN ' + fieldName + ' ' + varType;
+	let neededQuery = 'ALTER TABLE ' + tableName + ' MODIFY COLUMN ' + fieldName + ' ' + varType;
 
 	if(isNullAllowed && attributes.IS_NULLABLE === "NO") {
 		neededQuery += ' NULL'
@@ -81,7 +81,7 @@ async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAl
 		neededQuery += ' AUTO_INCREMENT';
 	} else if(def !== "NO_DEFAULT") {
 		let tempDefault = def;
-		if(isNaN(parseInt(def)) && !(def.substring(0,1) === "(" && def.substring(def.length-1) === ")")) {
+		if(isNaN(parseInt(def)) && !(def.substring(0,1) === "(" && def.substring(def.length-1) === ")")) { //so, defaults can be a string, number, or function.  They CANNOT be queried with quotations, which is what parameterization does. Strings need quotes, number/function doesn't.  This checks for that. 
             tempDefault = '"' + def + '"'; 
         }
 		neededQuery += ' DEFAULT ' + tempDefault;
@@ -112,7 +112,13 @@ async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAl
 
 	if(colKey === "UNI" && attributes.COLUMN_KEY !== "UNI") {
 		await connection.query(
-			"ALTER TABLE users ADD UNIQUE (" + fieldName + ");"
+			"ALTER TABLE " + tableName + " ADD UNIQUE (" + fieldName + ");"
+		);
+	}
+
+    if(colKey === "MUL" && attributes.COLUMN_KEY !== "MUL") {
+		await connection.query(
+			"ALTER TABLE " + tableName + " ADD FOREIGN KEY (" + fieldName + ") REFERENCES " + fieldName + "(" + fieldName + ");"
 		);
 	}
 }
@@ -125,7 +131,7 @@ async function initDB() {
 
     try {
         const [db] = await connection.query(`SHOW DATABASES LIKE ?;`, [dbName]);
-        if (db == undefined) {
+        if (db.length <= 0) {
             console.error("Database Doesn't Exist");
             await connection.query(`CREATE DATABASE IF NOT EXISTS ${dbName};`); //THIS DOES NOT PROTECT AGAINST MYSQL INJECTION. Most of this doesn't.  Only a Developer should run initDB.
             await connection.query(
@@ -145,7 +151,10 @@ async function initDB() {
             return;
 
         } else {
-            //Current Checks, DataBase Exists: Yes.  Next Check, Table Exists:Pending
+            //Current Checks, DataBase Exists: Yes.  Next Check, Table(s) Exists:Pending
+
+            let bothEmptyFlag = false;
+
             const [table] = await connection.query(
                 `
                 SELECT table_name
@@ -156,29 +165,64 @@ async function initDB() {
                 , [dbName]
             );
 
-            if (table == undefined) {
-                console.error("users table does not exist");
+            const [notificationTable] = await connection.query(
+                `
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_schema = ?
+                AND table_name = 'notifications';
+                `
+                , [dbName]
+            );
+
+            bothEmpty = (table.length <= 0 && notificationTable.length <= 0);
+
+            if (table.length <= 0) {
+                console.error("users table does not exist.  creating...");
                 await connection.query(
-                    `
-                CREATE TABLE users (
-                username VARCHAR(50) PRIMARY KEY,
-                password VARCHAR(255) NOT NULL,
-                email VARCHAR(50) UNIQUE,
-                favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH",
-                timezone VARCHAR(3) DEFAULT "GMT",
-                notifications_enabled TINYINT(1) NOT NULL DEFAULT 0,
-                id INT NOT NULL UNIQUE AUTO_INCREMENT,
-                register_date DATE DEFAULT (CURRENT_DATE())
-                );
+                `
+                    CREATE TABLE users (
+                    username VARCHAR(50) PRIMARY KEY,
+                    password VARCHAR(255) NOT NULL,
+                    email VARCHAR(50) UNIQUE,
+                    favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH",
+                    timezone VARCHAR(3) DEFAULT "GMT",
+                    notifications_enabled TINYINT(1) NOT NULL DEFAULT 0,
+                    id INT NOT NULL UNIQUE AUTO_INCREMENT,
+                    register_date DATE DEFAULT (CURRENT_DATE())
+                    );
                 `
                 );
-                return;
+                
+                console.error("created.")
+            }
+
+            if (notificationTable.length <= 0) {
+                console.error("notifications table does not exist.  creating...");
+                await connection.query(
+                `
+                    CREATE TABLE notifications (
+                    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+                    creation_time DATETIME DEFAULT (NOW()),
+                    notification_title VARCHAR(300),
+                    message MEDIUMTEXT,
+                    wasReceived TINYINT(1) NOT NULL DEFAULT 0,
+                    username VARCHAR(50),
+                    FOREIGN KEY (username) REFERENCES users(username) 
+                    );
+                `
+                );
+                console.error("created.")
+            }
+
+            if(bothEmptyFlag) {
+                return; //this is to save processing time, as if it's created via these queries, we don't need to check with the multitude of field queries
             }
         }
-        //Current Checks, DataBase Exists: YES. Table Exists:YES.  Next Check: Every Field
+        //Current Checks, DataBase Exists: YES. Tables Exists:YES.  Next Check: Every Field
 
 
-        const usernameField = await getFieldAttributes("username", dbName); //all existing fields follow this pattern.  Grab the metadata
+        const usernameField = await getFieldAttributes("username", dbName, "users"); //all existing fields follow this pattern.  Grab the metadata
         if (usernameField == undefined) { //Check if column exists
             await connection.query( //if not, create it with all proper attributes
                 `
@@ -187,14 +231,14 @@ async function initDB() {
                 `
             )
         } else { //if it DOES exist, reinitialize the field with whatever needs to change.  If all attributes are correct, it will run a query that modifys/changes the current column's vartype to it's vartype, otherwise nothing changing.
-            await updateFields("username", usernameField, 1, "varchar(50)", false, false, "PRI", "NO_DEFAULT");
+            await updateFields("username", usernameField, 1, "varchar(50)", false, false, "PRI", "NO_DEFAULT", "users");
         }
         //IF we have a table column we removed later and old tables might have it, we can check for it existing, and call the dropColumn(columnName)
         //There are currently none of those, so the function is unused.
 
 
         //the rest of the function follows the pattern above
-        const passwordField = await getFieldAttributes("password", dbName);
+        const passwordField = await getFieldAttributes("password", dbName, "users");
 
         if (passwordField == undefined) {
             await connection.query(
@@ -204,10 +248,10 @@ async function initDB() {
                 `
             )
         } else {
-            await updateFields("password", passwordField, 2, "varchar(255)", false, false, "NO_COLKEY", "NO_DEFAULT");
+            await updateFields("password", passwordField, 2, "varchar(255)", false, false, "NO_COLKEY", "NO_DEFAULT", "users");
         }
 
-        const emailField = await getFieldAttributes("email", dbName);
+        const emailField = await getFieldAttributes("email", dbName, "users");
 
         if (emailField == undefined) {
             await connection.query(
@@ -217,10 +261,10 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("email", emailField, 3, "varchar(50)", false, false, "UNI", "NO_DEFAULT");
+            await updateFields("email", emailField, 3, "varchar(50)", false, false, "UNI", "NO_DEFAULT", "users");
         }
 
-        const favBeachField = await getFieldAttributes("favorite_beach", dbName);
+        const favBeachField = await getFieldAttributes("favorite_beach", dbName, "users");
 
         if (favBeachField !== undefined) {
             await connection.query(
@@ -232,7 +276,7 @@ async function initDB() {
         }
 
 
-        const favBeachesField = await getFieldAttributes("favorite_beaches", dbName);
+        const favBeachesField = await getFieldAttributes("favorite_beaches", dbName, "users");
 
         if (favBeachesField == undefined) {
             await connection.query(
@@ -242,10 +286,10 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("favorite_beaches", favBeachesField, 4, "varchar(3000)", true, false, "NO_COLKEY", "NULL_BEACH");
+            await updateFields("favorite_beaches", favBeachesField, 4, "varchar(3000)", true, false, "NO_COLKEY", "NULL_BEACH", "users");
         }
 
-        const timezoneField = await getFieldAttributes("timezone", dbName);
+        const timezoneField = await getFieldAttributes("timezone", dbName, "users");
 
         if (timezoneField == undefined) {
             await connection.query(
@@ -255,10 +299,10 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("timezone", timezoneField, 5, "varchar(3)", true, false, "NO_COLKEY", "GMT");
+            await updateFields("timezone", timezoneField, 5, "varchar(3)", true, false, "NO_COLKEY", "GMT", "users");
         }
 
-        const notificationsField = await getFieldAttributes("notifications_enabled", dbName);
+        const notificationsField = await getFieldAttributes("notifications_enabled", dbName, "users");
 
         if (notificationsField == undefined) {
             await connection.query(
@@ -268,10 +312,10 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("notifications_enabled", notificationsField, 6, "tinyint(1)", false, false, "NO_COLKEY", "0");
+            await updateFields("notifications_enabled", notificationsField, 6, "tinyint(1)", false, false, "NO_COLKEY", "0", "users");
         }
 
-        const idField = await getFieldAttributes("id", dbName);
+        const idField = await getFieldAttributes("id", dbName, "users");
 
         if (idField == undefined) {
             await connection.query(
@@ -281,10 +325,10 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("id", idField, 7, "int", false, true, "NO_COLKEY", "NO_DEFAULT");
+            await updateFields("id", idField, 7, "int", false, true, "NO_COLKEY", "NO_DEFAULT", "users");
         }
 
-        const registerField = await getFieldAttributes("register_date", dbName);
+        const registerField = await getFieldAttributes("register_date", dbName, "users");
 
         if (registerField == undefined) {
             await connection.query(
@@ -294,8 +338,75 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("register_date", registerField, 8, "date", true, false, "NO_COLKEY", "(CURRENT_DATE())");
+            await updateFields("register_date", registerField, 8, "date", true, false, "NO_COLKEY", "(CURRENT_DATE())", "users");
         }
+        //All user table fields have been checked, now checking notification table fields
+        const creationField = await getFieldAttributes("creation_time", dbName, "notifications");
+
+        if (creationField == undefined) {
+            await connection.query(
+                `
+                ALTER TABLE notifications
+                ADD creationn_time DATETIME DEFAULT (NOW());
+                `
+            );
+        } else {
+            await updateFields("creation_time", creationField, 2, "DATETIME", true, false, "NO_COLKEY", "(NOW())", "notifications");
+        }
+
+        const notificationTitleField = await getFieldAttributes("notification_title", dbName, "notifications");
+
+        if (notificationTitleField == undefined) {
+            await connection.query(
+                `
+                ALTER TABLE notifications
+                ADD notification_title VARCHAR(300);
+                `
+            );
+        } else {
+            await updateFields("notification_title", notificationTitleField, 3, "VARCHAR(300)", true, false, "NO_COLKEY", "NO_DEFAULT", "notifications");
+        }
+
+        const messageField = await getFieldAttributes("message", dbName, "notifications");
+
+        if (messageField == undefined) {
+            await connection.query(
+                `
+                ALTER TABLE notifications
+                ADD message MEDIUMTEXT;
+                `
+            );
+        } else {
+            await updateFields("message", messageField, 4, "MEDIUMTEXT", true, false, "NO_COLKEY", "NO_DEFAULT", "notifications");
+        }
+
+        const wasReceivedField = await getFieldAttributes("wasReceived", dbName, "notifications");
+
+        if (wasReceivedField == undefined) {
+            await connection.query(
+                `
+                ALTER TABLE notifications
+                ADD wasReceived TINYINT(1) NOT NULL DEFAULT 0;
+                `
+            );
+        } else {
+            await updateFields("wasReceived", wasReceivedField, 5, "TINYINT(1)", false, false, "NO_COLKEY", "0", "notifications");
+        }
+
+        const notificationsUsernameField = await getFieldAttributes("username", dbName, "notifications");
+
+        if (notificationsUsernameField == undefined) {
+            await connection.query(
+                `
+                ALTER TABLE notifications
+                ADD username VARCHAR(50);
+                ADD FOREIGN KEY (username) REFERENCES users(username);
+                `
+            );
+        } else {
+            await updateFields("username", notificationsUsernameField, 6, "VARCHAR(50)", false, false, "MUL", "NO_DEFAULT", "notifications");
+        }
+
     } catch (e) {
         console.log(e);
         if (e instanceof dbErrors.UserNotFound) {
