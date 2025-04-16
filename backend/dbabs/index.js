@@ -164,7 +164,6 @@ async function setEmail (username, email) {
 		}
 	}
 }
-
 async function setEmailTester(){
 
 	const [rowsBefore] = await connection.query('SELECT * FROM users WHERE username = ?', ["testuser"]);

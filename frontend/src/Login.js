@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
+import { useContext } from 'react';
+import { UserContext } from './UserContext';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import Cookies from 'js-cookie';  // Import js-cookie
+import { fetchBeachInfoWithWeather, cacheFavorites } from './utils';
+import { API } from './api';
 
-const loginURL =
-	'http://' +
-	process.env.REACT_APP_BACKEND_HOST +
-	':' +
-	process.env.REACT_APP_BACKEND_PORT +
-	'/login';
+function Login() {
+  const {
+    setAuthenticated,
+    setLoadingFavorites,
+    favorites,
+    setFavorites,
+    setJwtToken
+  } = useContext(UserContext);
 
-function Login({ setAuthenticated }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -20,7 +25,7 @@ function Login({ setAuthenticated }) {
     e.preventDefault();
 
     try {
-      const response = await fetch(loginURL, {
+      const response = await fetch(API.LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -29,15 +34,13 @@ function Login({ setAuthenticated }) {
       const data = await response.json();
 
       if (response.ok && data.jwt) {
-        // Store JWT token in a cookie with a 1-day expiration
-        Cookies.set('jwt', data.jwt, { expires: 1, secure: false, sameSite: 'Strict', path: '/' });
+        setJwtToken(data.jwt);  // still async, so pass data.jwt directly to the next call
+        Cookies.set('jwt', data.jwt, { expires: 1, secure: false, sameSite: 'Strict', path: '/' }); // Store JWT token in a cookie with a 1-day expiration
 
-        // Set the authenticated state to true
         setAuthenticated(true);
-
-        // Navigate to the Beach Info page (or any other page you'd like)
-        navigate('/beach-info');
-        //console.log("Issued JWT:", data.jwt);
+        navigate('/home');
+        setFavorites([]); // Clear the old favorites before adding new ones incrementally
+        await cacheFavorites(data.jwt, setLoadingFavorites, setFavorites, favorites);
       } else {
         setMessage(data.message || 'Login failed. Please try again.');
       }

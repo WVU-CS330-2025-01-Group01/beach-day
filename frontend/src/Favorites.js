@@ -1,212 +1,219 @@
-import React, { useState, useEffect } from 'react';
-import Cookies from 'js-cookie'; // Import js-cookie to manage cookies
-import { Navigate } from 'react-router-dom';
-import './Favorites.css'; // Import the CSS file for styling
-
-const favoritesURL =
-    'http://' +
-    process.env.REACT_APP_BACKEND_HOST +
-    ':' +
-    process.env.REACT_APP_BACKEND_PORT +
-    '/favorites';
-
-const updateFavoritesURL =
-    'http://' +
-    process.env.REACT_APP_BACKEND_HOST +
-    ':' +
-    process.env.REACT_APP_BACKEND_PORT +
-    '/update_favorites';
-
-const beachInfoURL =
-    'http://' +
-    process.env.REACT_APP_BACKEND_HOST +
-    ':' +
-    process.env.REACT_APP_BACKEND_PORT +
-    '/weather';
+import React, { useState, useEffect, useRef } from 'react';
+import { Navigate } from 'react-router-dom'; // Import Navigate for redirection
+import { useContext } from 'react';
+import { UserContext } from './UserContext';
+import { fetchBeachInfoWithWeather, cacheFavorites, refreshWeatherData } from './utils';
+import Cookies from 'js-cookie';
+import './Favorites.css';
+import { API } from './api';
 
 function Favorites() {
-    const [favorites, setFavorites] = useState([]); // Store favorite beaches
-    const [viewMode, setViewMode] = useState('grid'); // Toggle between list and grid view
-    const [loading, setLoading] = useState(true); // Loading state
-    const [error, setError] = useState(null); // Error state
+  const {
+    authenticated,
+    loadingFavorites,
+    setLoadingFavorites,
+    jwtToken,
+    favorites,
+    setFavorites
+  } = useContext(UserContext);
 
-    useEffect(() => {
-        // Retrieve the JWT from cookies
-        const token = Cookies.get('jwt'); // Get JWT from cookies
+  const [viewMode, setViewMode] = useState('grid'); // Display mode (grid/list)
+  const [error, setError] = useState(null); // Error state
+  const [newBeachId, setNewBeachId] = useState(''); // Beach ID for adding new favorites
+  const [adding, setAdding] = useState(false); // State to manage adding new beach
 
-        if (token) {
-            fetch(favoritesURL, {
-                method: 'POST',  // Change the method to POST
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ jwt: token })  // Send the JWT in the body
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Fetched data:', data);
-                    const favoritesData = Array.isArray(data.favorites) ? data.favorites : [];
+  // updates favorites used within interval
+  const favoritesRef = useRef(favorites);
+  useEffect(() => {
+    favoritesRef.current = favorites;
+  }, [favorites]);
 
-                    // Fetch beach info for each favorite beach ID
-                    Promise.all(favoritesData.map(async (id) => {
-                        const beachInfo = await fetchBeachInfoWithWeather(id); // Fetch beach info with weather
-                        return { id, ...beachInfo }; // Return the beach ID along with the additional info
-                    }))
-                        .then(updatedFavorites => {
-                            setFavorites(updatedFavorites); // Update the state with updated beach info
-                            setLoading(false); // Stop loading
-                        });
-                })
-                .catch(error => {
-                    console.error('Error fetching favorites:', error);
-                    setError('Failed to load favorite beaches. Please try again later.');
-                    setLoading(false); // Stop loading
-                });
-        } else {
-            setError('You need to be logged in to view your favorites.');
-            setLoading(false); // Stop loading
-        }
-    }, []);
+  // Occurs on page mount
+  useEffect(() => {
+    const cachedFavorites = localStorage.getItem('cachedFavorites');
+    const lastUpdated = localStorage.getItem('lastUpdated');
+    const tenMinutes = 10 * 60 * 1000; // 10 minutes in milliseconds
+    const shouldRefresh = !lastUpdated || (Date.now() - lastUpdated > tenMinutes);
 
-    const clearFavorites = async () => {
-        const token = Cookies.get('jwt');
-
-        if (!token) {
-            setError('You need to be logged in to modify favorites.');
-            return;
-        }
-
-        try {
-            const response = await fetch(updateFavoritesURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ jwt: token, type: 'clear' }),
-            });
-
-            const data = await response.json();
-
-            if (data.message === 'Success.') {
-                setFavorites([]); // Clear the UI after successful request
-            } else {
-                setError(data.message);
-            }
-        } catch (error) {
-            console.error('Error clearing favorites:', error);
-            setError('Failed to clear favorites. Please try again later.');
-        }
-    };
-
-    const removeFavorite = async (beachId) => {
-        const token = Cookies.get('jwt');
-    
-        if (!token) {
-            setError('You need to be logged in to modify favorites.');
-            return;
-        }
-    
-        try {
-            // Optimistically update the UI
-            setFavorites(favorites.filter(fav => fav.id !== beachId));
-    
-            const response = await fetch(updateFavoritesURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ jwt: token, type: 'remove', favorite: beachId })
-            });
-    
-            if (response.ok) {
-                console.log('Favorite removed successfully');
-            } else {
-                console.error('Failed to remove favorite');
-                // Revert the UI update if the removal fails
-                const updatedFavorites = await response.json();
-                setFavorites(updatedFavorites);
-            }
-        } catch (error) {
-            console.error('Error removing favorite:', error);
-            // In case of an error, revert to the previous state
-            setFavorites(favorites);
-        }
-    };
-
-    const fetchBeachInfoWithWeather = async (beachId) => {
-        try {
-            const response = await fetch(beachInfoURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ request_type: 'dummy_get_beach_info_weather_by_id', beach_id: beachId })
-            });
-
-            const result = await response.json();  // Capture the response JSON
-
-            // Check if the response has the expected structure
-            if (result.code === "dummy_get_beach_info_weather_by_id") {
-                // Destructure the necessary properties
-                const { beach_name, beach_county, beach_state, weather } = result;
-
-                // If weather data exists, return the necessary values; otherwise, fallback to 'N/A'
-                return {
-                    name: beach_name || 'Unknown Beach',
-                    county: beach_county || 'Unknown County',
-                    state: beach_state || 'Unknown State',
-                    temperature: weather?.temperature || 'N/A',
-                    forecast: weather?.forecastSummary || 'No forecast available',
-                };
-            } else {
-                throw new Error('Failed to fetch beach info with weather');
-            }
-        } catch (error) {
-            console.error('Error fetching beach info and weather:', error);
-            // Fallback values for missing data
-            return {
-                name: 'Unknown',
-                county: 'Unknown',
-                state: 'Unknown',
-                temperature: 'N/A',
-                forecast: 'N/A',
-            };
-        }
-    };
-
-    // If no JWT token, redirect to login page
-    if (!Cookies.get('jwt')) {
-        return <Navigate to="/login" replace />;
+    // If cached data exists, use it immediately without waiting for a refresh
+    if (cachedFavorites) {
+      setFavorites(JSON.parse(cachedFavorites));
+      setLoadingFavorites(false); // Immediately show cached data
     }
 
-    return (
-        <div className="favorites-container">
-            <div className="favorites-header">
-                <h2>Your Favorite Beaches</h2>
-                <div className="view-toggle">
-                    <button onClick={() => setViewMode('list')}>List</button>
-                    <button onClick={() => setViewMode('grid')}>Grid</button>
-                </div>
-                <button onClick={clearFavorites} className="clear-btn">Clear Favorites</button>
-            </div>
+    // Auto-refetch every 10 minutes
+    const interval = setInterval(() => {
+      refreshWeatherData(favoritesRef.current, setFavorites);
+    }, tenMinutes);
 
-            {loading ? (
-                <p>Loading...</p> // Display loading message
-            ) : error ? (
-                <p>{error}</p> // Display error message
-            ) : (
-                <div className={`favorites-list ${viewMode}`}>
-                    {favorites.length > 0 ? (
-                        favorites.map((beach, index) => (
-                            <div key={index} className="favorite-item">
-                                <h3>{beach.name}</h3> {/* Display the beach name */}
-                                <p>{beach.county}, {beach.state}</p> {/* Display county and state */}
-                                <p>Temperature: {beach.temperature === 'N/A' ? 'Data not available' : `${beach.temperature}°F`}</p>
-                                <p>Forecast: {beach.forecast === 'N/A' ? 'Data not available' : beach.forecast}</p>
-                                <button onClick={() => removeFavorite(beach.id)} style={{ marginLeft: '10px' }}>Remove</button>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No favorite beaches added yet.</p>
-                    )}
-                </div>
-            )}
+    return () => clearInterval(interval); // Clean up when component unmounts
+
+  }, [authenticated, jwtToken]);
+
+  // Clear all favorites from both local state and server
+  const clearFavorites = async () => {
+    try {
+      const response = await fetch(API.UPDATE_FAVORITES, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jwt: jwtToken, type: 'clear' }),
+      });
+
+      const data = await response.json();
+
+      if (data.message === 'Success.') {
+        setFavorites([]); // Clear the list in local state
+        localStorage.setItem('cachedFavorites', JSON.stringify([])); // Clear cached favorites
+      } else {
+        setError(data.message); // Show error message
+      }
+    } catch (error) {
+      console.error('Error clearing favorites:', error);
+      setError('Failed to clear favorites. Please try again later.');
+    }
+  };
+
+  // Add a beach to favorites
+  const addFavorite = async () => {
+    const trimmedBeachId = newBeachId.trim(); // trims whitespace
+
+    // If user adds empty string
+    if (!trimmedBeachId) {
+      setError('Please enter a valid BeachID.');
+      return;
+    }
+
+    // Check if the beach is already in favorites
+    if (favorites.some(fav => fav.id === newBeachId)) {
+      setError('That beach is already in your favorites.');
+      return;
+    }
+
+    if (loadingFavorites) {
+      setError('Please wait until all beaches have loaded');
+      return;
+    }
+
+    try {
+      setAdding(true);
+      const beachInfo = await fetchBeachInfoWithWeather(newBeachId);
+
+      // if user enters invalid BeachID
+      if (beachInfo.name === null) {
+        setError('BeachID is invalid. Please enter valid BeachID');
+        return;
+      }
+
+      const response = await fetch(API.UPDATE_FAVORITES, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jwt: jwtToken, type: 'add', favorite: trimmedBeachId })
+      });
+
+      const data = await response.json();
+
+      if (data.message !== 'Success.') {
+        setError(data.message || 'Failed to add beach to favorites.');
+        return;
+      }
+
+      const newFavorite = { id: trimmedBeachId, ...beachInfo }; // creates new json object for newBeach
+      const updatedFavorites = [...favorites, newFavorite]; // adds this object to favorites
+      setFavorites(updatedFavorites); // updates local favorites state
+      localStorage.setItem('cachedFavorites', JSON.stringify(updatedFavorites)); // updates cachedFavorites
+      setNewBeachId(''); // clears newBeachID state
+      setError(null); // clears error state
+    } catch (err) {
+      console.error('Error adding favorite:', err);
+      setError('Could not add favorite. Please try again later.');
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  // Remove a beach from favorites
+  const removeFavorite = async (beachId) => {
+    try {
+      const response = await fetch(API.UPDATE_FAVORITES, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jwt: jwtToken, type: 'remove', favorite: beachId })
+      });
+
+      if (response.ok) {
+        const newFavorites = favorites.filter(fav => fav.id !== beachId);
+        setFavorites(newFavorites);
+        localStorage.setItem('cachedFavorites', JSON.stringify(newFavorites));
+      } else {
+        console.error('Failed to remove favorite');
+      }
+    } catch (error) {
+      console.error('Error removing favorite:', error);
+    }
+  };
+
+  return (
+    <div className="favorites-container">
+      <div className="favorites-header">
+        <h2>Your Favorite Beaches</h2>
+        <div className="view-toggle">
+          <button onClick={() => setViewMode('list')}>List</button>
+          <button onClick={() => setViewMode('grid')}>Grid</button>
         </div>
-    );
+        <button
+          onClick={() => {
+            if (window.confirm("Are you sure you want to clear all favorite beaches?")) {
+              clearFavorites();
+            }
+          }}
+          className="clear-btn"
+        >
+          Clear Favorites
+        </button>
+      </div>
+
+      <div className={`favorites-list ${viewMode}`}>
+        {favorites.map((beach, index) => (
+          <div key={beach.id} className="favorite-item">
+            <h3>{beach.name}</h3>
+            <p>{beach.county ? `${beach.county}, ` : ''}{beach.state}</p>
+            <p>Temperature: {beach.temperature === 'N/A' ? 'Data not available' : `${beach.temperature}°F`}</p>
+            <p>Forecast: {beach.forecast === 'N/A' ? 'Data not available' : beach.forecast}</p>
+            <button onClick={() => removeFavorite(beach.id)} className="remove-btn">Remove</button>
+          </div>
+        ))}
+
+        {/* Show loading spinner inline if more beaches are still coming */}
+        {loadingFavorites && (
+          <div className="favorite-item loading">
+            <p>Loading next beach...</p>
+            <div className="spinner"></div>
+          </div>
+        )}
+
+        {/* Add Beach Block */}
+        <div className="favorite-item add-favorite">
+          <h3>Add a Beach by ID</h3>
+          <input
+            type="text"
+            placeholder="Enter BeachID"
+            value={newBeachId}
+            onChange={(e) => {
+              setNewBeachId(e.target.value);
+              setError(null);
+            }}
+            style={{ marginRight: '10px' }}
+          />
+          <button onClick={addFavorite} disabled={adding}>
+            {adding ? 'Adding...' : 'Add Beach'}
+          </button>
+
+          {/* Show error below input if any */}
+          {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Favorites;

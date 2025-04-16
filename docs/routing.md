@@ -134,6 +134,8 @@ The following are the status codes and `message`s of the possible outcomes.
 | Token Problem | 500 | `User authentication token absent or invalid.` |
 | Database Problem | 500 | `Problem updating database.` |
 | User Doesn't Exist | 500 | `User not found.` |
+| Beach Already Favorited | 500 | `Beach is already in favorites.` |
+| Beach Not Present | 500 | `Attempted to remove beach not in favorites.` |
 | Other Error | 500 | `Undefined error.` |
 
 ## `routes/test.js`

@@ -15,16 +15,10 @@ app.use(cors());
 const wrapper = require("./data/");
 wrapper.runScript("update conda env");
 
-// Initialize Database
-const db = require("./dbabs/");
-db.initDB();
-
 // Add the Routes
 const authRoutes = require('./routes/auth');
-const testRoutes = require('./routes/test');
 const weatherRoutes = require('./routes/weather');
 app.use(authRoutes);
-app.use(testRoutes);
 app.use(weatherRoutes);
 
 // Start App

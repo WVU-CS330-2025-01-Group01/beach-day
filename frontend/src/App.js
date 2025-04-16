@@ -1,51 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { UserContext } from './UserContext';
 import Login from './Login';
 import Register from './Register';
-import Home from './Home';  // Import Home
-import Navbar from "./Navbar"; // Import Navbar
-import Favorites from "./Favorites"; // Import Favorites
+import Home from './Home';
+import Navbar from './Navbar';
+import Favorites from './Favorites';
+import Settings from './Settings';
+import BeachInfo from './BeachInfo';
 
 function App() {
-  const [authenticated, setAuthenticated] = useState(
-    () => JSON.parse(localStorage.getItem('authenticated')) || false
-  );
-
-  // Update local storage whenever `authenticated` state changes
-  useEffect(() => {
-    localStorage.setItem('authenticated', JSON.stringify(authenticated));
-  }, [authenticated]);
+  const { authenticated } = useContext(UserContext);
+  const [weather, setWeather] = useState(null); // State to hold weather info
 
   return (
     <Router>
-      <Navbar authenticated={authenticated} setAuthenticated={setAuthenticated} />
+      <Navbar onWeatherData={setWeather} />
       <Routes>
-        {/* Redirect default route to Home if authenticated, else to Login */}
         <Route
           path="/"
-          element={<Navigate to="/home" />}
-        />
-
-        {/* Favorites Route */}
-        <Route path="/favorites" element={<Favorites />} />
-
-        {/* Login Route */}
+          element={<Navigate to="/home" />} />
+        <Route
+          path="/favorites"
+          element={authenticated ? <Favorites /> : <Navigate to="/login" replace />} />
         <Route
           path="/login"
-          element={authenticated ? <Navigate to="/home" replace /> : <Login setAuthenticated={setAuthenticated} />}
+          element={authenticated ? <Navigate to="/home" replace /> : <Login />}
         />
-
-        {/* Register Route */}
         <Route
           path="/register"
           element={authenticated ? <Navigate to="/home" replace /> : <Register />}
         />
-
-        {/* Home Route (No authentication required) */}
         <Route
           path="/home"
-          element={<Home />} // Accessible without authentication
-        />
+          element={<Home weather={weather} />} />
+        <Route
+          path="/settings"
+          element={authenticated ? <Settings /> : <Navigate to="/login" replace />} />
+        <Route
+          path="/beach-info"
+          element={<BeachInfo />} />
       </Routes>
     </Router>
   );
