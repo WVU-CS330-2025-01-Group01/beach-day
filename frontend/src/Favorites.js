@@ -146,8 +146,6 @@ function Favorites() {
         localStorage.setItem('cachedFavorites', JSON.stringify(newFavorites));
       } else {
         console.error('Failed to remove favorite');
-        const updatedFavorites = await response.json();
-        setFavorites(updatedFavorites); // fallback if server returns corrected list
       }
     } catch (error) {
       console.error('Error removing favorite:', error);

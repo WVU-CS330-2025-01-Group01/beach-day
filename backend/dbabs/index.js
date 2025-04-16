@@ -83,7 +83,7 @@ module.exports = {
 	addFavorite: dbFavorite.addFavorite,
 	clearFavorites: dbFavorite.clearFavorites,
 	getFavorites: dbFavorite.getFavorites,
-	removeFavorites: dbFavorite.removeFavorites,
+	removeFavorite: dbFavorite.removeFavorites,
 	getNotificationCount: dbNotifications.getNotificationCount,
 	UserAlreadyExists: dbErrors.UserAlreadyExists,
 	ProblemWithDB: dbErrors.ProblemWithDB,
