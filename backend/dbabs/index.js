@@ -8,6 +8,18 @@ const dbNotifications = require('./notifications');
 const connection = require('./database-connection');
 const salt = 10;
 
+async function setEmail(username, email) {
+	try {
+		const user = await dbHelper.getUserData(username);
+		await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
+	} catch (e) {
+		if (e instanceof dbErrors.UserNotFound) {
+			throw new dbErrors.UserNotFound();
+		} else {
+			throw new dbErrors.ProblemWithDB();
+		}
+	}
+}
 
 module.exports = {
 	/**
@@ -67,17 +79,30 @@ module.exports = {
 		} catch (e) {
 			if (e instanceof dbErrors.UserNotFound) {
 				throw new dbErrors.UserNotFound();
-			} else if(e instanceof dbErrors.IncorrectPassword){
+			} else if (e instanceof dbErrors.IncorrectPassword) {
 				throw new dbErrors.IncorrectPassword();
 			} else {
 				throw new dbErrors.ProblemWithDB()
 			}
 		}
 
-    },
+	},
 
-	initDB: async function() {
+	initDB: async function () {
 		console.error("initDB is now called upon connection creation.  This message is only here until no longer called by app.js");
+	},
+
+	setEmail: async function (username, email) {
+		try {
+			const user = await getUserData(username);
+			await connection.query(`UPDATE users SET email = ? WHERE username = ?;`, [email, username]);
+		} catch (e) {
+			if (e instanceof UserNotFound) {
+				throw new UserNotFound();
+			} else {
+				throw new ProblemWithDB();
+			}
+		}
 	},
 
 	addFavorite: dbFavorite.addFavorite,
@@ -92,5 +117,4 @@ module.exports = {
 	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
 	BeachNotPresent: dbErrors.BeachNotPresent
 };
-
 

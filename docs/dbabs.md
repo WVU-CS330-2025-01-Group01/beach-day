@@ -583,3 +583,56 @@ ProblemWithDB
 This is exception is thrown if there are issues accessing the database.
 
 </dd>
+
+## `setEmail(username, email)`
+Sets a users email to given param.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will change their email for.
+
+</dd>
+
+<dt>
+
+email
+
+</dt>
+<dd>
+
+The value for what the user wants to set their email to.  We are assuming you are checking it for valid input, but we can do so if requested.  We are still protecting against injection regardless.
+
+</dd>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database. We also have this error be thrown if the email provided is used elsewhere in the Database.  We can change this to it's own error if requested.
+
+</dd>
