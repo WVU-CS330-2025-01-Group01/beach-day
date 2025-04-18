@@ -1,185 +1,41 @@
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const mysql = require('mysql2');
+const dbErrors = require('./db-errors');
+const dbHelper = require('./generic-helpers');
+const dbFavorite = require('./favorite-functions');
+const dbNotifications = require('./notifications');
+const connection = require('./database-connection');
+const salt = 10;
 
-// Error declarations
-class UserAlreadyExists extends Error { }
-class ProblemWithDB extends Error { }
-class UserNotFound extends Error { }
-class IncorrectPassword extends Error { }
-class BeachNotPresent extends Error { }
-
-
-console.log(process.env.BEACH_DAY_DB_NAME);
-const connection = mysql.createPool({
-	host: process.env.BEACH_DAY_DB_HOST,
-	user: process.env.BEACH_DAY_DB_USER,
-	password: process.env.BEACH_DAY_DB_PASSWORD,
-	database: process.env.BEACH_DAY_DB_NAME,
-	port: process.env.BEACH_DAY_DB_PORT,
-	waitForConnections: true,
-	connectionLimit: 10,
-	queueLimit: 0
-}).promise();
-
-function initDB() {
-	console.log("DB Initialized (placeholder)");
-	// Optionally, create tables or run setup queries here
-} //iycf
-
-async function testDatabaseConnection() {
-	let connect;
-	try {
-		connect = await connection.getConnection(); // Get a connection from the pool
-	} catch (err) {
-		console.error('Error connecting to the database:', err.message || err);
-		throw err; // Exit if there’s an error, no need to release connection
-	} finally {
-		if (connect) {
-			connect.release(); // Release the connection back to the pool
-		}
-	}
-}
-
-testDatabaseConnection();
-
-async function getUserData(username) {
-
-	try {
-		const [user] = await connection.query(`SELECT * FROM users WHERE username = ?;`, [username]);
-
-		if (user.length == 0) {
-			throw new UserNotFound();
-		}
-		return user[0];
-	} catch (e) {
-		//console.log(e);
-		if (e instanceof UserNotFound) {
-			throw new UserNotFound();
-		} else {
-			throw new ProblemWithDB()
-		}
-	}
-}
-
-async function userExists(username) {
-
-	try {
-
-		const [user] = await connection.query(`SELECT * FROM users WHERE username = ?;`, [username]);
-
-		if (user.length != 0) {
-			return true;
-		}
-
-		return false;
-
-	} catch (e) {
-		//console.log(e);
-		throw new ProblemWithDB();
-	}
-}
-
-
-async function printUser(username) {
-	const test = await getUserData(username);
-	console.log(test);
-}
-
-
-function validateInputAlphaNumeric(input) { //This is used in removeFavorites()
-	const regex = /^[a-zA-Z0-9_]*$/;
-	return regex.test(input);
-}
-
-
-async function removeFavorites(username, beach) {
-	try {
-		const user = await getUserData(username);
-
-		if (!validateInputAlphaNumeric(beach)) {
-			console.log("That input ain't right dawg");
-			throw new ProblemWithDB();
-		}
-
-		if (user.favorite_beaches === "NULL_BEACH") {
-			console.log("No beach found")
-			throw new BeachNotPresent();
-		}
-		let beaches = user.favorite_beaches.split(",");
-		if (!beaches.includes(beach)) {
-			throw new BeachNotPresent();
-		}
-		beaches = beaches.filter(beaches => beaches !== beach);
-		if (beaches.length === 0) {
-			beaches = ["NULL_BEACH"];
-		}
-		let CSVbeaches = beaches.join(",");
-		await connection.query(
-			`UPDATE users SET favorite_beaches = ? WHERE username = ?;`, [CSVbeaches, username]
-		);
-	} catch (e) {
-		console.log(e);
-		if (e instanceof UserNotFound) {
-			throw new UserNotFound();
-		} else if (e instanceof BeachNotPresent) {
-			throw new BeachNotPresent();
-		}
-		else {
-			throw new ProblemWithDB();
-		}
-	}
-}
-
-async function getFavorites(username) {
-	try {
-		const [favoritesColumn] = await connection.query('SELECT favorite_beaches FROM users WHERE username = ?', [username]);
-		if (favoritesColumn.length === 0) {
-			throw new UserNotFound; //Throws error if there is no user favorite.
-		}
-		let userFavorite = favoritesColumn[0].favorite_beaches;
-
-		if (userFavorite === "NULL_BEACH" || userFavorite.trim() === "") { //Checks for whether userFavorite is null/empty
-			return []; //Returns an empty array
-		}
-		return userFavorite.split(',').map(beach => beach.trim()).filter(beach => beach !== ""); //Returns an array with strings that are
-	} catch (e) {
-		console.log(e);
-		if (e instanceof UserNotFound) {
-			throw new UserNotFound();
-		} else {
-			throw new ProblemWithDB();
-		}
-	}
-}
 async function setEmail (username, email) {
-	try {
-		const user = getUserData(username);
-		await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
-	} catch (e) {
-		if (e instanceof UserNotFound) {
-			throw new UserNotFound();
-		} else {
-			throw new ProblemWithDB();
-		}
-	}
+    try {
+        const user = await dbHelper.getUserData(username);
+        await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
+    } catch (e) {
+        if (e instanceof dbErrors.UserNotFound) {
+            throw new dbErrors.UserNotFound();
+        } else {
+            throw new dbErrors.ProblemWithDB();
+        }
+    }
 }
 async function setEmailTester(){
 
-	const [rowsBefore] = await connection.query('SELECT * FROM users WHERE username = ?', ["testuser"]);
-	//the 4 is just whichever user I was testing, your index won't match mine
-	
-	console.log(rowsBefore[0].email);
-	
-	await setEmail("testuser", "goofy2email@example.com");
-	
-	const [rowsAfter] = await connection.query(
-	`SELECT * FROM users WHERE username = ?`, ['testuser']
-	);
-	
-	console.log(rowsAfter[0].email);
-	}
-	setEmailTester();
+    const [rowsBefore] = await connection.query('SELECT * FROM users WHERE username = ?', ["testuser"]);
+    //the 4 is just whichever user I was testing, your index won't match mine
+    
+    console.log(rowsBefore[0].email);
+    
+    await setEmail("testuser", "goofy2email@example.com");
+    
+    const [rowsAfter] = await connection.query(
+    `SELECT * FROM users WHERE username = ?`, ['testuser']
+    );
+    
+    console.log(rowsAfter[0].email);
+    }
+    setEmailTester();
 
 module.exports = {
 	/**
@@ -189,33 +45,30 @@ module.exports = {
 	 * the user is successfully added to the database, no exceptions are to
 	 * be thrown. Nothing is ever returned by this function.
 	 */
-	initDB, 
-
 	attemptToMakeUser: async function (username, password) {
 
 		try {
 
-			if (await userExists(username)) {
-				throw new UserAlreadyExists();
+			if (await dbHelper.userExists(username)) {
+				throw new dbErrors.UserAlreadyExists();
 			}
 
-			const hash = await bcrypt.hash(password, 10);
+			const hash = await bcrypt.hash(password, salt);
 
 			await connection.query(`
-			INSERT INTO
-			users (username, password)
-			VALUES 
-			(?, ?);
-			`,
-				[username, hash]);
+				INSERT INTO
+				users (username, password)
+				VALUES 
+				(?, ?);
+				`, [username, hash]
+			);
 
 
 		} catch (e) {
-			//console.log(e);
-			if (e instanceof UserAlreadyExists) {
-				throw new UserAlreadyExists();
+			if (e instanceof dbErrors.UserAlreadyExists) {
+				throw new dbErrors.UserAlreadyExists();
 			} else {
-				throw new ProblemWithDB()
+				throw new dbErrors.ProblemWithDB()
 			}
 		}
 	},
@@ -229,138 +82,55 @@ module.exports = {
 	 */
 	tryLogIn: async function (username, enteredPassword) {
 		try {
-			const user = await getUserData(username);
+			const user = await dbHelper.getUserData(username);
 
 			const password = await bcrypt.compare(enteredPassword, user.password);
 
 			if (!password) {
 				console.log("Wrong Password");
-				throw new IncorrectPassword();
+				throw new dbErrors.IncorrectPassword();
 			}
 
 			console.log("Password Works");
-
-
 		} catch (e) {
-			if (e instanceof UserNotFound) {
-				throw new UserNotFound();
-			} else if (e instanceof IncorrectPassword) {
-				console.log("Pass Error Throw");
-				throw new IncorrectPassword();
+			if (e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
+			} else if(e instanceof dbErrors.IncorrectPassword){
+				throw new dbErrors.IncorrectPassword();
 			} else {
-				throw new ProblemWithDB()
+				throw new dbErrors.ProblemWithDB()
 			}
 		}
-	},
 
-	getFavorites: async function (username) {
-		try {
-			const [favoritesColumn] = await connection.query('SELECT favorite_beaches FROM users WHERE username = ?', [username]);
-			if (favoritesColumn.length === 0) {
-				throw new UserNotFound;
-			}
-			let userFavorite = favoritesColumn[0].favorite_beaches;
+    },
 
-			if (userFavorite === "NULL_BEACH" || userFavorite.trim() === "") {
-				return [];
-			}
-			return userFavorite.split(',').map(beach => beach.trim()).filter(beach => beach !== "");
-		} catch (e) {
-
-			if (e instanceof UserNotFound) {
-				throw new UserNotFound();
-			} else {
-				throw new ProblemWithDB();
-			}
-		}
-	},
-
-	removeFavorites: async function (username, beach) {
-		try {
-			const user = await getUserData(username);
-
-			if (!validateInputAlphaNumeric(beach)) {
-				console.log("That input ain't right dawg");
-				throw new ProblemWithDB();
-			}
-
-			if (user.favorite_beaches === "NULL_BEACH") {
-				console.log("No beach found")
-				throw new BeachNotPresent();
-			}
-			let beaches = user.favorite_beaches.split(",");
-			if (!beaches.includes(beach)) {
-				throw new BeachNotPresent();
-			}
-			beaches = beaches.filter(beaches => beaches !== beach);
-			if (beaches.length === 0) {
-				beaches = ["NULL_BEACH"];
-			}
-			let CSVbeaches = beaches.join(",");
-			await connection.query(
-				`UPDATE users SET favorite_beaches = ? WHERE username = ?;`, [CSVbeaches, username]
-			);
-		} catch (e) {
-			console.log(e);
-			if (e instanceof UserNotFound) {
-				throw new UserNotFound();
-			} else if (e instanceof BeachNotPresent) {
-				throw new BeachNotPresent();
-			}
-			else {
-				throw new ProblemWithDB();
-			}
-		}
+	initDB: async function() {
+		console.error("initDB is now called upon connection creation.  This message is only here until no longer called by app.js");
 	},
 
 	setEmail: async function (username, email) {
-		try {
-			const user = getUserData(username);
-			if (!validateInputAlphaNumeric(email)) {
-				throw new Error("Wrong email!");
-			}
-			await connection.query(`UPDATE users SET email = ? WHERE username = ?;`, [email, username]);
-		} catch (e) {
-			if (e instanceof UserNotFound) {
-				throw new UserNotFound();
-			} else {
-				throw new ProblemWithDB();
-			}
-		}
-	},
-		initDB,
-		getFavorites: tempGetFavorites,
-		addFavorite: tempAddFavorite,
-		removeFavorite: tempRemoveFavorite,
-		clearFavorites: tempClearFavorites,
-		UserAlreadyExists: UserAlreadyExists,
-		ProblemWithDB: ProblemWithDB,
-		UserNotFound: UserNotFound,
-		IncorrectPassword: IncorrectPassword,
-		BeachNotPresent: BeachNotPresent,
+        try {
+            const user = await getUserData(username);
+            await connection.query(`UPDATE users SET email = ? WHERE username = ?;`, [email, username]);
+        } catch (e) {
+            if (e instanceof UserNotFound) {
+                throw new UserNotFound();
+            } else {
+                throw new ProblemWithDB();
+            }
+        }
+    },
+
+	addFavorite: dbFavorite.addFavorite,
+	clearFavorites: dbFavorite.clearFavorites,
+	getFavorites: dbFavorite.getFavorites,
+	removeFavorite: dbFavorite.removeFavorites,
+	getNotificationCount: dbNotifications.getNotificationCount,
+	UserAlreadyExists: dbErrors.UserAlreadyExists,
+	ProblemWithDB: dbErrors.ProblemWithDB,
+	UserNotFound: dbErrors.UserNotFound,
+	IncorrectPassword: dbErrors.IncorrectPassword,
+	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
+	BeachNotPresent: dbErrors.BeachNotPresent
 };
-
-	let favorites = new Set(["AK103349",
-		"AK103839",
-		"NC810571",
-		"WA171257",
-		"NJ828093",
-		"FL257350",
-		"MA242910",
-		"WA397523",
-		"WA815475",
-		"HI659533"]);
-	function tempGetFavorites(username) {
-	return favorites;
-}
-function tempAddFavorite(username, favorite) {
-	favorites.add(favorite);
-}
-function tempRemoveFavorite(username, favorite) {
-	favorites.delete(favorite);
-}
-function tempClearFavorites(username) {
-	favorites.clear();
-}
-
 
