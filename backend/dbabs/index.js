@@ -8,34 +8,18 @@ const dbNotifications = require('./notifications');
 const connection = require('./database-connection');
 const salt = 10;
 
-async function setEmail (username, email) {
-    try {
-        const user = await dbHelper.getUserData(username);
-        await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
-    } catch (e) {
-        if (e instanceof dbErrors.UserNotFound) {
-            throw new dbErrors.UserNotFound();
-        } else {
-            throw new dbErrors.ProblemWithDB();
-        }
-    }
+async function setEmail(username, email) {
+	try {
+		const user = await dbHelper.getUserData(username);
+		await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
+	} catch (e) {
+		if (e instanceof dbErrors.UserNotFound) {
+			throw new dbErrors.UserNotFound();
+		} else {
+			throw new dbErrors.ProblemWithDB();
+		}
+	}
 }
-async function setEmailTester(){
-
-    const [rowsBefore] = await connection.query('SELECT * FROM users WHERE username = ?', ["testuser"]);
-    //the 4 is just whichever user I was testing, your index won't match mine
-    
-    console.log(rowsBefore[0].email);
-    
-    await setEmail("testuser", "goofy2email@example.com");
-    
-    const [rowsAfter] = await connection.query(
-    `SELECT * FROM users WHERE username = ?`, ['testuser']
-    );
-    
-    console.log(rowsAfter[0].email);
-    }
-    setEmailTester();
 
 module.exports = {
 	/**
@@ -95,31 +79,31 @@ module.exports = {
 		} catch (e) {
 			if (e instanceof dbErrors.UserNotFound) {
 				throw new dbErrors.UserNotFound();
-			} else if(e instanceof dbErrors.IncorrectPassword){
+			} else if (e instanceof dbErrors.IncorrectPassword) {
 				throw new dbErrors.IncorrectPassword();
 			} else {
 				throw new dbErrors.ProblemWithDB()
 			}
 		}
 
-    },
+	},
 
-	initDB: async function() {
+	initDB: async function () {
 		console.error("initDB is now called upon connection creation.  This message is only here until no longer called by app.js");
 	},
 
 	setEmail: async function (username, email) {
-        try {
-            const user = await getUserData(username);
-            await connection.query(`UPDATE users SET email = ? WHERE username = ?;`, [email, username]);
-        } catch (e) {
-            if (e instanceof UserNotFound) {
-                throw new UserNotFound();
-            } else {
-                throw new ProblemWithDB();
-            }
-        }
-    },
+		try {
+			const user = await getUserData(username);
+			await connection.query(`UPDATE users SET email = ? WHERE username = ?;`, [email, username]);
+		} catch (e) {
+			if (e instanceof UserNotFound) {
+				throw new UserNotFound();
+			} else {
+				throw new ProblemWithDB();
+			}
+		}
+	},
 
 	addFavorite: dbFavorite.addFavorite,
 	clearFavorites: dbFavorite.clearFavorites,
