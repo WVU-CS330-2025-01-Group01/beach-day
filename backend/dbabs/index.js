@@ -8,7 +8,6 @@ const dbNotifications = require('./notifications');
 const connection = require('./database-connection');
 const salt = 10;
 
-
 module.exports = {
 	/**
 	 * This function takes in an unsanitized username and password. If the
@@ -76,15 +75,19 @@ module.exports = {
 
     },
 
-	initDB: async function() {
-		console.error("initDB is now called upon connection creation.  This message is only here until no longer called by app.js");
-	},
-
 	addFavorite: dbFavorite.addFavorite,
 	clearFavorites: dbFavorite.clearFavorites,
 	getFavorites: dbFavorite.getFavorites,
 	removeFavorite: dbFavorite.removeFavorites,
 	getNotificationCount: dbNotifications.getNotificationCount,
+	receivedNotification: dbNotifications.receivedNotification,
+	getUserNotifications: dbNotifications.getUserNotifications,
+	addNotification: dbNotifications.addNotification,
+	removeAllNotificationsFromUser: dbNotifications.removeAllNotificationsFromUser,
+	removeNotificationFromID: dbNotifications.removeNotificationFromID,
+	getNotificationFromID: dbNotifications.getNotificationFromID,
+	getUserPendingNotifications: dbNotifications.getUserPendingNotifications,
+	removeAllReceivedNotificationsFromUser: dbNotifications.removeAllReceivedNotificationsFromUser,
 	UserAlreadyExists: dbErrors.UserAlreadyExists,
 	ProblemWithDB: dbErrors.ProblemWithDB,
 	UserNotFound: dbErrors.UserNotFound,

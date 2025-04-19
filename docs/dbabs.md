@@ -533,7 +533,7 @@ This is exception is thrown if there are issues accessing the database.
 </dd>
 
 ## `getUserNotifications(username)`
-Retrives all pending notifications for a user.
+Retrives all notifications for a user.
 
 ### Arguments
 <dl>
@@ -549,7 +549,7 @@ The username of the user who retrive the notifications from.
 </dd>
 
 ### Returns
-An array of objects in which each object is its own notification.  It contains the time the notifcation was created, its given title, message.  It also contains the notification id, corresponding email, whether they have notifications enabled, and username if needed.
+An array of objects in which each object is its own notification.  It contains the time the notifcation was created, its given title, message.  It also contains the notification id, corresponding email, whether they have notifications enabled, and username if needed.  THIS NOTIFIFCATION OBJECT IS CONSISTENT FOR EVERY METHOD THAT RETURNS AN NOTIFICATION.  Also note that it can return an email that is null, that just means the user has never set an email, and that is for you to check and then decide the next course of action.
 
 ### Exceptions
 <dl>
@@ -720,3 +720,106 @@ This is exception is thrown if there are issues accessing the database.
 
 </dd>
 
+## `getUserPendingNotifications(username)`
+Retrives all pending notifications for a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who retrive the notifications from.
+
+</dd>
+
+### Returns
+An array of objects in which each object is its own notification. These are only those that have not been marked as received.  It contains the time the notifcation was created, its given title, message.  It also contains the notification id, corresponding email, whether they have notifications enabled, and username if needed.  THIS NOTIFIFCATION OBJECT IS CONSISTENT FOR EVERY METHOD THAT RETURNS AN NOTIFICATION.  Also note that it can return an email that is null, that just means the user has never set an email, and that is for you to check and then decide the next course of action.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.  If desired, it can be changed to return an empty array.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `removeAllReceivedNotificationsFromUser(username)`
+Removes all notifications for a user that have been marked as received.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who remove the notifications from.
+
+</dd>
+
+### Returns
+Nothing
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>

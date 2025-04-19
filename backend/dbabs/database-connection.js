@@ -2,7 +2,6 @@ require('dotenv').config();
 const mysql = require('mysql2');
 const dbErrors = require("./db-errors");
 
-
 const connection = mysql.createPool({
     host: process.env.BEACH_DAY_DB_HOST,
     user: process.env.BEACH_DAY_DB_USER,
@@ -11,8 +10,15 @@ const connection = mysql.createPool({
     port: process.env.BEACH_DAY_DB_PORT,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    ssl: (process.env.BEACH_DAY_DB_REMOTE_FLAG === undefined) ? (undefined) : ({ ca: process.env.BEACH_DAY_DB_SSL_PUBLIC_CERTIFICATE })
 }).promise();
+
+if(process.env.BEACH_DAY_DB_REMOTE_FLAG === undefined) {
+    console.error("Manipulating Local Database");
+} else {
+    console.error("Manipulating Remote Database");
+}
 
 async function testDatabaseConnection() {
 	let connect;
@@ -81,7 +87,7 @@ async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAl
 		neededQuery += ' AUTO_INCREMENT';
 	} else if(def !== "NO_DEFAULT") {
 		let tempDefault = def;
-		if(isNaN(parseInt(def)) && !(def.substring(0,1) === "(" && def.substring(def.length-1) === ")")) { //so, defaults can be a string, number, or function.  They CANNOT be queried with quotations, which is what parameterization does. Strings need quotes, number/function doesn't.  This checks for that. 
+		if(isNaN(parseInt(def)) && !(def.substring(def.length-2, def.length-1) === "(" && def.substring(def.length-1) === ")")) { //so, defaults can be a string, number, or function.  They CANNOT be queried with quotations, which is what parameterization does. Strings need quotes, number/function doesn't.  This checks for that. 
             tempDefault = '"' + def + '"'; 
         }
 		neededQuery += ' DEFAULT ' + tempDefault;
@@ -161,8 +167,7 @@ async function initDB() {
             favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH",
             timezone VARCHAR(3) DEFAULT "GMT",
             notifications_enabled TINYINT(1) NOT NULL DEFAULT 0,
-            id INT NOT NULL UNIQUE AUTO_INCREMENT,
-            register_date DATE DEFAULT (CURRENT_DATE())
+            id INT NOT NULL UNIQUE AUTO_INCREMENT
             );
             `
             );
@@ -206,8 +211,7 @@ async function initDB() {
                     favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH",
                     timezone VARCHAR(3) DEFAULT "GMT",
                     notifications_enabled TINYINT(1) NOT NULL DEFAULT 0,
-                    id INT NOT NULL UNIQUE AUTO_INCREMENT,
-                    register_date DATE DEFAULT (CURRENT_DATE())
+                    id INT NOT NULL UNIQUE AUTO_INCREMENT
                     );
                 `
                 );
@@ -221,7 +225,7 @@ async function initDB() {
                 `
                     CREATE TABLE notifications (
                     notification_id INT AUTO_INCREMENT PRIMARY KEY,
-                    creation_time DATETIME DEFAULT (NOW()),
+                    creation_time DATETIME DEFAULT NOW(),
                     notification_title VARCHAR(300),
                     message MEDIUMTEXT,
                     wasReceived TINYINT(1) NOT NULL DEFAULT 0,
@@ -348,16 +352,14 @@ async function initDB() {
 
         const registerField = await getFieldAttributes("register_date", dbName, "users");
 
-        if (registerField == undefined) {
+        if (registerField != undefined) { //cannot be supported in the Azure database
             await connection.query(
                 `
                 ALTER TABLE users
-                ADD register_date DATE DEFAULT (CURRENT_DATE());
+                DROP COLUMN register_date;
                 `
             );
-        } else {
-            await updateFields("register_date", registerField, ordinalPositions.REGISTER, "date", true, false, "NO_COLKEY", "(CURRENT_DATE())", "users");
-        }
+        } 
         //All user table fields have been checked, now checking notification table fields
         const creationField = await getFieldAttributes("creation_time", dbName, "notifications");
 
@@ -369,7 +371,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("creation_time", creationField, ordinalPositions.CREATION_TIME, "DATETIME", true, false, "NO_COLKEY", "(NOW())", "notifications");
+            await updateFields("creation_time", creationField, ordinalPositions.CREATION_TIME, "DATETIME", true, false, "NO_COLKEY", "NOW()", "notifications");
         }
 
         const notificationTitleField = await getFieldAttributes("notification_title", dbName, "notifications");
