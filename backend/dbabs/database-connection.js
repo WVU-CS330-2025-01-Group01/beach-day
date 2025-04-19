@@ -11,10 +11,10 @@ const connection = mysql.createPool({
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
-    ssl: (process.env.BEACH_DAY_DB_REMOTE_FLAG === undefined) ? (undefined) : ({ ca: process.env.BEACH_DAY_DB_SSL_PUBLIC_CERTIFICATE })
+    ssl: (process.env.BEACH_DAY_DB_SSL_FLAG === undefined) ? (undefined) : ({ ca: process.env.BEACH_DAY_DB_SSL_CERT })
 }).promise();
 
-if(process.env.BEACH_DAY_DB_REMOTE_FLAG === undefined) {
+if(process.env.BEACH_DAY_DB_SSL_FLAG === undefined) {
     console.error("Manipulating Local Database");
 } else {
     console.error("Manipulating Remote Database");
