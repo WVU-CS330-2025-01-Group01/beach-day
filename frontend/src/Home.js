@@ -1,34 +1,39 @@
 import React from "react";
-import "./Home.css";
-import projectphoto from "./projectphoto.png";
+import { Link } from "react-router-dom";
+import "./Home.css"; 
 
 function Home({ weather }) {
   return (
     <div className="home-container">
-      <h1>Welcome to Beach Day!</h1>
-      <p>Use the search bar above to check beach weather by ZIP code or coordinates</p>
+      <h1>Welcome to Beach Day</h1>
 
-      {weather && (
-        <>
+      {weather ? (
+        <div className="weather-box">
           <h2 className="weather-header">
             Weather Info for{" "}
-            {weather.searchType === "zipcode"
-              ? `Zip Code ${weather.zipCode}`
-              : `Latitude/Longitude: ${weather.latitude}, ${weather.longitude}`}
+            {weather.searchType === "zipcode" ? (
+              <Link
+                to="/beach-info"
+                state={{ weather }}
+                className="zipcode-link"
+              >
+                Zip Code {weather.zipCode}
+              </Link>
+            ) : (
+              `Latitude/Longitude: ${weather.latitude}, ${weather.longitude}`
+            )}
           </h2>
 
-          <div className="weather-info-container">
-            <p className="weather-info">Temperature: {weather.temperature}</p>
-            <p className="weather-info">Humidity: {weather.relHumidity}</p>
-            <p className="weather-info">Wind Speed: {weather.windSpeed}</p>
-            <p className="weather-info">Wind Direction: {weather.windDirection}</p>
-            <p className="weather-info">Forecast: {weather.forecastSummary}</p>
-            <p className="weather-info">Precipitation: {weather.probPrecip}</p>
-          </div>
-        </>
+          <p>Temperature: {weather.temperature}</p>
+          <p>Humidity: {weather.relHumidity}</p>
+          <p>Wind Speed: {weather.windSpeed}</p>
+          <p>Wind Direction: {weather.windDirection}</p>
+          <p>Forecast: {weather.forecastSummary}</p>
+          <p>Precipitation: {weather.probPrecip}</p>
+        </div>
+      ) : (
+        <p>Search for a beach to see the weather!</p>
       )}
-
-      <img src={projectphoto} alt="Beach drawing" className="beach-image" />
     </div>
   );
 }

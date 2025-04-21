@@ -359,8 +359,13 @@ This is exception is thrown if there are issues modifying the database.
 </dd>
 </dl>
 
+<<<<<<< HEAD
 ## `getNotificationsEnabled(username)`
 Retrieves whether a user has notifications enabled.
+=======
+## `getNotificationCount(username)`
+Get a total number of notifcations for a user.
+>>>>>>> origin/main
 
 ### Arguments
 <dl>
@@ -371,12 +376,22 @@ username
 </dt>
 <dd>
 
+<<<<<<< HEAD
 The username of the user who we check for notification preferences.
 
 </dd>
 
 ### Returns
 A binary 1 or 0, one for if they have it enabled, zero for they do not.  We can change this to be a simple bool if requested, it is just how it stored.
+=======
+The username of the user whose notifications to count.
+
+</dd>
+</dl>
+
+### Returns
+Notification Amount.
+>>>>>>> origin/main
 
 ### Exceptions
 <dl>
@@ -400,8 +415,15 @@ ProblemWithDB
 This is exception is thrown if there are issues accessing the database.
 
 </dd>
+<<<<<<< HEAD
 ## `setNotificationsEnabled(username, enabled)`
 Sets whether a user wants to have notifications enabled.
+=======
+</dl>
+
+## `receivedNotification(username, notification_id)`
+Marks a notifcation as received and will no longer be accessed when grabbing all notifications of a user.
+>>>>>>> origin/main
 
 ### Arguments
 <dl>
@@ -412,20 +434,110 @@ username
 </dt>
 <dd>
 
+<<<<<<< HEAD
 The username of the user who we will set notification preferences for.
+=======
+The username of the user whose notifications to access.  Could be considered redundant, but is incorporated so that the one to call the function needs to know the user too, making it a bit more secure.
+>>>>>>> origin/main
 
 </dd>
 
 <dt>
 
+<<<<<<< HEAD
 enabled
+=======
+notification_id
+>>>>>>> origin/main
 
 </dt>
 <dd>
 
+<<<<<<< HEAD
 A boolean value for what the user wants their notification acceptance preference be. Sending `true` will set their notification_enabled field to state it's enabled.  There is no error for the paramater and already existing field are equal.
 
 </dd>
+=======
+The exact id of the notification to mark as received.
+
+</dd>
+</dl>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.  If desired, it can be changed to not throw an error.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+</dl>
+
+## `addNotification(username, title, message)`
+Adds a pending notification for a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who to add the given notification to.
+
+</dd>
+
+<dt>
+
+title
+
+</dt>
+<dd>
+
+The header of the new notification.
+
+</dd>
+<dt>
+
+message
+
+</dt>
+<dd>
+
+The main content of the notification.
+
+</dd>
+</dl>
+>>>>>>> origin/main
 
 ### Returns
 Nothing.
@@ -453,8 +565,13 @@ This is exception is thrown if there are issues accessing the database.
 
 </dd>
 
+<<<<<<< HEAD
 ## `setNotificationsEnabled(username, enabled)`
 Sets whether a user wants to have notifications enabled.
+=======
+## `getUserNotifications(username)`
+Retrives all notifications for a user.
+>>>>>>> origin/main
 
 ### Arguments
 <dl>
@@ -465,18 +582,322 @@ username
 </dt>
 <dd>
 
+<<<<<<< HEAD
 The username of the user who we will set notification preferences for.
+=======
+The username of the user who retrive the notifications from.
+
+</dd>
+
+### Returns
+An array of objects in which each object is its own notification.  It contains the time the notifcation was created, its given title, message.  It also contains the notification id, corresponding email, whether they have notifications enabled, and username if needed.  THIS NOTIFIFCATION OBJECT IS CONSISTENT FOR EVERY METHOD THAT RETURNS AN NOTIFICATION.  Also note that it can return an email that is null, that just means the user has never set an email, and that is for you to check and then decide the next course of action.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.  If desired, it can be changed to return an empty array.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `removeAllNotificationsFromUser(username)`
+Removes all notifications for a user, regardless of pending status.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who remove the notifications from.
+
+</dd>
+
+### Returns
+Nothing
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `removeNotificationFromID(notificationID)`
+Removes a notification of given Notification ID, regardless of pending status.
+
+### Arguments
+<dl>
+<dt>
+
+notificationID
+
+</dt>
+<dd>
+
+The id of the notification to remove.
+
+</dd>
+
+### Returns
+Nothing
+
+### Exceptions
+<dl>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `getNotificationFromID(notificationID)`
+Access a notification of a given Notification ID, regardless of pending status.
+
+### Arguments
+<dl>
+<dt>
+
+notificationID
+
+</dt>
+<dd>
+
+The id of the notification to grab.
+
+</dd>
+
+### Returns
+An object containing the notification's details.
+
+### Exceptions
+<dl>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `getUserPendingNotifications(username)`
+Retrives all pending notifications for a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who retrive the notifications from.
+
+</dd>
+
+### Returns
+An array of objects in which each object is its own notification. These are only those that have not been marked as received.  It contains the time the notifcation was created, its given title, message.  It also contains the notification id, corresponding email, whether they have notifications enabled, and username if needed.  THIS NOTIFIFCATION OBJECT IS CONSISTENT FOR EVERY METHOD THAT RETURNS AN NOTIFICATION.  Also note that it can return an email that is null, that just means the user has never set an email, and that is for you to check and then decide the next course of action.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.  If desired, it can be changed to return an empty array.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `removeAllReceivedNotificationsFromUser(username)`
+Removes all notifications for a user that have been marked as received.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who remove the notifications from.
+
+</dd>
+
+### Returns
+Nothing
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroNotifications
+
+</dt>
+<dd>
+
+This is exception is thrown if there are zero notifications at specified paramaters.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `setEmail(username, email)`
+Sets a users email to given param.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will change their email for.
+>>>>>>> origin/main
 
 </dd>
 
 <dt>
 
+<<<<<<< HEAD
 enabled
+=======
+email
+>>>>>>> origin/main
 
 </dt>
 <dd>
 
+<<<<<<< HEAD
 A boolean value for what the user wants their notification acceptance preference be. Sending `true` will set their notification_enabled field to state it's enabled.  There is no error for the paramater and already existing field are equal.
+=======
+The value for what the user wants to set their email to.  We are assuming you are checking it for valid input, but we can do so if requested.  We are still protecting against injection regardless.
+>>>>>>> origin/main
 
 </dd>
 
@@ -502,6 +923,10 @@ ProblemWithDB
 </dt>
 <dd>
 
+<<<<<<< HEAD
 This is exception is thrown if there are issues accessing the database.
+=======
+This is exception is thrown if there are issues accessing the database. We also have this error be thrown if the email provided is used elsewhere in the Database.  We can change this to it's own error if requested.
+>>>>>>> origin/main
 
 </dd>
