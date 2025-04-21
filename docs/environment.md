@@ -38,7 +38,7 @@ This is the port the backend is hosted on. If this is not set, you will get weir
 </details>
 
 ## Backend
-In your `backend/` folder, you must make a `.env` file that contains the following entries.
+In your `backend/` folder, you must make a `.env` file that contains the following entries.  Both the local DB and remote DB will have different credentials, your .env must reflect that to switch between DBs.
 <details>
 <summary>
 
@@ -110,9 +110,29 @@ This is the name of the database found in your MySQL connection.  These are need
 This is the port that links the MySQL connection to the code.  The default we opted to use is `3306`. This may possible be set during install of MySQL.  
 
 </details>
+<details>
+<summary>
+
+##### `BEACH_DAY_DB_SSL_FLAG`
+
+</summary>
+
+If this value has any valid value, preferably 1 for readability.  This will make your connection use SSL.
+
+</details>
+<details>
+<summary>
+
+##### `BEACH_DAY_DB_SSL_CERT`
+
+</summary>
+
+If you would like to use a specific public key, you can include this field in your .env.  If it is not included, it will use your systems root authority automatically. Include double quotes around your key if provided.
+
+</details>
 
 ## Example
-The following is an example of what your `frontend/.env` and `backend/.env` should look like.
+The following is an example of what your `frontend/.env` and `backend/.env` should look like. The backend example is for a non-SSL connection.
 ```
 # frontend
 PORT=3020

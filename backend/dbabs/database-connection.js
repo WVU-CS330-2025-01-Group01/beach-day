@@ -2,7 +2,6 @@ require('dotenv').config();
 const mysql = require('mysql2');
 const dbErrors = require("./db-errors");
 
-
 const connection = mysql.createPool({
     host: process.env.BEACH_DAY_DB_HOST,
     user: process.env.BEACH_DAY_DB_USER,
@@ -11,8 +10,15 @@ const connection = mysql.createPool({
     port: process.env.BEACH_DAY_DB_PORT,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    ssl: (process.env.BEACH_DAY_DB_SSL_FLAG === undefined) ? (undefined) : ({ ca: process.env.BEACH_DAY_DB_SSL_CERT })
 }).promise();
+
+if(process.env.BEACH_DAY_DB_SSL_FLAG === undefined) {
+    console.error("Manipulating Local Database");
+} else {
+    console.error("Manipulating Remote Database");
+}
 
 async function testDatabaseConnection() {
 	let connect;
@@ -81,7 +87,7 @@ async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAl
 		neededQuery += ' AUTO_INCREMENT';
 	} else if(def !== "NO_DEFAULT") {
 		let tempDefault = def;
-		if(isNaN(parseInt(def)) && !(def.substring(0,1) === "(" && def.substring(def.length-1) === ")")) { //so, defaults can be a string, number, or function.  They CANNOT be queried with quotations, which is what parameterization does. Strings need quotes, number/function doesn't.  This checks for that. 
+		if(isNaN(parseInt(def)) && !(def.substring(def.length-2, def.length-1) === "(" && def.substring(def.length-1) === ")")) { //so, defaults can be a string, number, or function.  They CANNOT be queried with quotations, which is what parameterization does. Strings need quotes, number/function doesn't.  This checks for that. 
             tempDefault = '"' + def + '"'; 
         }
 		neededQuery += ' DEFAULT ' + tempDefault;
@@ -129,6 +135,24 @@ async function initDB() {
 
     testDatabaseConnection();
 
+    //These are the proper location/index for each field on their respective table. Because we grab objects and use keys, order doesn't matter.  Used for debugging.
+    const ordinalPositions = Object.freeze({
+        USERNAME: 1,
+        PASSWORD: 2,
+        EMAIL: 3,
+        FAVORITE_BEACHES: 4,
+        TIMEZONE: 5,
+        NOTIFICATIONS_EN: 6,
+        ID: 7,
+        REGISTER: 8,
+        NOTIFICATION_ID: 1,
+        CREATION_TIME: 2,
+        TITLE: 3,
+        MESSAGE: 4,
+        WAS_REC: 5,
+        NOTIFICATION_USERNAME: 6
+    });
+
     try {
         const [db] = await connection.query(`SHOW DATABASES LIKE ?;`, [dbName]);
         if (db.length <= 0) {
@@ -143,8 +167,7 @@ async function initDB() {
             favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH",
             timezone VARCHAR(3) DEFAULT "GMT",
             notifications_enabled TINYINT(1) NOT NULL DEFAULT 0,
-            id INT NOT NULL UNIQUE AUTO_INCREMENT,
-            register_date DATE DEFAULT (CURRENT_DATE())
+            id INT NOT NULL UNIQUE AUTO_INCREMENT
             );
             `
             );
@@ -188,8 +211,7 @@ async function initDB() {
                     favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH",
                     timezone VARCHAR(3) DEFAULT "GMT",
                     notifications_enabled TINYINT(1) NOT NULL DEFAULT 0,
-                    id INT NOT NULL UNIQUE AUTO_INCREMENT,
-                    register_date DATE DEFAULT (CURRENT_DATE())
+                    id INT NOT NULL UNIQUE AUTO_INCREMENT
                     );
                 `
                 );
@@ -203,7 +225,7 @@ async function initDB() {
                 `
                     CREATE TABLE notifications (
                     notification_id INT AUTO_INCREMENT PRIMARY KEY,
-                    creation_time DATETIME DEFAULT (NOW()),
+                    creation_time DATETIME DEFAULT NOW(),
                     notification_title VARCHAR(300),
                     message MEDIUMTEXT,
                     wasReceived TINYINT(1) NOT NULL DEFAULT 0,
@@ -231,7 +253,7 @@ async function initDB() {
                 `
             )
         } else { //if it DOES exist, reinitialize the field with whatever needs to change.  If all attributes are correct, it will run a query that modifys/changes the current column's vartype to it's vartype, otherwise nothing changing.
-            await updateFields("username", usernameField, 1, "varchar(50)", false, false, "PRI", "NO_DEFAULT", "users");
+            await updateFields("username", usernameField, ordinalPositions.USERNAME, "varchar(50)", false, false, "PRI", "NO_DEFAULT", "users");
         }
         //IF we have a table column we removed later and old tables might have it, we can check for it existing, and call the dropColumn(columnName)
         //There are currently none of those, so the function is unused.
@@ -248,7 +270,7 @@ async function initDB() {
                 `
             )
         } else {
-            await updateFields("password", passwordField, 2, "varchar(255)", false, false, "NO_COLKEY", "NO_DEFAULT", "users");
+            await updateFields("password", passwordField, ordinalPositions.PASSWORD, "varchar(255)", false, false, "NO_COLKEY", "NO_DEFAULT", "users");
         }
 
         const emailField = await getFieldAttributes("email", dbName, "users");
@@ -261,7 +283,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("email", emailField, 3, "varchar(50)", false, false, "UNI", "NO_DEFAULT", "users");
+            await updateFields("email", emailField, ordinalPositions.EMAIL, "varchar(50)", false, false, "UNI", "NO_DEFAULT", "users");
         }
 
         const favBeachField = await getFieldAttributes("favorite_beach", dbName, "users");
@@ -286,7 +308,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("favorite_beaches", favBeachesField, 4, "varchar(3000)", true, false, "NO_COLKEY", "NULL_BEACH", "users");
+            await updateFields("favorite_beaches", favBeachesField, ordinalPositions.FAVORITE_BEACHES, "varchar(3000)", true, false, "NO_COLKEY", "NULL_BEACH", "users");
         }
 
         const timezoneField = await getFieldAttributes("timezone", dbName, "users");
@@ -299,7 +321,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("timezone", timezoneField, 5, "varchar(3)", true, false, "NO_COLKEY", "GMT", "users");
+            await updateFields("timezone", timezoneField, ordinalPositions.TIMEZONE, "varchar(3)", true, false, "NO_COLKEY", "GMT", "users");
         }
 
         const notificationsField = await getFieldAttributes("notifications_enabled", dbName, "users");
@@ -312,7 +334,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("notifications_enabled", notificationsField, 6, "tinyint(1)", false, false, "NO_COLKEY", "0", "users");
+            await updateFields("notifications_enabled", notificationsField, ordinalPositions.NOTIFICATIONS_EN, "tinyint(1)", false, false, "NO_COLKEY", "0", "users");
         }
 
         const idField = await getFieldAttributes("id", dbName, "users");
@@ -325,21 +347,19 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("id", idField, 7, "int", false, true, "NO_COLKEY", "NO_DEFAULT", "users");
+            await updateFields("id", idField, ordinalPositions.ID, "int", false, true, "NO_COLKEY", "NO_DEFAULT", "users");
         }
 
         const registerField = await getFieldAttributes("register_date", dbName, "users");
 
-        if (registerField == undefined) {
+        if (registerField != undefined) { //cannot be supported in the Azure database
             await connection.query(
                 `
                 ALTER TABLE users
-                ADD register_date DATE DEFAULT (CURRENT_DATE());
+                DROP COLUMN register_date;
                 `
             );
-        } else {
-            await updateFields("register_date", registerField, 8, "date", true, false, "NO_COLKEY", "(CURRENT_DATE())", "users");
-        }
+        } 
         //All user table fields have been checked, now checking notification table fields
         const creationField = await getFieldAttributes("creation_time", dbName, "notifications");
 
@@ -351,7 +371,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("creation_time", creationField, 2, "DATETIME", true, false, "NO_COLKEY", "(NOW())", "notifications");
+            await updateFields("creation_time", creationField, ordinalPositions.CREATION_TIME, "DATETIME", true, false, "NO_COLKEY", "NOW()", "notifications");
         }
 
         const notificationTitleField = await getFieldAttributes("notification_title", dbName, "notifications");
@@ -364,7 +384,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("notification_title", notificationTitleField, 3, "VARCHAR(300)", true, false, "NO_COLKEY", "NO_DEFAULT", "notifications");
+            await updateFields("notification_title", notificationTitleField, ordinalPositions.TITLE, "VARCHAR(300)", true, false, "NO_COLKEY", "NO_DEFAULT", "notifications");
         }
 
         const messageField = await getFieldAttributes("message", dbName, "notifications");
@@ -377,7 +397,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("message", messageField, 4, "MEDIUMTEXT", true, false, "NO_COLKEY", "NO_DEFAULT", "notifications");
+            await updateFields("message", messageField, ordinalPositions.MESSAGE, "MEDIUMTEXT", true, false, "NO_COLKEY", "NO_DEFAULT", "notifications");
         }
 
         const wasReceivedField = await getFieldAttributes("wasReceived", dbName, "notifications");
@@ -390,7 +410,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("wasReceived", wasReceivedField, 5, "TINYINT(1)", false, false, "NO_COLKEY", "0", "notifications");
+            await updateFields("wasReceived", wasReceivedField, ordinalPositions.WAS_REC, "TINYINT(1)", false, false, "NO_COLKEY", "0", "notifications");
         }
 
         const notificationsUsernameField = await getFieldAttributes("username", dbName, "notifications");
@@ -404,7 +424,7 @@ async function initDB() {
                 `
             );
         } else {
-            await updateFields("username", notificationsUsernameField, 6, "VARCHAR(50)", false, false, "MUL", "NO_DEFAULT", "notifications");
+            await updateFields("username", notificationsUsernameField, ordinalPositions.NOTIFICATION_USERNAME, "VARCHAR(50)", false, false, "MUL", "NO_DEFAULT", "notifications");
         }
 
     } catch (e) {
