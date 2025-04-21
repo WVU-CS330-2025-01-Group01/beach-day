@@ -137,6 +137,3 @@ The following are the status codes and `message`s of the possible outcomes.
 | Beach Already Favorited | 500 | `Beach is already in favorites.` |
 | Beach Not Present | 500 | `Attempted to remove beach not in favorites.` |
 | Other Error | 500 | `Undefined error.` |
-
-## `routes/test.js`
-These routes are currently left undocumented as, currently, nobody needs to access them. They exist only for testing. This section may be revised, should someone develop a need to call these routes.

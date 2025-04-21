@@ -69,7 +69,7 @@ module.exports = {
 			} else if (e instanceof dbErrors.IncorrectPassword) {
 				throw new dbErrors.IncorrectPassword();
 			} else {
-				throw new dbErrors.ProblemWithDB()
+				throw new dbErrors.ProblemWithDB();
 			}
 		}
 
@@ -80,10 +80,10 @@ module.exports = {
 			const user = await getUserData(username);
 			await connection.query(`UPDATE users SET email = ? WHERE username = ?;`, [email, username]);
 		} catch (e) {
-			if (e instanceof UserNotFound) {
-				throw new UserNotFound();
+			if (e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
 			} else {
-				throw new ProblemWithDB();
+				throw new dbErrors.ProblemWithDB();
 			}
 		}
 	},
