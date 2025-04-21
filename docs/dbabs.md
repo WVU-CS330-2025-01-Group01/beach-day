@@ -359,13 +359,8 @@ This is exception is thrown if there are issues modifying the database.
 </dd>
 </dl>
 
-<<<<<<< HEAD
-## `getNotificationsEnabled(username)`
-Retrieves whether a user has notifications enabled.
-=======
 ## `getNotificationCount(username)`
 Get a total number of notifcations for a user.
->>>>>>> origin/main
 
 ### Arguments
 <dl>
@@ -376,14 +371,6 @@ username
 </dt>
 <dd>
 
-<<<<<<< HEAD
-The username of the user who we check for notification preferences.
-
-</dd>
-
-### Returns
-A binary 1 or 0, one for if they have it enabled, zero for they do not.  We can change this to be a simple bool if requested, it is just how it stored.
-=======
 The username of the user whose notifications to count.
 
 </dd>
@@ -391,7 +378,6 @@ The username of the user whose notifications to count.
 
 ### Returns
 Notification Amount.
->>>>>>> origin/main
 
 ### Exceptions
 <dl>
@@ -415,15 +401,10 @@ ProblemWithDB
 This is exception is thrown if there are issues accessing the database.
 
 </dd>
-<<<<<<< HEAD
-## `setNotificationsEnabled(username, enabled)`
-Sets whether a user wants to have notifications enabled.
-=======
 </dl>
 
 ## `receivedNotification(username, notification_id)`
 Marks a notifcation as received and will no longer be accessed when grabbing all notifications of a user.
->>>>>>> origin/main
 
 ### Arguments
 <dl>
@@ -434,30 +415,17 @@ username
 </dt>
 <dd>
 
-<<<<<<< HEAD
-The username of the user who we will set notification preferences for.
-=======
 The username of the user whose notifications to access.  Could be considered redundant, but is incorporated so that the one to call the function needs to know the user too, making it a bit more secure.
->>>>>>> origin/main
 
 </dd>
 
 <dt>
 
-<<<<<<< HEAD
-enabled
-=======
 notification_id
->>>>>>> origin/main
 
 </dt>
 <dd>
 
-<<<<<<< HEAD
-A boolean value for what the user wants their notification acceptance preference be. Sending `true` will set their notification_enabled field to state it's enabled.  There is no error for the paramater and already existing field are equal.
-
-</dd>
-=======
 The exact id of the notification to mark as received.
 
 </dd>
@@ -537,7 +505,6 @@ The main content of the notification.
 
 </dd>
 </dl>
->>>>>>> origin/main
 
 ### Returns
 Nothing.
@@ -565,13 +532,8 @@ This is exception is thrown if there are issues accessing the database.
 
 </dd>
 
-<<<<<<< HEAD
-## `setNotificationsEnabled(username, enabled)`
-Sets whether a user wants to have notifications enabled.
-=======
 ## `getUserNotifications(username)`
 Retrives all notifications for a user.
->>>>>>> origin/main
 
 ### Arguments
 <dl>
@@ -582,9 +544,6 @@ username
 </dt>
 <dd>
 
-<<<<<<< HEAD
-The username of the user who we will set notification preferences for.
-=======
 The username of the user who retrive the notifications from.
 
 </dd>
@@ -878,26 +837,17 @@ username
 <dd>
 
 The username of the user who we will change their email for.
->>>>>>> origin/main
 
 </dd>
 
 <dt>
 
-<<<<<<< HEAD
-enabled
-=======
 email
->>>>>>> origin/main
 
 </dt>
 <dd>
 
-<<<<<<< HEAD
-A boolean value for what the user wants their notification acceptance preference be. Sending `true` will set their notification_enabled field to state it's enabled.  There is no error for the paramater and already existing field are equal.
-=======
 The value for what the user wants to set their email to.  We are assuming you are checking it for valid input, but we can do so if requested.  We are still protecting against injection regardless.
->>>>>>> origin/main
 
 </dd>
 
@@ -923,10 +873,101 @@ ProblemWithDB
 </dt>
 <dd>
 
-<<<<<<< HEAD
-This is exception is thrown if there are issues accessing the database.
-=======
 This is exception is thrown if there are issues accessing the database. We also have this error be thrown if the email provided is used elsewhere in the Database.  We can change this to it's own error if requested.
->>>>>>> origin/main
+
+</dd>
+
+## `getNotificationsEnabled(username)`
+Retrieves whether a user has notifications enabled.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we check for notification preferences.
+
+</dd>
+
+### Returns
+A binary 1 or 0, one for if they have it enabled, zero for they do not.  We can change this to be a simple bool if requested, it is just how it stored.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `setNotificationsEnabled(username, enabled)`
+Sets whether a user wants to have notifications enabled.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will set notification preferences for.
+
+</dd>
+
+<dt>
+
+enabled
+
+</dt>
+<dd>
+
+A boolean value for what the user wants their notification acceptance preference be. Sending `true` will set their notification_enabled field to state it's enabled.  There is no error for the paramater and already existing field are equal.
+
+</dd>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
 
 </dd>
