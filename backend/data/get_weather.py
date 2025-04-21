@@ -116,7 +116,61 @@ try:
         exit()
     
 
-    # Beach search by zip code
+    # Beach search by latitude and longitude
+    elif request_type == "search_beach_by_lat_lon":
+        import beach_search
+
+        try:
+            latitude = float(str(input_params["latitude"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: latitude must be a valid float",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+        
+        try:
+            longitude = float(str(input_params["longitude"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: longitude must be a valid float",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+        
+        try:
+            start = int(str(input_params["start"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: start must be a valid integer",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+        
+        try:
+            stop = int(str(input_params["stop"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: stop must be a valid integer",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+        
+        result = beach_search.search_beach_by_lat_lon(latitude, longitude, start, stop)
+        result["code"] = "search_beach_by_lat_lon"
+
+        print(json.dumps(result, indent=4))
+        exit()
+
+     # Beach search by zip code
     elif request_type == "search_beach_by_zip":
         import beach_search
 
