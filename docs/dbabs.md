@@ -358,3 +358,150 @@ This is exception is thrown if there are issues modifying the database.
 
 </dd>
 </dl>
+
+## `getNotificationsEnabled(username)`
+Retrieves whether a user has notifications enabled.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we check for notification preferences.
+
+</dd>
+
+### Returns
+A binary 1 or 0, one for if they have it enabled, zero for they do not.  We can change this to be a simple bool if requested, it is just how it stored.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+## `setNotificationsEnabled(username, enabled)`
+Sets whether a user wants to have notifications enabled.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will set notification preferences for.
+
+</dd>
+
+<dt>
+
+enabled
+
+</dt>
+<dd>
+
+A boolean value for what the user wants their notification acceptance preference be. Sending `true` will set their notification_enabled field to state it's enabled.  There is no error for the paramater and already existing field are equal.
+
+</dd>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `setNotificationsEnabled(username, enabled)`
+Sets whether a user wants to have notifications enabled.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will set notification preferences for.
+
+</dd>
+
+<dt>
+
+enabled
+
+</dt>
+<dd>
+
+A boolean value for what the user wants their notification acceptance preference be. Sending `true` will set their notification_enabled field to state it's enabled.  There is no error for the paramater and already existing field are equal.
+
+</dd>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
