@@ -6,6 +6,36 @@ const dbHelper = require('./generic-helpers');
 const connection = require('./database-connection');
 
 module.exports = {
+    getNotificationsEnabled: async function(username) {
+        try {
+            if (!(await dbHelper.userExists(username))) { // Check if user exists
+                throw new dbError.UserNotFound();
+            }
+            let [enabled] = await connection.query('SELECT notifications_enabled FROM users where username = ?', [username]); // Get value from table
+            return enabled[0].notifications_enabled;
+        } catch (e) { // Error
+            if (e instanceof dbErrors.UserNotFound) {
+                throw new dbErrors.UserNotFound;
+            } else {
+                console.log(e);
+                throw new dbErrors.ProblemWithDB();
+            }
+        }
+    },
+    setNotificationsEnabled: async function(username, enabled){
+        try {
+            if (!(await dbHelper.userExists(username))) { // Check if user exists
+                throw new dbError.UserNotFound();
+            }
+            await connection.query('UPDATE users SET notifications_enabled = ? WHERE username = ?', [enabled ? 1 : 0, username]); // Set notifications_enabled to true/false
+        } catch (e) { // Error
+            if (e instanceof dbErrors.UserNotFound) {
+                throw new dbErrors.UserNotFound();
+            } else {
+                throw new dbErrors.ProblemWithDB();
+            }
+        }
+    },
     getNotificationCount: async function(username) {
         try {
 
