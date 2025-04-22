@@ -77,7 +77,7 @@ module.exports = {
 
 	setEmail: async function (username, email) {
         try {
-            const user = await dbHelper.getUserData(username);
+            await dbHelper.getUserData(username);
             await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
         } catch (e) {
             if (e instanceof dbErrors.UserNotFound) {

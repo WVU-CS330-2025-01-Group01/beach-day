@@ -942,7 +942,7 @@ enabled
 </dt>
 <dd>
 
-A boolean value for what the user wants their notification acceptance preference be. Sending `true` will set their notification_enabled field to state it's enabled.  There is no error for the paramater and already existing field are equal.
+A boolean value for what the user wants their notification acceptance preference be. Sending `true` will set their notification_enabled field to state it's enabled.  There is no error if the parameter and already existing field are equal.
 
 </dd>
 
