@@ -9,15 +9,14 @@ module.exports = {
     getNotificationsEnabled: async function(username) {
         try {
             if (!(await dbHelper.userExists(username))) { // Check if user exists
-                throw new dbError.UserNotFound();
+                throw new dbErrors.UserNotFound();
             }
             let [enabled] = await connection.query('SELECT notifications_enabled FROM users where username = ?', [username]); // Get value from table
             return enabled[0].notifications_enabled;
         } catch (e) { // Error
             if (e instanceof dbErrors.UserNotFound) {
-                throw new dbErrors.UserNotFound;
+                throw new dbErrors.UserNotFound();
             } else {
-                console.log(e);
                 throw new dbErrors.ProblemWithDB();
             }
         }
@@ -25,7 +24,7 @@ module.exports = {
     setNotificationsEnabled: async function(username, enabled){
         try {
             if (!(await dbHelper.userExists(username))) { // Check if user exists
-                throw new dbError.UserNotFound();
+                throw new dbErrors.UserNotFound();
             }
             await connection.query('UPDATE users SET notifications_enabled = ? WHERE username = ?', [enabled ? 1 : 0, username]); // Set notifications_enabled to true/false
         } catch (e) { // Error
