@@ -76,18 +76,17 @@ module.exports = {
 	},
 
 	setEmail: async function (username, email) {
-		try {
-			const user = await getUserData(username);
-			await connection.query(`UPDATE users SET email = ? WHERE username = ?;`, [email, username]);
-		} catch (e) {
-			if (e instanceof UserNotFound) {
-				throw new UserNotFound();
-			} else {
-				throw new ProblemWithDB();
-			}
-		}
-	},
-	
+        try {
+            const user = await dbHelper.getUserData(username);
+            await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
+        } catch (e) {
+            if (e instanceof dbErrors.UserNotFound) {
+                throw new dbErrors.UserNotFound();
+            } else {
+                throw new dbErrors.ProblemWithDB();
+            }
+        }
+    },
 	addFavorite: dbFavorite.addFavorite,
 	clearFavorites: dbFavorite.clearFavorites,
 	getFavorites: dbFavorite.getFavorites,
@@ -108,4 +107,5 @@ module.exports = {
 	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
 	BeachNotPresent: dbErrors.BeachNotPresent
 };
+
 
