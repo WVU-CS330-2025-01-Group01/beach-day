@@ -8,6 +8,8 @@ const router = express.Router();
 // Modules We Made
 const auth = require("../auth/");
 const db = require("../dbabs/");
+const rterr = require("../routes/routing-errors");
+const errRes = require("../routes/error-responses");
 
 /**
  * Returns a list of a users favorite beaches.
@@ -25,10 +27,7 @@ router.post('/favorites', async function(req, res, next) {
 			favorites: favorites,
 		});
 	} catch (err) {
-		if (err instanceof auth.InvalidToken)
-			res.status(500).json({ message: 'User authentication token absent or invalid.' });
-		else
-			res.status(500).json({ message: 'Undefined error.' });
+		errRes.errorResLookup(res, err);
 	}
 });
 
@@ -39,10 +38,8 @@ router.post('/update_favorites', async function (req, res, next) {
 	try {
 		if (req.body.jwt === undefined || req.body.type === undefined
 				|| (req.body.type !== 'clear'
-				&& req.body.favorite === undefined)) {
-			res.status(500).json({ message: 'Invalid request.' });
-			return;
-		}
+				&& req.body.favorite === undefined))
+			throw new rterr.InvalidRequest();
 
 		const username = auth.verifyJWT(req.body.jwt).username;
 
@@ -54,18 +51,7 @@ router.post('/update_favorites', async function (req, res, next) {
 			await db.removeFavorite(username, req.body.favorite);
 		res.status(200).json({ message: 'Success.' });
 	} catch (err) {
-		if (err instanceof auth.InvalidToken)
-			res.status(500).json({ message: 'User authentication token absent or invalid.' });
-		else if (err instanceof db.ProblemWithDB)
-			res.status(500).json({ message: 'Problem updating database.' });
-		else if (err instanceof db.UserNotFound)
-			res.status(500).json({ message: 'User not found.' });
-		else if (err instanceof db.BeachAlreadyFavorited)
-			res.status(500).json({ message: 'Beach is already in favorites.' });
-		else if (err instanceof db.BeachNotPresent)
-			res.status(500).json({ message: 'Attempted to remove beach not in favorites.' });
-		else
-			res.status(500).json({ message: 'Undefined error.' });
+		errRes.errorResLookup(res, err);
 	}
 });
 
