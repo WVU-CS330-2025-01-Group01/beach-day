@@ -173,6 +173,7 @@ module.exports = {
                 , [username]
             );
         } catch (e) {
+            console.log(e)
             if(e instanceof dbErrors.ZeroNotifications) {
                 throw new dbErrors.ZeroNotifications();
             } else if (e instanceof dbErrors.UserNotFound) {

@@ -8,6 +8,33 @@ const dbNotifications = require('./notifications');
 const connection = require('./database-connection');
 const salt = 10;
 
+
+async function removeUser(username) {
+	try {
+		if((await dbNotifications.getNotificationCount(username)) > 0) {
+			await dbNotifications.removeAllNotificationsFromUser(username);
+		}
+
+		connection.query(
+			`
+				DELETE FROM USERS
+				WHERE username = ?;
+			`
+			, [username]
+		);
+
+	} catch (e) {
+		console.log(e);
+		if (e instanceof dbErrors.UserNotFound) {
+			throw new dbErrors.UserNotFound();
+		} else {
+			throw new dbErrors.ProblemWithDB()
+		}
+	}
+}
+
+removeUser("DropThisOneActually");
+
 module.exports = {
 	/**
 	 * This function takes in an unsanitized username and password. If the
