@@ -8,6 +8,7 @@ const dbNotifications = require('./notifications');
 const connection = require('./database-connection');
 const salt = 10;
 
+
 module.exports = {
 	/**
 	 * This function takes in an unsanitized username and password. If the
@@ -87,6 +88,31 @@ module.exports = {
             }
         }
     },
+
+	removeUser: async function(username) {
+		try {
+			if((await dbNotifications.getNotificationCount(username)) > 0) {
+				await dbNotifications.removeAllNotificationsFromUser(username);
+			}
+	
+			connection.query(
+				`
+					DELETE FROM USERS
+					WHERE username = ?;
+				`
+				, [username]
+			);
+	
+		} catch (e) {
+			if (e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
+			} else {
+				throw new dbErrors.ProblemWithDB()
+			}
+		}
+	},
+
+
 	addFavorite: dbFavorite.addFavorite,
 	clearFavorites: dbFavorite.clearFavorites,
 	getFavorites: dbFavorite.getFavorites,

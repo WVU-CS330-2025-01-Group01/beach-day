@@ -33,6 +33,40 @@ async function getNotificationFromIDHelper(notificationID) {
     }
 }
 
+async function getUserNotificationsHelper(username) { //This and the function below are near identical in logic to two functions above, but they were split to appear more clear to the frontend
+    try {
+
+        if(!(await dbHelper.userExists(username))) {
+            throw new dbErrors.UserNotFound();
+        }
+
+        const [notifications] = await connection.query(
+            `
+                SELECT creation_time, notification_title, message, email, notifications_enabled, notification_id, notifications.username
+                FROM notifications LEFT JOIN users
+                ON  notifications.username = users.username
+                WHERE notifications.username = ?
+                ORDER BY creation_time desc;
+            `
+            , [username]
+        );
+        if (notifications.length <= 0) {
+            throw new dbErrors.ZeroNotifications();
+        }
+
+        return notifications;
+
+    } catch (e) {
+        if(e instanceof dbErrors.UserNotFound) {
+            throw new dbErrors.UserNotFound();
+        } else if (e instanceof dbErrors.ZeroNotifications) {
+            throw new dbErrors.ZeroNotifications();
+        } else {
+            throw new dbErrors.ProblemWithDB()
+        }
+    }
+}
+
 module.exports = {
     getNotificationsEnabled: async function(username) {
         try {
@@ -191,7 +225,7 @@ module.exports = {
                 throw new dbErrors.UserNotFound();
             }
     
-            await getUserNotifications(username);
+            await getUserNotificationsHelper(username);
     
             await connection.query(
                 `
@@ -233,40 +267,7 @@ module.exports = {
     },
 
     getNotificationFromID: getNotificationFromIDHelper,
-
-    getUserNotifications: async function (username) { //This and the function below are near identical in logic to two functions above, but they were split to appear more clear to the frontend
-        try {
-    
-            if(!(await dbHelper.userExists(username))) {
-                throw new dbErrors.UserNotFound();
-            }
-    
-            const [notifications] = await connection.query(
-                `
-                    SELECT creation_time, notification_title, message, email, notifications_enabled, notification_id, notifications.username
-                    FROM notifications LEFT JOIN users
-                    ON  notifications.username = users.username
-                    WHERE notifications.username = ?
-                    ORDER BY creation_time desc;
-                `
-                , [username]
-            );
-            if (notifications.length <= 0) {
-                throw new dbErrors.ZeroNotifications();
-            }
-    
-            return notifications;
-    
-        } catch (e) {
-            if(e instanceof dbErrors.UserNotFound) {
-                throw new dbErrors.UserNotFound();
-            } else if (e instanceof dbErrors.ZeroNotifications) {
-                throw new dbErrors.ZeroNotifications();
-            } else {
-                throw new dbErrors.ProblemWithDB()
-            }
-        }
-    },
+    getUserNotifications: getUserNotificationsHelper,
 
     removeAllReceivedNotificationsFromUser: async function(username) {
         try {
