@@ -5,6 +5,34 @@ const dbErrors = require('./db-errors');
 const dbHelper = require('./generic-helpers');
 const connection = require('./database-connection');
 
+
+
+async function getNotificationFromIDHelper(notificationID) {
+    try {
+
+        const [notification] = await connection.query(
+            `
+                SELECT * FROM notifications
+                WHERE notification_id = ?
+            `
+            , [notificationID]
+        )
+
+        if(notification.length <= 0) {
+            throw new dbErrors.ZeroNotifications();
+        }
+
+        return notification[0];
+
+    } catch (e) {
+        if(e instanceof dbErrors.ZeroNotifications) {
+            throw new dbErrors.ZeroNotifications();
+        } else {
+            throw new dbErrors.ProblemWithDB()
+        }
+    }
+}
+
 module.exports = {
     getNotificationsEnabled: async function(username) {
         try {
@@ -186,7 +214,7 @@ module.exports = {
     removeNotificationFromID: async function(notificationID) {
         try {
     
-            await getNotificationFromID(notificationID);
+            await getNotificationFromIDHelper(notificationID);
     
             await connection.query(
                 `
@@ -204,31 +232,7 @@ module.exports = {
         }
     },
 
-    getNotificationFromID: async function(notificationID) {
-        try {
-    
-            const [notification] = await connection.query(
-                `
-                    SELECT * FROM notifications
-                    WHERE notification_id = ?
-                `
-                , [notificationID]
-            )
-    
-            if(notification.length <= 0) {
-                throw new dbErrors.ZeroNotifications();
-            }
-    
-            return notification[0];
-    
-        } catch (e) {
-            if(e instanceof dbErrors.ZeroNotifications) {
-                throw new dbErrors.ZeroNotifications();
-            } else {
-                throw new dbErrors.ProblemWithDB()
-            }
-        }
-    },
+    getNotificationFromID: getNotificationFromIDHelper,
 
     getUserNotifications: async function (username) { //This and the function below are near identical in logic to two functions above, but they were split to appear more clear to the frontend
         try {
