@@ -96,10 +96,12 @@ function Navbar({ onWeatherData }) {
 
   return (
     <div className="navbar">
+      <Link to="/home" className="navbar-home-link">
       <div className="navbar-content">
         <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
         <h1 className="navbar-title">Beach Day</h1>
       </div>
+      </Link>
       <form onSubmit={handleSearch} className="custom-search-form">
         <div className="search-box">
           <select
