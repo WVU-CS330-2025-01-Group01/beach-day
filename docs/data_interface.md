@@ -212,6 +212,58 @@ Get info about a beach by ID. [Deprecated]
 
 ---
 
+## Beach Search by Latitude and Longitude
+
+Search for beaches near a location. Get results from `start` (inclusive) to `stop` (exclusive) in a search sorting by distance to target latitude and longitude. Returns a key containing the order (`order`), and a set of beaches identified by their ids that are not necessarily in order (`result`). The beach info are similar to the beach info requests above, and include the weather in the same way as other request types include the weather.
+
+### Request format
+
+```JSON
+{
+    "request_type": "search_beach_by_lat_lon",
+    "latitude": "{latitude}",
+    "longitude": "{longitude}",
+    "start": "{search result to start at}",
+    "stop": "{search result to end before (exclusive)}"
+}
+```
+
+### Response Format
+
+```JSON
+{
+    "order": [
+        "{beach_id1}",
+        "{beach_id2}",
+        "{beach_id3}",
+        ...etc
+    ],
+    "result": {
+        "{beach_id1}": {
+            "beach_name": "{beach_name}",
+            "beach_county": "{beach_county}",
+            ...etc
+            "weather": {
+                ...etc
+            }
+        },
+        "{beach_id2}": {
+            ..etc
+        },
+        "{beach_id3}": {
+            ...etc
+        }
+    },
+    "code": "search_beach_by_lat_lon"
+}
+```
+
+
+
+
+
+---
+
 # Errors
 
 There are circumstances where you may receive an error response. These errors are mostly to indicate when the request received is missing a required key, but there are a few instances where the database can fail. I recommend checking each response for an error, and printing an error to the console with the message field from the error response.
