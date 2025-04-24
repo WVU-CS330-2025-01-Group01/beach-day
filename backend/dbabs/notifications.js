@@ -276,7 +276,7 @@ module.exports = {
                 throw new dbErrors.UserNotFound();
             }
     
-            await getUserNotifications(username);
+            await getUserNotificationsHelper(username);
     
             await connection.query(
                 `
