@@ -57,11 +57,11 @@ router.post('/receive_notification', async function(req, res, next) {
 	try {
 		const payload = auth.verifyJWT(req.body.jwt);
 
-		if (req.body.id === undefined || !userOwnsNotification(
+		if (req.body.id === undefined || !await userOwnsNotification(
 				payload.username, req.body.id))
 			throw new rterr.UserDoesntOwnNotification();
 
-		await db.receivedNotification(payload.username, req.id);
+		await db.receivedNotification(payload.username, req.body.id);
 
 		res.status(200).json({ message: 'Success.' });
 	} catch (err) {
@@ -82,7 +82,7 @@ router.post('/get_notifications', async function(req, res, next) {
 		} else if (req.body.type === 'all') {
 			notifications = await db.getUserNotifications(payload.username);
 		} else if (req.body.type === 'by_id') {
-			if (req.body.id === undefined || !userOwnsNotification(
+			if (req.body.id === undefined || !await userOwnsNotification(
 					payload.username, req.body.id))
 				throw new rterr.UserDoesntOwnNotification();
 
@@ -109,7 +109,7 @@ router.post('/remove_notifications', async function(req, res, next) {
 		} else if (req.body.type === 'all') {
 			await db.removeAllNotificationsFromUser(payload.username);
 		} else if (req.body.type === 'by_id') {
-			if (req.body.id === undefined || !userOwnsNotification(
+			if (req.body.id === undefined || !await userOwnsNotification(
 					payload.username, req.body.id))
 				throw new rterr.UserDoesntOwnNotification();
 

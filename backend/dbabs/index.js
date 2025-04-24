@@ -131,7 +131,8 @@ module.exports = {
 	UserNotFound: dbErrors.UserNotFound,
 	IncorrectPassword: dbErrors.IncorrectPassword,
 	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
-	BeachNotPresent: dbErrors.BeachNotPresent
+	BeachNotPresent: dbErrors.BeachNotPresent,
+	ZeroNotifications: dbErrors.ZeroNotifications
 };
 
 
