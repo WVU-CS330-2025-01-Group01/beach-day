@@ -33,7 +33,7 @@ async function getNotificationFromIDHelper(notificationID) {
     }
 }
 
-async function getUserNotificationsHelper(username) { //This and the function below are near identical in logic to two functions above, but they were split to appear more clear to the frontend
+async function getUserNotificationsHelper(username) { //This and the function below are near identical in logic to two functions, but they were split to appear more clear to the frontend
     try {
 
         if(!(await dbHelper.userExists(username))) {
@@ -46,7 +46,7 @@ async function getUserNotificationsHelper(username) { //This and the function be
                 FROM notifications LEFT JOIN users
                 ON  notifications.username = users.username
                 WHERE notifications.username = ?
-                ORDER BY creation_time desc;
+                ORDER BY creation_time DESC;
             `
             , [username]
         );

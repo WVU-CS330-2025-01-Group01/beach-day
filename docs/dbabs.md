@@ -971,3 +971,223 @@ ProblemWithDB
 This is exception is thrown if there are issues accessing the database.
 
 </dd>
+
+## `getUserFutureEvents(username)`
+Accesses every event that has NOT happened yet for a specific user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will get future events for.
+
+</dd>
+
+### Returns
+An array of objects that contain event details for each event.  This includes the event time, event message, relevant beachID, email of the user, the id of the event for possible changes, and the username of the events.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroEvents
+
+</dt>
+<dd>
+
+This exception is thrown if the user has no events in the future.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `getEventCount(username)`
+Gets a count every event for a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will get a count of events for.
+
+</dd>
+
+### Returns
+Number of how many events a user has
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `removeAllEventsFromUser(username)`
+Removes every event from a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will remove all events from.
+
+</dd>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroEvents
+
+</dt>
+<dd>
+
+This exception is thrown if the user has no events in the future.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `clearPastEvents(username)`
+Removes EVERY event that has already happened in accordance to the current time/date.  This is table wide, user independent.
+
+### Arguments
+None.
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `getUserEvents(username)`
+Accesses every event for a specific user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will get events for.
+
+</dd>
+
+### Returns
+An array of objects that contain event details for each event.  This includes the event time, event message, relevant beachID, email of the user, the id of the event for possible changes, and the username of the events.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroEvents
+
+</dt>
+<dd>
+
+This exception is thrown if the user has no events in the future.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
