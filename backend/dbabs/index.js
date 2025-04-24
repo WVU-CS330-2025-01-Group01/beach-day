@@ -8,6 +8,7 @@ const dbNotifications = require('./notifications');
 const connection = require('./database-connection');
 const salt = 10;
 
+
 module.exports = {
 	/**
 	 * This function takes in an unsanitized username and password. If the
@@ -76,9 +77,32 @@ module.exports = {
 	},
 
 	setEmail: async function (username, email) {
+        try {
+            await dbHelper.getUserData(username);
+            await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
+        } catch (e) {
+            if (e instanceof dbErrors.UserNotFound) {
+                throw new dbErrors.UserNotFound();
+            } else {
+                throw new dbErrors.ProblemWithDB();
+            }
+        }
+    },
+
+	removeUser: async function(username) {
 		try {
-			const user = await getUserData(username);
-			await connection.query(`UPDATE users SET email = ? WHERE username = ?;`, [email, username]);
+			if((await dbNotifications.getNotificationCount(username)) > 0) {
+				await dbNotifications.removeAllNotificationsFromUser(username);
+			}
+	
+			connection.query(
+				`
+					DELETE FROM USERS
+					WHERE username = ?;
+				`
+				, [username]
+			);
+	
 		} catch (e) {
 			if (e instanceof dbErrors.UserNotFound) {
 				throw new dbErrors.UserNotFound();
@@ -87,7 +111,8 @@ module.exports = {
 			}
 		}
 	},
-	
+
+
 	addFavorite: dbFavorite.addFavorite,
 	clearFavorites: dbFavorite.clearFavorites,
 	getFavorites: dbFavorite.getFavorites,
@@ -108,4 +133,5 @@ module.exports = {
 	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
 	BeachNotPresent: dbErrors.BeachNotPresent
 };
+
 
