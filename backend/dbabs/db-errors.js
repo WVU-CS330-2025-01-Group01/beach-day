@@ -16,6 +16,6 @@ module.exports = {
 	IncorrectPassword: IncorrectPassword,
 	BeachAlreadyFavorited: BeachAlreadyFavorited,
 	BeachNotPresent: BeachNotPresent,
-    ZeroNotifications: ZeroNotifications,
+  ZeroNotifications: ZeroNotifications,
 	ZeroEvents: ZeroEvents,
 };

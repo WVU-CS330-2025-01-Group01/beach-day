@@ -70,7 +70,7 @@ module.exports = {
 			} else if (e instanceof dbErrors.IncorrectPassword) {
 				throw new dbErrors.IncorrectPassword();
 			} else {
-				throw new dbErrors.ProblemWithDB()
+				throw new dbErrors.ProblemWithDB();
 			}
 		}
 
@@ -112,7 +112,7 @@ module.exports = {
 			if (e instanceof dbErrors.UserNotFound) {
 				throw new dbErrors.UserNotFound();
 			} else {
-				throw new dbErrors.ProblemWithDB()
+				throw new dbErrors.ProblemWithDB();
 			}
 		}
 	},
@@ -141,7 +141,8 @@ module.exports = {
 	UserNotFound: dbErrors.UserNotFound,
 	IncorrectPassword: dbErrors.IncorrectPassword,
 	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
-	BeachNotPresent: dbErrors.BeachNotPresent
+	BeachNotPresent: dbErrors.BeachNotPresent,
+	ZeroNotifications: dbErrors.ZeroNotifications
 };
 
 
