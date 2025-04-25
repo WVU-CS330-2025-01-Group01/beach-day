@@ -3,9 +3,9 @@ This is Group 1's project for the Spring 2025 semester of CS 330. Beach Day is a
 
 ## Current State
 Here is a list of planned features:
-- [*] Account Creation
-- [*] Bookmarking Beaches
-- [*] Checking Weather Conditions
+- [X] Account Creation
+- [X] Bookmarking Beaches
+- [X] Checking Weather Conditions
 - [ ] Checking Wave Conditions
 - [ ] Checking UV Index
 
