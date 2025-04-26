@@ -1191,3 +1191,87 @@ ProblemWithDB
 This is exception is thrown if there are issues accessing the database.
 
 </dd>
+
+## `getEventFromID(eventId)`
+Accesses an event with a specific ID.
+
+### Arguments
+<dl>
+<dt>
+
+eventID
+
+</dt>
+<dd>
+
+The id of the specific event you want, user inspecific.
+
+</dd>
+
+### Returns
+An array of objects that contain event details for the event.  This includes the event time, event message, relevant beachID, email of the user, the id of the event for possible changes, and the username of the event.
+
+### Exceptions
+<dl>
+<dt>
+
+ZeroEvents
+
+</dt>
+<dd>
+
+This exception is thrown if the user has no events in the future.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `removeEventFromID(eventId)`
+Removes an event with a specific ID.
+
+### Arguments
+<dl>
+<dt>
+
+eventID
+
+</dt>
+<dd>
+
+The id of the specific event you want to delete, user inspecific.
+
+</dd>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+ZeroEvents
+
+</dt>
+<dd>
+
+This exception is thrown if the user has no events in the future.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>

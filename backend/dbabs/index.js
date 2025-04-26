@@ -136,6 +136,8 @@ module.exports = {
 	removeAllEventsFromUser: dbEvents.removeAllEventsFromUser,
 	clearPastEvents: dbEvents.clearPastEvents,
 	getUserEvents: dbEvents.getUserEvents,
+	getEventFromId: dbEvents.getEventFromID,
+	removeEventFromID: dbEvents.removeEventFromID,
 	UserAlreadyExists: dbErrors.UserAlreadyExists,
 	ProblemWithDB: dbErrors.ProblemWithDB,
 	UserNotFound: dbErrors.UserNotFound,
