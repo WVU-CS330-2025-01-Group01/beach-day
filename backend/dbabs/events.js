@@ -44,7 +44,7 @@ async function getEventFromIDHelper(eventID) {
 
         const [event] = await connection.query(
             `
-                SELECT * FROM event
+                SELECT * FROM events
                 WHERE event_id = ?
             `
             , [eventID]
@@ -64,6 +64,14 @@ async function getEventFromIDHelper(eventID) {
         }
     }
 }
+
+async function tester() {
+    const event = await getEventFromIDHelper(1);
+    console.log(typeof event.username);
+    console.log(event.username);
+}
+
+tester();
 
 module.exports = {
 
