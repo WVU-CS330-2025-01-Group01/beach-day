@@ -42,6 +42,7 @@ In either case, the response looks like:
     "relHumidity": "{relative humidity in % *}",
     "windSpeed": "{wind speed **}",
     "windDirection": "{direction wind is coming from}",
+    "uvIndex": "{uv index of the nearest measurement location ***}",
     "forecastSummary": "{short phrase describing the weather}"
 }
 ```
@@ -49,6 +50,8 @@ In either case, the response looks like:
 \*: These are unreliable if you request by latitude and longitude. If they aren't found, you will receive an empty string instead.
 
 \*\*: The way this is formatted is strange. It seems to be formatted for human readability, but only sometimes. Some responses will just have a number, which is presumably in mph, while others will say something like, "2 to 7 mph". Use with care.
+
+\*\*\*: Does not work in zip code mode. If you supply a zip code, this property with be and empty string `""`.
 
 ---
 
@@ -120,6 +123,7 @@ Get info about a beach by ID. Identical to the `"get_beach_info_by_id"`, but has
         "relHumidity": "{relative humidity in % *}",
         "windSpeed": "{wind speed **}",
         "windDirection": "{direction wind is coming from}",
+        "uvIndex": "{uv index of the nearest measurement location ***}",
         "forecastSummary": "{short phrase describing the weather}"
     }
 }
@@ -128,6 +132,8 @@ Get info about a beach by ID. Identical to the `"get_beach_info_by_id"`, but has
 \*: These are unreliable if you request by latitude and longitude. If they aren't found, you will receive an empty string instead.
 
 \*\*: The way this is formatted is strange. It seems to be formatted for human readability, but only sometimes. Some responses will just have a number, which is presumably in mph, while others will say something like, "2 to 7 mph". Use with care.
+
+\*\*\*: Does not work in zip code mode. If you supply a zip code, this property with be and empty string `""`.
 
 ---
 

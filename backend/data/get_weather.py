@@ -171,47 +171,47 @@ try:
         exit()
 
      # Beach search by zip code
-    elif request_type == "search_beach_by_zip":
-        import beach_search
+    # elif request_type == "search_beach_by_zip":
+    #     import beach_search
 
-        try:
-            zip_code = int(str(input_params["zip_code"]))
-        except ValueError:
-            result = {
-                "code": "ERROR",
-                "error_type": "malformed_request: zip_code must be a valid integer",
-                "message": f"Malformed request for request type '{request_type}'"
-            }
-            print(json.dumps(result, indent=4))
-            exit()
+    #     try:
+    #         zip_code = int(str(input_params["zip_code"]))
+    #     except ValueError:
+    #         result = {
+    #             "code": "ERROR",
+    #             "error_type": "malformed_request: zip_code must be a valid integer",
+    #             "message": f"Malformed request for request type '{request_type}'"
+    #         }
+    #         print(json.dumps(result, indent=4))
+    #         exit()
         
-        try:
-            start = int(str(input_params["start"]))
-        except ValueError:
-            result = {
-                "code": "ERROR",
-                "error_type": "malformed_request: start must be a valid integer",
-                "message": f"Malformed request for request type '{request_type}'"
-            }
-            print(json.dumps(result, indent=4))
-            exit()
+    #     try:
+    #         start = int(str(input_params["start"]))
+    #     except ValueError:
+    #         result = {
+    #             "code": "ERROR",
+    #             "error_type": "malformed_request: start must be a valid integer",
+    #             "message": f"Malformed request for request type '{request_type}'"
+    #         }
+    #         print(json.dumps(result, indent=4))
+    #         exit()
         
-        try:
-            stop = int(str(input_params["stop"]))
-        except ValueError:
-            result = {
-                "code": "ERROR",
-                "error_type": "malformed_request: stop must be a valid integer",
-                "message": f"Malformed request for request type '{request_type}'"
-            }
-            print(json.dumps(result, indent=4))
-            exit()
+    #     try:
+    #         stop = int(str(input_params["stop"]))
+    #     except ValueError:
+    #         result = {
+    #             "code": "ERROR",
+    #             "error_type": "malformed_request: stop must be a valid integer",
+    #             "message": f"Malformed request for request type '{request_type}'"
+    #         }
+    #         print(json.dumps(result, indent=4))
+    #         exit()
         
-        result = beach_search.search_beach_by_zip(zip_code, start, stop)
-        result["code"] = "search_beach_by_zip"
+    #     result = beach_search.search_beach_by_zip(zip_code, start, stop)
+    #     result["code"] = "search_beach_by_zip"
 
-        print(json.dumps(result, indent=4))
-        exit()
+    #     print(json.dumps(result, indent=4))
+    #     exit()
     
     
 
@@ -250,6 +250,14 @@ try:
         
         print(json.dumps(result, indent=4))
         exit()
+    
+    elif request_type == "test":
+        import basic_weather
+
+        lat = float(input_params["latitude"])
+        lon = float(input_params["longitude"])
+
+        basic_weather.get_uv_index(lat, lon)
 
     else:
         result = {
