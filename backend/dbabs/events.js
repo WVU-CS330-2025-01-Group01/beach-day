@@ -65,14 +65,6 @@ async function getEventFromIDHelper(eventID) {
     }
 }
 
-async function tester() {
-    const event = await getEventFromIDHelper(1);
-    console.log(typeof event.username);
-    console.log(event.username);
-}
-
-tester();
-
 module.exports = {
 
     getUserFutureEvents: async function(username) {
