@@ -1,6 +1,8 @@
+import requests
+import json
+from datetime import datetime
 
-
-def check_event(time, beach_id):
+def check_event(time, beach_id, event_name):
     import beaches
     import basic_forecast
 
@@ -9,18 +11,40 @@ def check_event(time, beach_id):
     lat = float(beach["latitude"])
     lon = float(beach["longitude"])
 
-    print(time)
+    point_info = requests.get(f"https://api.weather.gov/zones?type=land&point={lat},{lon}&limit=500").json()
 
-    forecast = basic_forecast.get_forecast_at_time(lat, lon, time)
+    # print(point_info["features"][0]["properties"]["id"])
 
-    if forecast != None:
+    zone_id = point_info["features"][0]["properties"]["id"]
 
-        title = ""
-        message = ""
+    alerts = get_alerts(time, zone_id)
 
+    messages = []
+
+    for alert in alerts:
+        print(json.dumps(alert, indent=4))
+        start = alert["properties"]["onset"]
+        end = alert["properties"]["ends"]
+
+        start = datetime.strptime(start,"%Y-%m-%dT%H:%M:%S%z")
+        end = datetime.strptime(end,"%Y-%m-%dT%H:%M:%S%z")
+
+        if start <= time and time <= end:
+            messages.append(alert["properties"]["headline"])
+    
+    if len(messages) == 0:
+        return {
+            "action": "none"
+        }
+    
+    else:
+        title = f"Event '{event_name}' impacted by NWS Alert"
+        message = f"Your registered event '{event_name}' may be impacted by one or more National Weather Service alerts or advisories. Consult local authorities for accurate and up-to-date information. The advisories are as follows:\n"
+        for m in messages:
+            message += "\n"
+            message += m.strip()
         return {
             "action": "notify",
-
             "title": title,
             "message": message
         }
@@ -28,3 +52,13 @@ def check_event(time, beach_id):
     return {
         "action": "none"
     }
+
+# beach_search.search_beach_by_lat_lon(55.357081020413204, -131.6843667617338, 0, 1)
+
+def get_alerts(time, zone_id):
+    alerts = requests.get(f"https://api.weather.gov/alerts/active?status=actual&message_type=alert,update,cancel&zone={zone_id}&urgency=Immediate,Expected,Future&severity=Extreme,Severe,Moderate,Minor&certainty=Observed,Likely,Possible,Unlikely&limit=500")
+    # print(json.dumps(alerts.json(), indent=4))
+    
+    alerts = alerts.json()["features"]
+
+    return alerts

@@ -220,8 +220,9 @@ try:
         # time = datetime.fromtimestamp(input_params["time"])
         time = datetime.strptime(input_params["time"][0:33],"%a %b %d %Y %H:%M:%S GMT%z")
         beach_id = input_params["beach_id"]
+        event_name = input_params["event_name"]
 
-        result = events.check_event(time, beach_id)
+        result = events.check_event(time, beach_id, event_name)
 
         result["code"] = "check_event"
 

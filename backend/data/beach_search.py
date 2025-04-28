@@ -21,7 +21,7 @@ def search_beach_by_lat_lon(lat, lon, start, stop):
     import beaches as beaches_info
     import basic_weather
 
-    results = {key: val for key, val in sorted(beaches.items(), key=lambda item: distance(lat, lon, item[1]))}
+    results = {key: val for key, val in sorted(beaches.items(), key=lambda item: distance(float(lat), float(lon), item[1]))}
     count = 0
     # for res in results.items():
     #     if count < 20:
