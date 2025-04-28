@@ -6,6 +6,7 @@ import './Navbar.css';
 import beachIcon from './beachIcon.png';
 import Cookies from 'js-cookie';
 import searchIcon from './search.png';
+import { API } from './api';
 
 function Navbar({ onWeatherData }) {
   const {
@@ -57,7 +58,7 @@ function Navbar({ onWeatherData }) {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:3010/weather", {
+      const response = await fetch(API.BEACHINFO, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
