@@ -213,6 +213,19 @@ try:
     #     print(json.dumps(result, indent=4))
     #     exit()
     
+
+    elif request_type == "check_event":
+        import events
+        import beaches
+        # time = datetime.fromtimestamp(input_params["time"])
+        time = datetime.strptime(input_params["time"][0:33],"%a %b %d %Y %H:%M:%S GMT%z")
+        beach_id = input_params["beach_id"]
+
+        result = events.check_event(time, beach_id)
+
+        result["code"] = "check_event"
+
+        print(json.dumps(result, indent=4))
     
 
     # Dummy request types from testing. Will still work, but should be avoided
