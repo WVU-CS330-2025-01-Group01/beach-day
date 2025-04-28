@@ -8,6 +8,37 @@ const dbNotifications = require('./notifications');
 const connection = require('./database-connection');
 const salt = 10;
 
+
+async function setPassword(username, password) {
+	try {
+		const hash = await bcrypt.hash(password, salt);
+		await connection.query(`UPDATE users SET password = ? WHERE username = ?`, [hash, username]);
+	} catch (e) {
+		if (e instanceof dbErrors.UserAlreadyExists) {
+			throw new dbErrors.UserAlreadyExists();
+		} else {
+			throw new dbErrors.ProblemWithDB()
+		}
+	}
+}
+async function setPasswordTester() {
+
+	const [rowsBefore] = await connection.query('SELECT * FROM users WHERE username = ?', ["testuser"]);
+
+	console.log(rowsBefore[0].password);
+
+	await setPassword("testuser", "goofyPassword");
+
+	const [rowsAfter] = await connection.query(
+		`SELECT * FROM users WHERE username = ?`, ['testuser']
+	);
+
+	console.log(rowsAfter[0].password);
+}
+setPasswordTester();
+
+
+
 module.exports = {
 	/**
 	 * This function takes in an unsanitized username and password. If the
@@ -33,8 +64,6 @@ module.exports = {
 				(?, ?);
 				`, [username, hash]
 			);
-
-
 		} catch (e) {
 			if (e instanceof dbErrors.UserAlreadyExists) {
 				throw new dbErrors.UserAlreadyExists();
@@ -76,17 +105,17 @@ module.exports = {
 	},
 
 	setEmail: async function (username, email) {
-        try {
-            const user = await dbHelper.getUserData(username);
-            await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
-        } catch (e) {
-            if (e instanceof dbErrors.UserNotFound) {
-                throw new dbErrors.UserNotFound();
-            } else {
-                throw new dbErrors.ProblemWithDB();
-            }
-        }
-    },
+		try {
+			const user = await dbHelper.getUserData(username);
+			await connection.query(`UPDATE users SET email = ? WHERE username = ?`, [email, username]);
+		} catch (e) {
+			if (e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
+			} else {
+				throw new dbErrors.ProblemWithDB();
+			}
+		}
+	},
 	addFavorite: dbFavorite.addFavorite,
 	clearFavorites: dbFavorite.clearFavorites,
 	getFavorites: dbFavorite.getFavorites,
@@ -107,5 +136,3 @@ module.exports = {
 	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
 	BeachNotPresent: dbErrors.BeachNotPresent
 };
-
-
