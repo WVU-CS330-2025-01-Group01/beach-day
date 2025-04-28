@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 80px);
+  min-height: calc(100vh - 80px);
   background-color: var(--secondary-color); /* Light tan/beach color */
   color: var(--primary-color); /* Blue text color */
   font-family: "Poppins", sans-serif;
@@ -41,6 +41,7 @@ label {
   margin-bottom: 5px;
   display: block;
   text-align: left; /* Align the labels to the left */
+  color: black;
 }
 
 input {
@@ -85,6 +86,7 @@ button:hover {
 .redirect {
   margin-top: 20px;
   font-size: 1rem;
+  color: black;
 }
 
 .redirect a {

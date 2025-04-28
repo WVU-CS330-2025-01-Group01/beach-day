@@ -1,58 +1,61 @@
-import React, { useState } from "react";
-import "./Settings.css"; // Importing styles
+import React from "react";
+import "./Settings.css";
 
 function Settings() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [notification, setNotification] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    console.log("Settings saved");
-  };
-
   return (
-    <div className="settings-container">
-      <h1>Settings</h1>
+    <div className="settings-page">
+      <h1 className="settings-title">Manage Account</h1>
 
-      <form onSubmit={handleSubmit} className="settings-form">
-        <div className="settings-input-group">
-          <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            placeholder="Enter your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+      <div className="settings-grid">
+        {/* Profile Section */}
+        <div className="settings-card profile-card">
+          <h2>Profile</h2>
+          <form>
+            <div className="form-group">
+              <label>Username</label>
+              <input type="text" placeholder="Username" />
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input type="email" placeholder="example@example.com" />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input type="password" placeholder="Change Password" />
+            </div>
+            <div className="form-group">
+              <label>Gender (Optional)</label>
+              <select>
+                <option>Prefer not to say</option>
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+          </form>
         </div>
 
-        <div className="settings-input-group">
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        {/* Sidebar Section */}
+        <div className="settings-card side-card">
+          <h2>Emails</h2>
+          <p>The Morning Brief <span className="not-subscribed">Not Subscribed</span></p>
+          <p>Marketing Emails <span className="not-subscribed">Not Subscribed</span></p>
         </div>
 
-        <div className="settings-input-group">
-          <label htmlFor="notifications">Enable Notifications:</label>
-          <input
-            type="checkbox"
-            id="notifications"
-            checked={notification}
-            onChange={() => setNotification(!notification)}
-          />
+        {/* Subscriptions */}
+        <div className="settings-card">
+          <h2>Subscriptions</h2>
+          <p>Subscription Status: <strong>Not a subscriber</strong></p>
+          <button className="settings-button">See Subscription Offers</button>
         </div>
 
-        <button type="submit" className="settings-button">
-          Save Settings
-        </button>
-      </form>
+        {/* FAQ / Help */}
+        <div className="settings-card">
+          <h2>FAQ</h2>
+          <p>• What can I use my account for?</p>
+          <p>• How many locations can I save?</p>
+          <button className="settings-button secondary">Email Us</button>
+        </div>
+      </div>
     </div>
   );
 }
