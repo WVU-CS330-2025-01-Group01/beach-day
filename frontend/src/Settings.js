@@ -13,11 +13,11 @@ function Settings() {
           <form>
             <div className="form-group">
               <label>Username</label>
-              <input type="text" placeholder="Jackson" />
+              <input type="text" placeholder="Username" />
             </div>
             <div className="form-group">
               <label>Email</label>
-              <input type="email" placeholder="jacksonpricewvu@gmail.com" />
+              <input type="email" placeholder="example@example.com" />
             </div>
             <div className="form-group">
               <label>Password</label>
