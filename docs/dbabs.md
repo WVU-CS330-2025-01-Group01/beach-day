@@ -360,7 +360,7 @@ This is exception is thrown if there are issues modifying the database.
 </dl>
 
 ## `getNotificationCount(username)`
-Get a total number of notifcations for a user.
+Get a total number of pending notifcations for a user.
 
 ### Arguments
 <dl>
@@ -874,5 +874,404 @@ ProblemWithDB
 <dd>
 
 This is exception is thrown if there are issues accessing the database. We also have this error be thrown if the email provided is used elsewhere in the Database.  We can change this to it's own error if requested.
+
+</dd>
+
+## `getNotificationsEnabled(username)`
+Retrieves whether a user has notifications enabled.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we check for notification preferences.
+
+</dd>
+
+### Returns
+A binary 1 or 0, one for if they have it enabled, zero for they do not.  We can change this to be a simple bool if requested, it is just how it stored.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `setNotificationsEnabled(username, enabled)`
+Sets whether a user wants to have notifications enabled.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will set notification preferences for.
+
+</dd>
+
+<dt>
+
+enabled
+
+</dt>
+<dd>
+
+A boolean value for what the user wants their notification acceptance preference be. Sending `true` will set their notification_enabled field to state it's enabled.  There is no error if the parameter and already existing field are equal.
+
+</dd>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `getUserFutureEvents(username)`
+Accesses every event that has NOT happened yet for a specific user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will get future events for.
+
+</dd>
+
+### Returns
+An array of objects that contain event details for each event.  This includes the event time, event message, relevant beachID, email of the user, the id of the event for possible changes, and the username of the events.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroEvents
+
+</dt>
+<dd>
+
+This exception is thrown if the user has no events in the future.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `getEventCount(username)`
+Gets a count every event for a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will get a count of events for.
+
+</dd>
+
+### Returns
+Number of how many events a user has
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `removeAllEventsFromUser(username)`
+Removes every event from a user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will remove all events from.
+
+</dd>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroEvents
+
+</dt>
+<dd>
+
+This exception is thrown if the user has no events in the future.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `clearPastEvents(username)`
+Removes EVERY event that has already happened in accordance to the current time/date.  This is table wide, user independent.
+
+### Arguments
+None.
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `getUserEvents(username)`
+Accesses every event for a specific user.
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username of the user who we will get events for.
+
+</dd>
+
+### Returns
+An array of objects that contain event details for each event.  This includes the event time, event message, relevant beachID, email of the user, the id of the event for possible changes, and the username of the events.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ZeroEvents
+
+</dt>
+<dd>
+
+This exception is thrown if the user has no events in the future.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `getEventFromID(eventId)`
+Accesses an event with a specific ID.
+
+### Arguments
+<dl>
+<dt>
+
+eventID
+
+</dt>
+<dd>
+
+The id of the specific event you want, user inspecific.
+
+</dd>
+
+### Returns
+An array of objects that contain event details for the event.  This includes the event time, event message, relevant beachID, email of the user, the id of the event for possible changes, and the username of the event.
+
+### Exceptions
+<dl>
+<dt>
+
+ZeroEvents
+
+</dt>
+<dd>
+
+This exception is thrown if the user has no events in the future.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
+## `removeEventFromID(eventId)`
+Removes an event with a specific ID.
+
+### Arguments
+<dl>
+<dt>
+
+eventID
+
+</dt>
+<dd>
+
+The id of the specific event you want to delete, user inspecific.
+
+</dd>
+
+### Returns
+Nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+ZeroEvents
+
+</dt>
+<dd>
+
+This exception is thrown if the user has no events in the future.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
 
 </dd>

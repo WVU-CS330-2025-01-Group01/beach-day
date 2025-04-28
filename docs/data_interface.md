@@ -42,6 +42,7 @@ In either case, the response looks like:
     "relHumidity": "{relative humidity in % *}",
     "windSpeed": "{wind speed **}",
     "windDirection": "{direction wind is coming from}",
+    "uvIndex": "{uv index of the nearest measurement location ***}",
     "forecastSummary": "{short phrase describing the weather}"
 }
 ```
@@ -49,6 +50,8 @@ In either case, the response looks like:
 \*: These are unreliable if you request by latitude and longitude. If they aren't found, you will receive an empty string instead.
 
 \*\*: The way this is formatted is strange. It seems to be formatted for human readability, but only sometimes. Some responses will just have a number, which is presumably in mph, while others will say something like, "2 to 7 mph". Use with care.
+
+\*\*\*: Does not work in zip code mode. If you supply a zip code, this property with be and empty string `""`.
 
 ---
 
@@ -120,6 +123,7 @@ Get info about a beach by ID. Identical to the `"get_beach_info_by_id"`, but has
         "relHumidity": "{relative humidity in % *}",
         "windSpeed": "{wind speed **}",
         "windDirection": "{direction wind is coming from}",
+        "uvIndex": "{uv index of the nearest measurement location ***}",
         "forecastSummary": "{short phrase describing the weather}"
     }
 }
@@ -128,6 +132,8 @@ Get info about a beach by ID. Identical to the `"get_beach_info_by_id"`, but has
 \*: These are unreliable if you request by latitude and longitude. If they aren't found, you will receive an empty string instead.
 
 \*\*: The way this is formatted is strange. It seems to be formatted for human readability, but only sometimes. Some responses will just have a number, which is presumably in mph, while others will say something like, "2 to 7 mph". Use with care.
+
+\*\*\*: Does not work in zip code mode. If you supply a zip code, this property with be and empty string `""`.
 
 ---
 
@@ -209,6 +215,58 @@ Get info about a beach by ID. [Deprecated]
     "joinkey": "{a key for accessing this beach in the database}"
 }
 ```
+
+---
+
+## Beach Search by Latitude and Longitude
+
+Search for beaches near a location. Get results from `start` (inclusive) to `stop` (exclusive) in a search sorting by distance to target latitude and longitude. Returns a key containing the order (`order`), and a set of beaches identified by their ids that are not necessarily in order (`result`). The beach info are similar to the beach info requests above, and include the weather in the same way as other request types include the weather.
+
+### Request format
+
+```JSON
+{
+    "request_type": "search_beach_by_lat_lon",
+    "latitude": "{latitude}",
+    "longitude": "{longitude}",
+    "start": "{search result to start at}",
+    "stop": "{search result to end before (exclusive)}"
+}
+```
+
+### Response Format
+
+```JSON
+{
+    "order": [
+        "{beach_id1}",
+        "{beach_id2}",
+        "{beach_id3}",
+        ...etc
+    ],
+    "result": {
+        "{beach_id1}": {
+            "beach_name": "{beach_name}",
+            "beach_county": "{beach_county}",
+            ...etc
+            "weather": {
+                ...etc
+            }
+        },
+        "{beach_id2}": {
+            ..etc
+        },
+        "{beach_id3}": {
+            ...etc
+        }
+    },
+    "code": "search_beach_by_lat_lon"
+}
+```
+
+
+
+
 
 ---
 

@@ -28,6 +28,17 @@
   margin: 0;
 }
 
+.navbar-home-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white; /* Ensures the text stays white */
+}
+
+.navbar-home-link:hover {
+  text-decoration: none; /* Ensures no underline on hover */
+}
+
 .navbar-links {
   display: flex;
   align-items: center;
@@ -109,3 +120,4 @@
   font-size: 0.9rem;
   margin-left: 15px;
 }
+

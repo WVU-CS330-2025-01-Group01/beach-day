@@ -1,17 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
 import { UserContext } from './UserContext';
 import './Navbar.css';
 import beachIcon from './beachIcon.png';
 import Cookies from 'js-cookie';
 import searchIcon from './search.png';
+import { API } from './api';
 
 function Navbar({ onWeatherData }) {
-  const {
-    authenticated,
-    setAuthenticated
-  } = useContext(UserContext);
+  const { authenticated, setAuthenticated } = useContext(UserContext);
 
   const [searchType, setSearchType] = useState("zipcode");
   const [zipCode, setZipCode] = useState("");
@@ -19,7 +16,7 @@ function Navbar({ onWeatherData }) {
   const [longitude, setLongitude] = useState("");
   const [error, setError] = useState("");
 
-  const navigate = useNavigate(); // ✅ Add navigator
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     Cookies.remove('jwt');
@@ -29,7 +26,7 @@ function Navbar({ onWeatherData }) {
   };
 
   const handleSearch = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault(); // Important: allow calling manually without needing a form submit event
 
     let requestBody;
     if (searchType === "zipcode") {
@@ -42,7 +39,7 @@ function Navbar({ onWeatherData }) {
         zip_code: zipCode,
         country_code: "US",
       };
-    } else {
+    } else if (searchType === "latlon") {
       if (!latitude.trim() || !longitude.trim()) {
         setError("Please enter both latitude and longitude.");
         return;
@@ -57,7 +54,7 @@ function Navbar({ onWeatherData }) {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:3010/weather", {
+      const response = await fetch(API.BEACHINFO, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,13 +76,14 @@ function Navbar({ onWeatherData }) {
           windSpeed: data.windSpeed || "N/A",
           windDirection: data.windDirection || "N/A",
           forecastSummary: data.forecastSummary || "No summary available",
+          uvIndex: data.uvIndex || "N/A",
           searchType,
           zipCode,
           latitude,
           longitude
         };
         onWeatherData(weatherData);
-        navigate("/home"); // ✅ Navigate to Home after setting weather
+        navigate("/home");
       } else {
         setError("No weather data available for this location.");
       }
@@ -96,10 +94,13 @@ function Navbar({ onWeatherData }) {
 
   return (
     <div className="navbar">
-      <div className="navbar-content">
-        <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
-        <h1 className="navbar-title">Beach Day</h1>
-      </div>
+      <Link to="/home" className="navbar-home-link">
+        <div className="navbar-content">
+          <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
+          <h1 className="navbar-title">Beach Day</h1>
+        </div>
+      </Link>
+
       <form onSubmit={handleSearch} className="custom-search-form">
         <div className="search-box">
           <select
@@ -137,6 +138,7 @@ function Navbar({ onWeatherData }) {
               />
             </>
           )}
+          <button type="submit" style={{ display: "none" }}></button>
           <img src={searchIcon} alt="Search" className="search-icon" />
         </div>
       </form>
