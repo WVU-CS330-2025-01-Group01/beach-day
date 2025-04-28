@@ -5,6 +5,7 @@ const dbErrors = require('./db-errors');
 const dbHelper = require('./generic-helpers');
 const dbFavorite = require('./favorite-functions');
 const dbNotifications = require('./notifications');
+const dbEvents = require('./events');
 const connection = require('./database-connection');
 const salt = 10;
 
@@ -69,7 +70,7 @@ module.exports = {
 			} else if (e instanceof dbErrors.IncorrectPassword) {
 				throw new dbErrors.IncorrectPassword();
 			} else {
-				throw new dbErrors.ProblemWithDB()
+				throw new dbErrors.ProblemWithDB();
 			}
 		}
 
@@ -87,6 +88,36 @@ module.exports = {
             }
         }
     },
+
+	removeUser: async function(username) {
+		try {
+			//Foreign keys halt any dropping of primary key as long as it's used in another table, this clears the other tables
+			if((await dbNotifications.getNotificationCount(username)) > 0) {
+				await dbNotifications.removeAllNotificationsFromUser(username);
+			}
+			if((await dbEvents.getEventCount(username)) > 0) {
+				await dbEvents.removeAllEventsFromUser(username);
+			}
+			
+	
+			connection.query(
+				`
+					DELETE FROM USERS
+					WHERE username = ?;
+				`
+				, [username]
+			);
+	
+		} catch (e) {
+			if (e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
+			} else {
+				throw new dbErrors.ProblemWithDB();
+			}
+		}
+	},
+
+
 	addFavorite: dbFavorite.addFavorite,
 	clearFavorites: dbFavorite.clearFavorites,
 	getFavorites: dbFavorite.getFavorites,
@@ -100,12 +131,20 @@ module.exports = {
 	getNotificationFromID: dbNotifications.getNotificationFromID,
 	getUserPendingNotifications: dbNotifications.getUserPendingNotifications,
 	removeAllReceivedNotificationsFromUser: dbNotifications.removeAllReceivedNotificationsFromUser,
+	getUserFutureEvents: dbEvents.getUserFutureEvents,
+	getEventCount: dbEvents.getEventCount,
+	removeAllEventsFromUser: dbEvents.removeAllEventsFromUser,
+	clearPastEvents: dbEvents.clearPastEvents,
+	getUserEvents: dbEvents.getUserEvents,
+	getEventFromId: dbEvents.getEventFromID,
+	removeEventFromID: dbEvents.removeEventFromID,
 	UserAlreadyExists: dbErrors.UserAlreadyExists,
 	ProblemWithDB: dbErrors.ProblemWithDB,
 	UserNotFound: dbErrors.UserNotFound,
 	IncorrectPassword: dbErrors.IncorrectPassword,
 	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
-	BeachNotPresent: dbErrors.BeachNotPresent
+	BeachNotPresent: dbErrors.BeachNotPresent,
+	ZeroNotifications: dbErrors.ZeroNotifications
 };
 
 

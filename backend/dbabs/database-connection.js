@@ -150,7 +150,12 @@ async function initDB() {
         TITLE: 3,
         MESSAGE: 4,
         WAS_REC: 5,
-        NOTIFICATION_USERNAME: 6
+        NOTIFICATION_USERNAME: 6,
+        EVENT_ID: 1,
+        EVENT_TIME: 2,
+        EVENT_MESSAGE: 3,
+        EVENT_BEACH_ID: 4,
+        EVENT_USERNAME: 5
     });
 
     try {
@@ -176,7 +181,7 @@ async function initDB() {
         } else {
             //Current Checks, DataBase Exists: Yes.  Next Check, Table(s) Exists:Pending
 
-            let bothEmptyFlag = false;
+            let allEmptyFlag = false;
 
             const [table] = await connection.query(
                 `
@@ -198,7 +203,17 @@ async function initDB() {
                 , [dbName]
             );
 
-            bothEmpty = (table.length <= 0 && notificationTable.length <= 0);
+            const [eventsTable] = await connection.query(
+                `
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_schema = ?
+                AND table_name = 'events';
+                `
+                , [dbName]
+            );
+
+            allEmptyFlag = (table.length <= 0 && notificationTable.length <= 0 && eventsTable.length <= 0);
 
             if (table.length <= 0) {
                 console.error("users table does not exist.  creating...");
@@ -237,7 +252,24 @@ async function initDB() {
                 console.error("created.")
             }
 
-            if(bothEmptyFlag) {
+            if (eventsTable.length <= 0) {
+                console.error("events table does not exist.  creating...");
+                await connection.query(
+                `
+                    CREATE TABLE events (
+                    event_id INT AUTO_INCREMENT PRIMARY KEY,
+                    event_time DATETIME,
+                    event_message MEDIUMTEXT,
+                    beach_id VARCHAR(10),
+                    username VARCHAR(50),
+                    FOREIGN KEY (username) REFERENCES users(username) 
+                    );
+                `
+                );
+                console.error("created.")
+            }
+
+            if(allEmptyFlag) {
                 return; //this is to save processing time, as if it's created via these queries, we don't need to check with the multitude of field queries
             }
         }
@@ -367,7 +399,7 @@ async function initDB() {
             await connection.query(
                 `
                 ALTER TABLE notifications
-                ADD creationn_time DATETIME DEFAULT (NOW());
+                ADD creation_time DATETIME DEFAULT NOW();
                 `
             );
         } else {
@@ -425,6 +457,59 @@ async function initDB() {
             );
         } else {
             await updateFields("username", notificationsUsernameField, ordinalPositions.NOTIFICATION_USERNAME, "VARCHAR(50)", false, false, "MUL", "NO_DEFAULT", "notifications");
+        }
+        //All user table fields have been checked. All notification table fields have been checked, now checking event table fields
+        const eventTimeField = await getFieldAttributes("event_time", dbName, "events");
+
+        if (eventTimeField == undefined) {
+            await connection.query(
+                `
+                ALTER TABLE events
+                ADD event_time DATETIME;
+                `
+            );
+        } else {
+            await updateFields("event_time", eventTimeField, ordinalPositions.EVENT_TIME, "DATETIME", true, false, "NO_COLKEY", "NO_DEFAULT", "events");
+        }
+
+        const eventMessageField = await getFieldAttributes("event_message", dbName, "events");
+
+        if (eventMessageField == undefined) {
+            await connection.query(
+                `
+                ALTER TABLE events
+                ADD event_message MEDIUMTEXT;
+                `
+            );
+        } else {
+            await updateFields("event_message", eventMessageField, ordinalPositions.EVENT_MESSAGE, "MEDIUMTEXT", true, false, "NO_COLKEY", "NO_DEFAULT", "events");
+        }
+
+        const eventBeachIDField = await getFieldAttributes("beach_id", dbName, "events");
+
+        if (eventBeachIDField == undefined) {
+            await connection.query(
+                `
+                ALTER TABLE events
+                ADD beach_id VARCHAR(10);
+                `
+            );
+        } else {
+            await updateFields("beach_id", eventBeachIDField, ordinalPositions.EVENT_BEACH_ID, "VARCHAR(10)", true, false, "NO_COLKEY", "NO_DEFAULT", "events");
+        }
+
+        const eventUsernameField = await getFieldAttributes("username", dbName, "events");
+
+        if (eventUsernameField == undefined) {
+            await connection.query(
+                `
+                ALTER TABLE events
+                ADD username VARCHAR(50);
+                ADD FOREIGN KEY (username) REFERENCES users(username);
+                `
+            );
+        } else {
+            await updateFields("username", eventUsernameField, ordinalPositions.EVENT_USERNAME, "VARCHAR(50)", false, false, "MUL", "NO_DEFAULT", "events");
         }
 
     } catch (e) {

@@ -18,10 +18,14 @@ wrapper.runScript("update conda env");
 // Add the Routes
 const authRoutes = require('./routes/auth');
 const weatherRoutes = require('./routes/weather');
+const favoritesRoutes = require('./routes/favorites');
+const notificationsRoutes = require('./routes/notifications');
 app.use(authRoutes);
 app.use(weatherRoutes);
+app.use(favoritesRoutes);
+app.use(notificationsRoutes);
 
 // Start App
 app.listen(PORT, () => {
-  console.log(`Server started listening on port: ${PORT}`);
+	console.log(`Server started listening on port: ${PORT}`);
 });

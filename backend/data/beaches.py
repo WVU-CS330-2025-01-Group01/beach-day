@@ -1,7 +1,6 @@
 import json
 import os
 # ~~ ~~ ~~ ~~ ~~ ~~ ~~
-# temporary beach data
 
 # Construct the correct absolute path
 base_dir = os.path.dirname(__file__)  # Get the directory of the current script
