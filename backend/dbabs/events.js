@@ -39,6 +39,32 @@ async function getUserEventsHelper(username) {
     }
 }
 
+async function getEventFromIDHelper(eventID) {
+    try {
+
+        const [event] = await connection.query(
+            `
+                SELECT * FROM events
+                WHERE event_id = ?
+            `
+            , [eventID]
+        )
+
+        if(event.length <= 0) {
+            throw new dbErrors.ZeroEvents();
+        }
+
+        return event[0];
+
+    } catch (e) {
+        if(e instanceof dbErrors.ZeroEvents) {
+            throw new dbErrors.ZeroEvents();
+        } else {
+            throw new dbErrors.ProblemWithDB()
+        }
+    }
+}
+
 module.exports = {
 
     getUserFutureEvents: async function(username) {
@@ -141,5 +167,27 @@ module.exports = {
         }
     },
 
+    removeEventFromID: async function(eventID) {
+        try {
+    
+            await getEventFromIDHelper(eventID);
+    
+            await connection.query(
+                `
+                    DELETE FROM events
+                    WHERE event_id = ?
+                `
+                , [eventID]
+            );
+        } catch (e) {
+            if(e instanceof dbErrors.ZeroEvents) {
+                throw new dbErrors.ZeroEvents();
+            } else {
+                throw new dbErrors.ProblemWithDB()
+            }
+        }
+    },
+
+    getEventFromID: getEventFromIDHelper,
     getUserEvents: getUserEventsHelper,
 }
