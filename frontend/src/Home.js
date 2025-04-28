@@ -30,6 +30,7 @@ function Home({ weather }) {
           <p>Wind Direction: {weather.windDirection}</p>
           <p>Forecast: {weather.forecastSummary}</p>
           <p>Precipitation: {weather.probPrecip}</p>
+          <p>UV Index: {weather.uvIndex}</p>
         </div>
       ) : (
         <p>Search for a beach to see the weather!</p>

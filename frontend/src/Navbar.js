@@ -76,6 +76,7 @@ function Navbar({ onWeatherData }) {
           windSpeed: data.windSpeed || "N/A",
           windDirection: data.windDirection || "N/A",
           forecastSummary: data.forecastSummary || "No summary available",
+          uvIndex: data.uvIndex || "N/A",
           searchType,
           zipCode,
           latitude,
