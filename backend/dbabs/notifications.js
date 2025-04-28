@@ -108,7 +108,7 @@ module.exports = {
                 `
                 SELECT COUNT(username) AS amount
                 FROM notifications
-                WHERE username = ?;
+                WHERE username = ? AND wasReceived = 0;
                 `
                 , [username]
             );

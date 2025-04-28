@@ -360,7 +360,7 @@ This is exception is thrown if there are issues modifying the database.
 </dl>
 
 ## `getNotificationCount(username)`
-Get a total number of notifcations for a user.
+Get a total number of pending notifcations for a user.
 
 ### Arguments
 <dl>
