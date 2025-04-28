@@ -138,6 +138,7 @@ function Navbar({ onWeatherData }) {
             </>
           )}
           <button type="submit" style={{ display: "none" }}></button>
+          <img src={searchIcon} alt="Search" className="search-icon" />
         </div>
       </form>
 
