@@ -5,7 +5,7 @@ export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(() => JSON.parse(localStorage.getItem('authenticated')) || false);
-  const [username, setUsername] = useState([]);
+  const [username, setUsername] = useState('');
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [jwtToken, setJwtToken] = useState(() => Cookies.get('jwt') || null);

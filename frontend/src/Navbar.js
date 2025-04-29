@@ -110,10 +110,8 @@ function Navbar({ onWeatherData }) {
           {/* Logo */}
           <div className="navbar-left">
             <Link to="/home" className="navbar-home-link">
-              <div className="navbar-content">
                 <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
                 <h1 className="navbar-title">Beach Day</h1>
-              </div>
             </Link>
           </div>
 
@@ -167,14 +165,14 @@ function Navbar({ onWeatherData }) {
           {/* Links */}
           <div className="navbar-right">
             <div className="navbar-links">
-              <Link to="/home">Home</Link>
+              <Link to="/home" className="navbar-link">Home</Link>
 
               {/* Only show Favorites and Settings if authenticated */}
               {authenticated && (
                 <>
-                  <Link to="/favorites">Favorites</Link>
+                  <Link to="/favorites" className="navbar-link">Favorites</Link>
                   <div className="profile-dropdown">
-                    <span onClick={toggleDropdown} className="profile-link">
+                    <span onClick={toggleDropdown} className="navbar-link">
                       Profile
                     </span>
 
@@ -202,11 +200,11 @@ function Navbar({ onWeatherData }) {
               )}
 
               {/* Show About always */}
-              <Link to="/about">About</Link>
+              <Link to="/about" className="navbar-link">About</Link>
 
               {/* Login or Logout */}
               {!authenticated && (
-                <Link to="/login">Login</Link>
+                <Link to="/login" className="navbar-link">Login</Link>
               )}
             </div>
           </div>
