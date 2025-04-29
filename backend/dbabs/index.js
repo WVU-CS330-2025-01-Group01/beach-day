@@ -34,8 +34,6 @@ module.exports = {
 				(?, ?);
 				`, [username, hash]
 			);
-
-
 		} catch (e) {
 			if (e instanceof dbErrors.UserAlreadyExists) {
 				throw new dbErrors.UserAlreadyExists();
@@ -88,6 +86,19 @@ module.exports = {
             }
         }
     },
+
+	setPassword: async function(username, password) {
+		try {
+			const hash = await bcrypt.hash(password, salt);
+			await connection.query(`UPDATE users SET password = ? WHERE username = ?`, [hash, username]);
+		} catch (e) {
+			if (e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
+			} else {
+				throw new dbErrors.ProblemWithDB()
+			}
+		}
+	},
 
 	removeUser: async function(username) {
 		try {
