@@ -110,8 +110,8 @@ function Navbar({ onWeatherData }) {
           {/* Logo */}
           <div className="navbar-left">
             <Link to="/home" className="navbar-home-link">
-                <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
-                <h1 className="navbar-title">Beach Day</h1>
+              <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
+              <h1 className="navbar-title">Beach Day</h1>
             </Link>
           </div>
 
@@ -212,7 +212,10 @@ function Navbar({ onWeatherData }) {
       </div>
       {error && (
         <div className="error-bar">
-          {error}
+          <div className="error-bar-inner">
+            {error}
+            <button className="error-dismiss" onClick={() => setError("")}>✕</button>
+          </div>
         </div>
       )}
     </>
