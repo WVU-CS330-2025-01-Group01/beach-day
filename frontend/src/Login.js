@@ -4,7 +4,7 @@ import { UserContext } from './UserContext';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import Cookies from 'js-cookie';  // Import js-cookie
-import { fetchBeachInfoWithWeather, cacheFavorites } from './utils';
+import { cacheFavorites } from './utils';
 import { API } from './api';
 
 function Login() {
@@ -13,10 +13,10 @@ function Login() {
     setLoadingFavorites,
     favorites,
     setFavorites,
-    setJwtToken
+    setJwtToken,
+    username,
+    setUsername
   } = useContext(UserContext);
-
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();  // Initialize the useNavigate hook
@@ -38,6 +38,8 @@ function Login() {
         Cookies.set('jwt', data.jwt, { expires: 1, secure: false, sameSite: 'Strict', path: '/' }); // Store JWT token in a cookie with a 1-day expiration
 
         setAuthenticated(true);
+        setUsername(username);
+        localStorage.setItem('username', username);
         navigate('/home');
         setFavorites([]); // Clear the old favorites before adding new ones incrementally
         await cacheFavorites(data.jwt, setLoadingFavorites, setFavorites, favorites);

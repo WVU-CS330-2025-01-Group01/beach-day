@@ -171,7 +171,7 @@ def get_uv_index(lat, lon):
     return uvmap.get(closest_city, "")
 
 def distance(a_lat, a_lon, b_lat, b_lon):
-    return ((b_lat - a_lat) ** 2 + (b_lon - a_lon) ** 2) ** 0.5
+    return ((float(b_lat) - float(a_lat)) ** 2 + (float(b_lon) - float(a_lon)) ** 2) ** 0.5
 
 
 def get_closest_uv_city(lat, lon):

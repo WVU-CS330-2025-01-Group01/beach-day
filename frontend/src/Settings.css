@@ -86,3 +86,12 @@
   color: red;
   font-weight: 600;
 }
+
+.logout-button {
+  background-color: #ff4d4d;
+  color: white;
+  margin-top: 1rem;
+}
+.logout-button:hover {
+  background-color: #ff1a1a;
+}
