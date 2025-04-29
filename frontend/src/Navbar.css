@@ -2,7 +2,8 @@
 
 .navbar {
   background-color: var(--primary-color);
-  padding: 10px 0; /* Top and bottom only */
+  padding: 10px 0;
+  /* Top and bottom only */
   color: white;
 }
 
@@ -14,7 +15,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 30px; /* adds small gap between left, center, right */
+  gap: 30px;
+  /* adds small gap between left, center, right */
 }
 
 .navbar-left,
@@ -57,11 +59,13 @@
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: white; /* Ensures the text stays white */
+  color: white;
+  /* Ensures the text stays white */
 }
 
 .navbar-home-link:hover {
-  text-decoration: none; /* Ensures no underline on hover */
+  text-decoration: none;
+  /* Ensures no underline on hover */
 }
 
 .navbar-links {
@@ -98,7 +102,8 @@
 
 .custom-search-form {
   display: flex;
-  justify-content: center; /* Centers the search bar */
+  justify-content: center;
+  /* Centers the search bar */
   flex-grow: 1;
 }
 
@@ -109,7 +114,8 @@
   border-radius: 30px;
   padding: 6px 12px;
   position: relative;
-  width: 400px; /* Adjust the width as needed */
+  width: 400px;
+  /* Adjust the width as needed */
   max-width: 90%;
 }
 
@@ -120,14 +126,15 @@
   margin-right: 8px;
   color: #333;
   outline: none;
-  width: 150px; /* Adjust the width of the dropdown */
+  width: 150px;
+  /* Adjust the width of the dropdown */
 }
 
 .search-input {
   flex: 1;
   border: none;
   font-size: 1rem;
-  padding: 4px 10px 10px ;
+  padding: 4px 10px 10px;
   outline: none;
   margin-bottom: 0px;
   color: #333;
@@ -142,14 +149,33 @@
 .search-icon {
   width: 30px;
   height: 30px;
-  margin-left: 0px; /* Adds space between the input field and icon */
-  pointer-events: none; /* Ensures the icon does not block input interaction */
+  margin-left: 0px;
+  /* Adds space between the input field and icon */
+  pointer-events: none;
+  /* Ensures the icon does not block input interaction */
 }
 
-.error-message {
-  color: #ffb3b3;
-  font-size: 0.9rem;
-  margin-left: 15px;
+.error-bar {
+  background-color: #f44336;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 0.95rem;
+  backdrop-filter: blur(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* PROFILE DROPDOWN STYLING */
@@ -242,6 +268,8 @@
   text-align: center;
   transition: background-color 0.3s ease;
 }
+
 .dropdown-logout:hover {
-  background-color: #c62828; /* Darker red on hover */
+  background-color: #c62828;
+  /* Darker red on hover */
 }

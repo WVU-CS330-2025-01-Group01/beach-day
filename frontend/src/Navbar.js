@@ -103,114 +103,121 @@ function Navbar({ onWeatherData }) {
   };
 
   return (
-    <div className="navbar">
-      <div className="navbar-container">
+    <>
+      <div className="navbar">
+        <div className="navbar-container">
 
-        {/* Logo */}
-        <div className="navbar-left">
-          <Link to="/home" className="navbar-home-link">
-            <div className="navbar-content">
-              <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
-              <h1 className="navbar-title">Beach Day</h1>
-            </div>
-          </Link>
-        </div>
+          {/* Logo */}
+          <div className="navbar-left">
+            <Link to="/home" className="navbar-home-link">
+              <div className="navbar-content">
+                <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
+                <h1 className="navbar-title">Beach Day</h1>
+              </div>
+            </Link>
+          </div>
 
-        {/* Search */}
-        <div className="navbar-center">
-          <form onSubmit={handleSearch} className="custom-search-form">
-            <div className="search-box">
-              <select
-                className="search-dropdown"
-                value={searchType}
-                onChange={(e) => setSearchType(e.target.value)}
-              >
-                <option value="zipcode">ZIP Code</option>
-                <option value="latlon">Coordinates</option>
-              </select>
+          {/* Search */}
+          <div className="navbar-center">
+            <form onSubmit={handleSearch} className="custom-search-form">
+              <div className="search-box">
+                <select
+                  className="search-dropdown"
+                  value={searchType}
+                  onChange={(e) => setSearchType(e.target.value)}
+                >
+                  <option value="zipcode">ZIP Code</option>
+                  <option value="latlon">Coordinates</option>
+                </select>
 
-              {searchType === "zipcode" ? (
-                <input
-                  className="search-input"
-                  type="text"
-                  placeholder="Enter ZIP code"
-                  value={zipCode}
-                  onChange={(e) => setZipCode(e.target.value)}
-                />
-              ) : (
+                {searchType === "zipcode" ? (
+                  <input
+                    className="search-input"
+                    type="text"
+                    placeholder="Enter ZIP code"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                  />
+                ) : (
+                  <>
+                    <input
+                      className="search-input"
+                      type="text"
+                      placeholder="Latitude"
+                      value={latitude}
+                      onChange={(e) => setLatitude(e.target.value)}
+                    />
+                    <input
+                      className="search-input"
+                      type="text"
+                      placeholder="Longitude"
+                      value={longitude}
+                      onChange={(e) => setLongitude(e.target.value)}
+                    />
+                  </>
+                )}
+                <button type="submit" style={{ display: "none" }}></button>
+                <img src={searchIcon} alt="Search" className="search-icon" />
+              </div>
+            </form>
+          </div>
+
+
+
+          {/* Links */}
+          <div className="navbar-right">
+            <div className="navbar-links">
+              <Link to="/home">Home</Link>
+
+              {/* Only show Favorites and Settings if authenticated */}
+              {authenticated && (
                 <>
-                  <input
-                    className="search-input"
-                    type="text"
-                    placeholder="Latitude"
-                    value={latitude}
-                    onChange={(e) => setLatitude(e.target.value)}
-                  />
-                  <input
-                    className="search-input"
-                    type="text"
-                    placeholder="Longitude"
-                    value={longitude}
-                    onChange={(e) => setLongitude(e.target.value)}
-                  />
-                </>
-              )}
-              <button type="submit" style={{ display: "none" }}></button>
-              <img src={searchIcon} alt="Search" className="search-icon" />
-            </div>
-          </form>
-        </div>
+                  <Link to="/favorites">Favorites</Link>
+                  <div className="profile-dropdown">
+                    <span onClick={toggleDropdown} className="profile-link">
+                      Profile
+                    </span>
 
-        {error && <p className="error-message">{error}</p>}
-
-        {/* Links */}
-        <div className="navbar-right">
-          <div className="navbar-links">
-            <Link to="/home">Home</Link>
-
-            {/* Only show Favorites and Settings if authenticated */}
-            {authenticated && (
-              <>
-                <Link to="/favorites">Favorites</Link>
-                <div className="profile-dropdown">
-                  <span onClick={toggleDropdown} className="profile-link">
-                    Profile
-                  </span>
-
-                  {dropdownOpen && (
-                    <div className="dropdown-box">
-                      <div className="dropdown-header">
-                        <div className="avatar">
-                          {username ? username.charAt(0).toUpperCase() : "?"}
-                        </div> {/* Optional: Just first letter of name */}
-                        <div>
-                          <div className="dropdown-name">
-                            {username}
+                    {dropdownOpen && (
+                      <div className="dropdown-box">
+                        <div className="dropdown-header">
+                          <div className="avatar">
+                            {username ? username.charAt(0).toUpperCase() : "?"}
+                          </div> {/* Optional: Just first letter of name */}
+                          <div>
+                            <div className="dropdown-name">
+                              {username}
+                            </div>
                           </div>
                         </div>
+
+                        <div className="dropdown-body">
+                          <Link to="/settings" onClick={() => setDropdownOpen(false)}>Settings</Link>
+                        </div>
+                        <button onClick={handleLogout} className="dropdown-logout">Logout</button>
                       </div>
+                    )}
+                  </div>
+                </>
+              )}
 
-                      <div className="dropdown-body">
-                        <Link to="/settings" onClick={() => setDropdownOpen(false)}>Settings</Link>
-                      </div>
-                      <button onClick={handleLogout} className="dropdown-logout">Logout</button>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
+              {/* Show About always */}
+              <Link to="/about">About</Link>
 
-            {/* Show About always */}
-            <Link to="/about">About</Link>
-
-            {/* Login or Logout */}
-            {!authenticated && (
-              <Link to="/login">Login</Link>
-            )}
+              {/* Login or Logout */}
+              {!authenticated && (
+                <Link to="/login">Login</Link>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      {error && (
+        <div className="error-bar">
+          {error}
+        </div>
+      )}
+    </>
   );
 }
 
