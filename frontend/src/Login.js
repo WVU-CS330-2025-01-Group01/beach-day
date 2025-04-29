@@ -39,6 +39,7 @@ function Login() {
 
         setAuthenticated(true);
         setUsername(username);
+        localStorage.setItem('username', username);
         navigate('/home');
         setFavorites([]); // Clear the old favorites before adding new ones incrementally
         await cacheFavorites(data.jwt, setLoadingFavorites, setFavorites, favorites);

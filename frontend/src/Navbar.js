@@ -27,6 +27,7 @@ function Navbar({ onWeatherData }) {
     Cookies.remove('jwt');
     localStorage.removeItem('cachedFavorites');
     localStorage.removeItem('lastUpdated');
+    localStorage.removeItem('username');
     setAuthenticated(false);
     navigate("/login"); // after logout, go to login page
   };
