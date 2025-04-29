@@ -3,7 +3,6 @@
 .navbar {
   background-color: var(--primary-color);
   padding: 10px 0;
-  /* Top and bottom only */
   color: white;
 }
 
@@ -50,12 +49,10 @@
   align-items: center;
   text-decoration: none;
   color: white;
-  /* Ensures the text stays white */
 }
 
 .navbar-home-link:hover {
   text-decoration: none;
-  /* Ensures no underline on hover */
 }
 
 .navbar-links {
@@ -93,7 +90,6 @@
 .custom-search-form {
   display: flex;
   justify-content: center;
-  /* Centers the search bar */
   flex-grow: 1;
 }
 
@@ -116,7 +112,6 @@
   color: #333;
   outline: none;
   width: 150px;
-  /* Adjust the width of the dropdown */
 }
 
 .search-input {
@@ -137,10 +132,7 @@
 .search-icon {
   width: 30px;
   height: 30px;
-  margin-left: 0px;
-  /* Adds space between the input field and icon */
   pointer-events: none;
-  /* Ensures the icon does not block input interaction */
 }
 
 .error-bar {
