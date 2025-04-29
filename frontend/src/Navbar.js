@@ -8,13 +8,18 @@ import searchIcon from './search.png';
 import { API } from './api';
 
 function Navbar({ onWeatherData }) {
-  const { authenticated, setAuthenticated } = useContext(UserContext);
+  const {
+    authenticated,
+    setAuthenticated,
+    username
+  } = useContext(UserContext);
 
   const [searchType, setSearchType] = useState("zipcode");
   const [zipCode, setZipCode] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [error, setError] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -23,6 +28,7 @@ function Navbar({ onWeatherData }) {
     localStorage.removeItem('cachedFavorites');
     localStorage.removeItem('lastUpdated');
     setAuthenticated(false);
+    navigate("/login"); // after logout, go to login page
   };
 
   const handleSearch = async (e) => {
@@ -92,68 +98,117 @@ function Navbar({ onWeatherData }) {
     }
   };
 
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
   return (
     <div className="navbar">
-      <Link to="/home" className="navbar-home-link">
-        <div className="navbar-content">
-          <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
-          <h1 className="navbar-title">Beach Day</h1>
+      <div className="navbar-container">
+
+        {/* Logo */}
+        <div className="navbar-left">
+          <Link to="/home" className="navbar-home-link">
+            <div className="navbar-content">
+              <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
+              <h1 className="navbar-title">Beach Day</h1>
+            </div>
+          </Link>
         </div>
-      </Link>
 
-      <form onSubmit={handleSearch} className="custom-search-form">
-        <div className="search-box">
-          <select
-            className="search-dropdown"
-            value={searchType}
-            onChange={(e) => setSearchType(e.target.value)}
-          >
-            <option value="zipcode">ZIP Code</option>
-            <option value="latlon">Coordinates</option>
-          </select>
+        {/* Search */}
+        <div className="navbar-center">
+          <form onSubmit={handleSearch} className="custom-search-form">
+            <div className="search-box">
+              <select
+                className="search-dropdown"
+                value={searchType}
+                onChange={(e) => setSearchType(e.target.value)}
+              >
+                <option value="zipcode">ZIP Code</option>
+                <option value="latlon">Coordinates</option>
+              </select>
 
-          {searchType === "zipcode" ? (
-            <input
-              className="search-input"
-              type="text"
-              placeholder="Enter ZIP code..."
-              value={zipCode}
-              onChange={(e) => setZipCode(e.target.value)}
-            />
-          ) : (
-            <>
-              <input
-                className="search-input"
-                type="text"
-                placeholder="Latitude"
-                value={latitude}
-                onChange={(e) => setLatitude(e.target.value)}
-              />
-              <input
-                className="search-input"
-                type="text"
-                placeholder="Longitude"
-                value={longitude}
-                onChange={(e) => setLongitude(e.target.value)}
-              />
-            </>
-          )}
-          <button type="submit" style={{ display: "none" }}></button>
-          <img src={searchIcon} alt="Search" className="search-icon" />
+              {searchType === "zipcode" ? (
+                <input
+                  className="search-input"
+                  type="text"
+                  placeholder="Enter ZIP code"
+                  value={zipCode}
+                  onChange={(e) => setZipCode(e.target.value)}
+                />
+              ) : (
+                <>
+                  <input
+                    className="search-input"
+                    type="text"
+                    placeholder="Latitude"
+                    value={latitude}
+                    onChange={(e) => setLatitude(e.target.value)}
+                  />
+                  <input
+                    className="search-input"
+                    type="text"
+                    placeholder="Longitude"
+                    value={longitude}
+                    onChange={(e) => setLongitude(e.target.value)}
+                  />
+                </>
+              )}
+              <button type="submit" style={{ display: "none" }}></button>
+              <img src={searchIcon} alt="Search" className="search-icon" />
+            </div>
+          </form>
         </div>
-      </form>
 
-      {error && <p className="error-message">{error}</p>}
+        {error && <p className="error-message">{error}</p>}
 
-      <div className="navbar-links">
-        <Link to="/home">Home</Link>
-        <Link to="/favorites">Favorites</Link>
-        <Link to="/settings">Settings</Link>
-        {authenticated ? (
-          <button onClick={handleLogout} className="logout-btn">Logout</button>
-        ) : (
-          <Link to="/login">Login</Link>
-        )}
+        {/* Links */}
+        <div className="navbar-right">
+          <div className="navbar-links">
+            <Link to="/home">Home</Link>
+
+            {/* Only show Favorites and Settings if authenticated */}
+            {authenticated && (
+              <>
+                <Link to="/favorites">Favorites</Link>
+                <div className="profile-dropdown">
+                  <span onClick={toggleDropdown} className="profile-link">
+                    Profile
+                  </span>
+
+                  {dropdownOpen && (
+                    <div className="dropdown-box">
+                      <div className="dropdown-header">
+                        <div className="avatar">
+                          {username ? username.charAt(0).toUpperCase() : "?"}
+                        </div> {/* Optional: Just first letter of name */}
+                        <div>
+                          <div className="dropdown-name">
+                            {username}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="dropdown-body">
+                        <Link to="/settings" onClick={() => setDropdownOpen(false)}>Settings</Link>
+                      </div>
+                      <button onClick={handleLogout} className="dropdown-logout">Logout</button>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* Show About always */}
+            <Link to="/about">About</Link>
+
+            {/* Login or Logout */}
+            {!authenticated && (
+              <Link to="/login">Login</Link>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

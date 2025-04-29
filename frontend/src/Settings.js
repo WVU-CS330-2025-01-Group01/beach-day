@@ -1,7 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./Settings.css";
+import { UserContext } from "./UserContext";
+import Cookies from 'js-cookie';
 
 function Settings() {
+  const { setAuthenticated } = useContext(UserContext);
+
+  const handleLogout = () => {
+    Cookies.remove('jwt');
+    localStorage.removeItem('cachedFavorites');
+    localStorage.removeItem('lastUpdated');
+    setAuthenticated(false);
+  };
+
+
+
+
   return (
     <div className="settings-page">
       <h1 className="settings-title">Manage Account</h1>
@@ -23,14 +37,9 @@ function Settings() {
               <label>Password</label>
               <input type="password" placeholder="Change Password" />
             </div>
-            <div className="form-group">
-              <label>Gender (Optional)</label>
-              <select>
-                <option>Prefer not to say</option>
-                <option>Male</option>
-                <option>Female</option>
-              </select>
-            </div>
+            <button className="settings-button logout-button" onClick={handleLogout}>
+            Logout
+          </button>
           </form>
         </div>
 
