@@ -1,3 +1,7 @@
+/** 
+ * This class includes functions for a user to schedule personal events.
+ * @author Ayden Jones, Bhavana Dakshinamoorthy, Austin Bird
+ */
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const mysql = require('mysql2');
@@ -5,6 +9,15 @@ const dbErrors = require('./db-errors');
 const dbHelper = require('./generic-helpers');
 const connection = require('./database-connection');
 
+    /** 
+	 * Retrives a user's events.
+	 * 
+	 * Checks to see if a user does not exist, if there are no
+     * events or if there is a database issue.
+	 * 
+	 * @param {String} username Given username
+	 * @return User's events
+	 */
 async function getUserEventsHelper(username) { 
     try {
 
@@ -39,6 +52,15 @@ async function getUserEventsHelper(username) {
     }
 }
 
+    /** 
+	 * Retrives a user's events from a given ID.
+	 * 
+	 * Checks to see if there are no events
+     * or if there is a database issue.
+	 * 
+	 * @param {number} eventID Given event ID
+	 * @return User's event from given ID
+	 */
 async function getEventFromIDHelper(eventID) {
     try {
 
@@ -66,7 +88,15 @@ async function getEventFromIDHelper(eventID) {
 }
 
 module.exports = {
-
+    /** 
+	 * Retrives a user's future events.
+	 * 
+	 * Checks to see if a user does not exist, if there are no
+     * events or if there is a database issue.
+	 * 
+	 * @param {String} username Given username
+	 * @return User's events
+	 */
     getUserFutureEvents: async function(username) {
         try {
     
@@ -101,6 +131,15 @@ module.exports = {
         }
     },
 
+    /** 
+	 * Retrives the number of events for a user.
+	 * 
+	 * Checks to see if a user does not exist,
+     * or if there is a database issue.
+	 * 
+	 * @param {String} username Given username
+	 * @return Number of events for a given user.
+	 */
     getEventCount: async function(username) {
         try {
     
@@ -126,6 +165,15 @@ module.exports = {
         }
     },
 
+     /** 
+	 * Removes all of a user's events from the database.
+	 * 
+	 * Checks to see if a user does not exist, if there are no events
+     * or if there is a database issue.
+	 * 
+	 * @param {String} username Given username
+	 * @return Nothing
+	 */
     removeAllEventsFromUser: async function(username) {
         try {
     
@@ -153,6 +201,13 @@ module.exports = {
         }
     },
 
+     /** 
+	 * Clears a user's past events.
+	 * 
+	 * Checks to see if there is a database issue.
+	 *
+	 * @return Nothing
+	 */
     clearPastEvents: async function() {
         try {
     
@@ -167,6 +222,15 @@ module.exports = {
         }
     },
 
+     /** 
+	 * Removes an event from a given ID.
+	 * 
+	 * Checks to see if there are no events
+     * or if there is a database issue.
+	 * 
+	 * @param {number} eventID Given event ID.
+	 * @return Nothing
+	 */
     removeEventFromID: async function(eventID) {
         try {
     

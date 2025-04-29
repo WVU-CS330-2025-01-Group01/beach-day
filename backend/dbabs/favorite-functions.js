@@ -1,3 +1,8 @@
+/** 
+ * This class includes functions to manage a user's favorite beach list.
+ * @author Ayden Jones, Bhavana Dakshinamoorthy, Austin Bird
+ */
+
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const mysql = require('mysql2');
@@ -6,6 +11,14 @@ const dbHelper = require('./generic-helpers');
 const connection = require('./database-connection');
 
 module.exports = {
+	/** 
+	 * Retrives a user's favorite beaches based on a given username.
+	 * 
+	 * Checks to see if a user does not exist or if there is a database issue.
+	 * 
+	 * @param {String} username Username added
+	 * @return An array of the user's favorite beaches.
+	 */
     getFavorites: async function (username) {
 		try {
 			const [favoritesColumn] = await connection.query('SELECT favorite_beaches FROM users WHERE username = ?', [username]);
@@ -27,6 +40,16 @@ module.exports = {
 		}
 	},
 
+	/** 
+	 * Removes a user's favorite beaches based on a given username and a beach.
+	 * 
+	 * Checks to see if a user does not exist, if there is no beach found,
+	 * or if there is a database issue.
+	 * 
+	 * @param {String} username Username added
+	 * @param {String} beach Inputted beach to be removed
+	 * @return nothing
+	 */
 	removeFavorites: async function (username, beach) {
 		try {
 			const user = await dbHelper.getUserData(username);
@@ -59,6 +82,16 @@ module.exports = {
 		}
 	},
 
+	/** 
+	 * Adds a user's favorite beach to their favorite beaches list.
+	 * 
+	 * Checks to see if a user does not exist, if the beach is already favorited
+	 * or if there is a database issue.
+	 * 
+	 * @param {String} username Username added
+	 * @param {String} beach Inputted beach to be removed
+	 * @return nothing
+	 */
     addFavorite: async function(username, beach) {
 		try {
 		
@@ -115,6 +148,15 @@ module.exports = {
 		} 
 	},
 
+	/** 
+	 * Clears a user's favorite beaches list based on a given username.
+	 * 
+	 * Checks to see if a user does not exist, if the beach is already favorited
+	 * or if there is a database issue.
+	 * 
+	 * @param {String} username Username added
+	 * @return nothing
+	 */
 	clearFavorites: async function(username) {
 		try {
 			if(await !dbHelper.userExists(username)) {

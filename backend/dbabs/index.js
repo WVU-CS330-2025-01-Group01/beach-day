@@ -1,3 +1,9 @@
+/** 
+ * This class includes functions related to user handling 
+ * and login credentials.
+ * @author Ayden Jones, Bhavana Dakshinamoorthy, Austin Bird
+ */
+
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const mysql = require('mysql2');
@@ -10,12 +16,14 @@ const connection = require('./database-connection');
 const salt = 10;
 
 module.exports = {
-	/**
-	 * This function takes in an unsanitized username and password. If the
-	 * user already exists, it throws UserAlreadyExists. If there is a
-	 * problem adding the user to the database, it throws ProblemWithDB. If
-	 * the user is successfully added to the database, no exceptions are to
-	 * be thrown. Nothing is ever returned by this function.
+	/** 
+	 * Creates a new user and inserts it into the database.
+	 * 
+	 * Checks to see if a user already exists or if there is a database issue.
+	 * 
+	 * @param {String} username Username added
+	 * @param {String} password Password created by user
+	 * @return nothing
 	 */
 	attemptToMakeUser: async function (username, password) {
 
@@ -42,13 +50,15 @@ module.exports = {
 			}
 		}
 	},
-	/**
-	 * This function takes in an unsanitized username and password. If the
-	 * user does not exist, it throws UserNotFound. If there is a problem
-	 * with the database, it throws ProblemWithDB. If the password is
-	 * incorrect, it throws IncorrectPassword. If the username exists and
-	 * the password is the correct password for that user, no exceptions are
-	 * to be thrown. Nothing is ever returned by this function.
+
+	/** 
+	 * Allows user to login with their correct username and password.
+	 * 
+	 * Checks to see if the user does not exist and if the password is incorrect.
+	 * 
+	 * @param {String} username Username given by user
+	 * @param {String} enteredPassword Password given by user
+	 * @return nothing
 	 */
 	tryLogIn: async function (username, enteredPassword) {
 		try {
@@ -74,6 +84,15 @@ module.exports = {
 
 	},
 
+	/** 
+	 * Sets a given e-mail in the database.
+	 * 
+	 * Checks to see if the user does not exist and for issues in the database.
+	 * 
+	 * @param {String} username User's username
+	 * @param {String} email Email added by user
+	 * @return nothing
+	 */
 	setEmail: async function (username, email) {
         try {
             await dbHelper.getUserData(username);
@@ -87,6 +106,15 @@ module.exports = {
         }
     },
 
+	/** 
+	 * Sets a given password in the databas.
+	 * 
+	 * Checks to see if a user already exists or if there is a database issue.
+	 * 
+	 * @param {String} username Username added
+	 * @param {String} password Password created by user
+	 * @return nothing
+	 */
 	setPassword: async function(username, password) {
 		try {
 			const hash = await bcrypt.hash(password, salt);
@@ -100,6 +128,14 @@ module.exports = {
 		}
 	},
 
+	/** 
+	 * Looks for a user in the database to delete it.
+	 * 
+	 * Checks to see if a user already exists or if there is a database issue.
+	 * 
+	 * @param {String} username Username added
+	 * @return nothing
+	 */
 	removeUser: async function(username) {
 		try {
 			//Foreign keys halt any dropping of primary key as long as it's used in another table, this clears the other tables
@@ -157,5 +193,3 @@ module.exports = {
 	BeachNotPresent: dbErrors.BeachNotPresent,
 	ZeroNotifications: dbErrors.ZeroNotifications
 };
-
-

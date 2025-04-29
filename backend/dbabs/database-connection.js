@@ -1,7 +1,13 @@
+/** 
+ * This class includes handling the connection to the database.
+ * 
+ * @author Ayden Jones, Bhavana Dakshinamoorthy, Austin Bird
+ */
 require('dotenv').config();
 const mysql = require('mysql2');
 const dbErrors = require("./db-errors");
 
+//Creating the mySQL connection and declraring variables.
 const connection = mysql.createPool({
     host: process.env.BEACH_DAY_DB_HOST,
     user: process.env.BEACH_DAY_DB_USER,
@@ -20,6 +26,14 @@ if(process.env.BEACH_DAY_DB_SSL_FLAG === undefined) {
     console.error("Manipulating Remote Database");
 }
 
+/** 
+	 * Tests a local database connection.
+	 * 
+	 * Checks to see is a connection is retrieved. If not, an error is thrown. 
+     * The connection is nevertheless released back into the pool.
+	 * 
+	 * @return Nothing.
+	 */
 async function testDatabaseConnection() {
 	let connect;
 	try {
@@ -41,18 +55,29 @@ async function testDatabaseConnection() {
 * More functions can be added in the same fashion as the others.
 */
 
-
+/** 
+	 * Helper to drop a column for the InitDB() function.
+	 * 
+	 * Drops a column in the table.
+	 * 
+	 * @return Nothing.
+	 */
 async function dropColumn(columnName) { 
 	//just drops the column, no SQL Injection protection, only ran by initDB
 	await connection.query(
 		"ALTER TABLE users DROP COLUMN " + columnName + ";"
 	);
-	//no error is caught either as that should be handled in initDB
 }
 
+/** 
+	 * Helper to retrieve table data.
+     * 
+	 * @param {String} databaseName Name of the database
+     * @param {String} field Name of field
+     * @param {String} tableName Name of table
+	 * @return Nothing.
+	 */
 async function getFieldAttributes(field, databaseName, tableName) {
-	//no SQL Injection protection, only ran by initDB
-	//no error is caught either as that should be handled in initDB
 	const [attributes] = await connection.query(
 		`
 		SELECT * FROM information_schema.columns
@@ -64,9 +89,24 @@ async function getFieldAttributes(field, databaseName, tableName) {
 	return attributes[0];
 }
 
+/** 
+	 * Updates the fields in the table.
+	 * 
+	 * Prints out error if the fields are unexpected.
+	 * 
+	 * @param {String} fieldName Given field name.
+     * @param {String} attributes Given attributes.
+     * @param {number} ordinalPos
+     * @param {} varType
+     * @param {} isNullAllowed
+     * @param {} isAutoInc
+     * @param {} colKey
+     * @param {} def
+     * @param {} tableName 
+     * 
+	 * @return nothing
+	 */
 async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAllowed, isAutoInc, colKey, def, tableName) {
-	//no SQL Injection protection, only ran by initDB
-	//no error is caught either as that should be handled in initDB
 	if(attributes.ORDINAL_POSITION != ordinalPos) { 
         console.error(" " + fieldName +" position "+  ordinalPos + ", should be " + attributes.ORDINAL_POSITION + " Table ordered wrong, no conflicts should arise however."); 
     }
@@ -129,7 +169,13 @@ async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAl
 	}
 }
 
-//If any of this can somehow be destructive to a db other than authdb/dbName, I will gladly sign the waver for Caden to be able to kill me.
+/** 
+	 * Checks if the database has all of the necessary fields and constraints.
+	 * 
+	 * Throws errors if fields/constraints are missing from the database/table.
+	 * 
+	 * @return nothing
+	 */
 async function initDB() {
     const dbName = "authdb"; //in case we don't standardize the name, this can be set to a param or process.env
 

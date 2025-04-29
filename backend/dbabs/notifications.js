@@ -1,3 +1,8 @@
+/** 
+ * This class includes functions related to sending notifications to users.
+ * @author Ayden Jones, Bhavana Dakshinamoorthy, Austin Bird
+ */
+
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const mysql = require('mysql2');
@@ -5,8 +10,14 @@ const dbErrors = require('./db-errors');
 const dbHelper = require('./generic-helpers');
 const connection = require('./database-connection');
 
-
-
+    /** 
+	 * Helper method to retrieve notifications from given ID.
+	 * 
+	 * Checks to see if there are no notifications or if there is a problem with the database.
+	 * 
+	 * @param {number} notificationID Given notification ID.
+	 * @return {String} The notification found.
+	 */
 async function getNotificationFromIDHelper(notificationID) {
     try {
 
@@ -33,6 +44,15 @@ async function getNotificationFromIDHelper(notificationID) {
     }
 }
 
+    /** 
+	 * Helper method to retrieve all notifications from a user.
+	 * 
+	 * Checks to see if there are no notifications, if there is no user found, or
+     * if there is a problem with the database.
+	 * 
+	 * @param {String} username Given username.
+	 * @return {String} The notifications.
+	 */
 async function getUserNotificationsHelper(username) { //This and the function below are near identical in logic to two functions, but they were split to appear more clear to the frontend
     try {
 
@@ -68,6 +88,14 @@ async function getUserNotificationsHelper(username) { //This and the function be
 }
 
 module.exports = {
+    /** 
+	 * Method to retrieve whether or not a user has notifications enabled.
+	 * 
+	 * Checks to see if a user is not found or if there is a problem with the database.
+	 * 
+	 * @param {String} username Given username.
+	 * @return {String} Value that represents whether a user has notifications enabled or not.
+	 */
     getNotificationsEnabled: async function(username) {
         try {
             if (!(await dbHelper.userExists(username))) { // Check if user exists
@@ -83,6 +111,16 @@ module.exports = {
             }
         }
     },
+
+    /** 
+	 * Set the value that represents whether a user has notifications enabled or not.
+	 * 
+	 * Checks to see if there is no  user found or if there is a problem with the database.
+	 * 
+	 * @param {String} username Given username.
+     * @param {String} enabled Given value for enabled/not enabled.
+	 * @return nothing
+	 */
     setNotificationsEnabled: async function(username, enabled){
         try {
             if (!(await dbHelper.userExists(username))) { // Check if user exists
@@ -97,6 +135,15 @@ module.exports = {
             }
         }
     },
+
+    /** 
+	 * Retrieves the number of notifications for each user.
+	 * 
+	 * Checks to see if there is no user found or if there is a problem with the database.
+	 * 
+	 * @param {String} username Given username.
+	 * @return {number} Count of notifications.
+	 */
     getNotificationCount: async function(username) {
         try {
 
@@ -122,6 +169,16 @@ module.exports = {
         }
     },
 
+    /** 
+	 * Marks whether or not a notification has been received.
+	 * 
+	 * Checks to see if there are no notifications, 
+     * no user found or if there is a problem with the database. 
+	 * 
+	 * @param {String} username Given username.
+     * @param {String} notification_id ID for notifications.
+	 * @return nothing
+	 */
     receivedNotification: async function(username, notification_id) {
         try {
     
@@ -160,6 +217,15 @@ module.exports = {
         }
     },
 
+    /** 
+	 * Retrieves notifications that have not been received yet.
+	 * 
+	 * Checks to see if there are no notifications, 
+     * no user found or if there is a problem with the database. 
+	 * 
+	 * @param {String} username Given username.
+	 * @return {String} Pending notifications
+	 */
     getUserPendingNotifications: async function (username) {
         try {
     
@@ -194,6 +260,16 @@ module.exports = {
         }
     },
 
+    /** 
+	 * Adds a notification for a user for them to see.
+	 * 
+	 * Checks to see if there is no user found or if there is a problem with the database. 
+	 * 
+	 * @param {String} username Given username.
+     * @param {String} title Title of notification
+     * @param {String} message Message of notification.
+	 * @return nothing
+	 */
     addNotification: async function (username, title, message) {
         try {
     
@@ -218,6 +294,15 @@ module.exports = {
         }
     },
 
+    /** 
+	 * Removes all notifications from a user.
+	 * 
+	 * Checks to see if there is no user found, no notifications, 
+     * or if there is a problem with the database. 
+	 * 
+	 * @param {String} username Given username.
+	 * @return nothing
+	 */
     removeAllNotificationsFromUser: async function(username) {
         try {
     
@@ -245,6 +330,15 @@ module.exports = {
         }
     },
 
+    /** 
+	 * Removes notifications from a given ID.
+	 * 
+	 * Checks to see if there is are no notifications, 
+     * or if there is a problem with the database. 
+	 * 
+	 * @param {String} username Given username.
+	 * @return nothing
+	 */
     removeNotificationFromID: async function(notificationID) {
         try {
     
@@ -269,6 +363,15 @@ module.exports = {
     getNotificationFromID: getNotificationFromIDHelper,
     getUserNotifications: getUserNotificationsHelper,
 
+    /** 
+	 * Removes all received notifications from a user.
+	 * 
+	 * Checks to see if there is no user found, no notifications, 
+     * or if there is a problem with the database. 
+	 * 
+	 * @param {String} username Given username.
+	 * @return nothing
+	 */
     removeAllReceivedNotificationsFromUser: async function(username) {
         try {
     
