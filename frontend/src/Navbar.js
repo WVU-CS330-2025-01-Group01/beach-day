@@ -27,7 +27,7 @@ function Navbar({ onWeatherData }) {
 
   const handleSearch = async (e) => {
     if (e) e.preventDefault(); // Important: allow calling manually without needing a form submit event
-
+  
     let requestBody;
     if (searchType === "zipcode") {
       if (!zipCode.trim()) {
@@ -44,54 +44,51 @@ function Navbar({ onWeatherData }) {
         setError("Please enter both latitude and longitude.");
         return;
       }
-      requestBody = {
-        request_type: "current_basic_weather",
-        latitude: latitude,
-        longitude: longitude,
-      };
-    }
-
-    setError("");
-
-    try {
-      const response = await fetch(API.BEACHINFO, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch weather data");
-      }
-
-      const data = await response.json();
-
-      if (data.temperature) {
-        const weatherData = {
-          temperature: `${data.temperature}°F`,
-          probPrecip: data.probPrecip ? `${data.probPrecip}%` : "N/A",
-          relHumidity: data.relHumidity ? `${data.relHumidity}%` : "N/A",
-          windSpeed: data.windSpeed || "N/A",
-          windDirection: data.windDirection || "N/A",
-          forecastSummary: data.forecastSummary || "No summary available",
-          uvIndex: data.uvIndex || "N/A",
+  
+      try {
+        // Step 1: Get beach information (including weather) near lat/lon
+        const searchResponse = await fetch(API.BEACHINFO, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            request_type: "search_beach_by_lat_lon",
+            latitude,
+            longitude,
+            start: 0,
+            stop: 5, // Top 5 nearest beaches
+          }),
+        });
+  
+        const searchData = await searchResponse.json();
+        if (!searchData.order || searchData.order.length === 0) {
+          setError("No beaches found near this location.");
+          return;
+        }
+  
+        const beachIds = searchData.order;
+  
+        // Step 2: Get weather data from the same response (included in searchData.result)
+        const multiBeachWeather = {
           searchType,
-          zipCode,
           latitude,
-          longitude
+          longitude,
+          result: searchData.result, // Already contains beach info and weather data
+          order: beachIds,
         };
-        onWeatherData(weatherData);
+  
+        onWeatherData(multiBeachWeather);
         navigate("/home");
-      } else {
-        setError("No weather data available for this location.");
+  
+      } catch (err) {
+        console.error(err);
+        setError("Error fetching beach data.");
       }
-    } catch (error) {
-      setError("Error fetching weather data");
     }
   };
-
+  
+  
   return (
     <div className="navbar">
       <Link to="/home" className="navbar-home-link">
