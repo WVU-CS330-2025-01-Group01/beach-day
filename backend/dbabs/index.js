@@ -15,6 +15,8 @@ const dbEvents = require('./events');
 const connection = require('./database-connection');
 const salt = 10;
 
+
+
 module.exports = {
 	/** 
 	 * Creates a new user and inserts it into the database.
@@ -154,6 +156,33 @@ module.exports = {
 				`
 				, [username]
 			);
+	
+		} catch (e) {
+			if (e instanceof dbErrors.UserNotFound) {
+				throw new dbErrors.UserNotFound();
+			} else {
+				throw new dbErrors.ProblemWithDB();
+			}
+		}
+	},
+
+	/** 
+	 * Returns user's email
+	 * 
+	 * Checks to see if the user does not exist, then grabs email
+	 * 
+	 * @param {String} username Username given by user
+	 * @return email as string
+	 */
+	getEmail: async function (username) {
+		try {
+			const user = await dbHelper.getUserData(username);
+	
+			if(user.email === null) {
+				return "null";
+			}
+	
+			return user.email;
 	
 		} catch (e) {
 			if (e instanceof dbErrors.UserNotFound) {

@@ -877,6 +877,48 @@ This is exception is thrown if there are issues accessing the database. We also 
 
 </dd>
 
+## `getEmail(username)`
+Retrieves email from username
+
+### Arguments
+<dl>
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username you want the email of
+
+</dd>
+
+### Returns
+String of the email, if no email present, returns "null" as a String.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if their is no user of given username.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
 ## `getNotificationsEnabled(username)`
 Retrieves whether a user has notifications enabled.
 
