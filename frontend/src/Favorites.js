@@ -193,6 +193,7 @@ function Favorites() {
             <p>{beach.county ? `${beach.county}, ` : ''}{beach.state}</p>
             <p>Temperature: {beach.temperature === 'N/A' ? 'Data not available' : `${beach.temperature}°F`}</p>
             <p>Forecast: {beach.forecast === 'N/A' ? 'Data not available' : beach.forecast}</p>
+            <p>Access: {beach.access === 'N/A' ? 'Data not available' : beach.access}</p>
             <button onClick={() => removeFavorite(beach.id)} className="remove-btn">Remove</button>
           </div>
         ))}
