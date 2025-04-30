@@ -170,49 +170,19 @@ try:
         print(json.dumps(result, indent=4))
         exit()
 
-     # Beach search by zip code
-    # elif request_type == "search_beach_by_zip":
-    #     import beach_search
 
-    #     try:
-    #         zip_code = int(str(input_params["zip_code"]))
-    #     except ValueError:
-    #         result = {
-    #             "code": "ERROR",
-    #             "error_type": "malformed_request: zip_code must be a valid integer",
-    #             "message": f"Malformed request for request type '{request_type}'"
-    #         }
-    #         print(json.dumps(result, indent=4))
-    #         exit()
-        
-    #     try:
-    #         start = int(str(input_params["start"]))
-    #     except ValueError:
-    #         result = {
-    #             "code": "ERROR",
-    #             "error_type": "malformed_request: start must be a valid integer",
-    #             "message": f"Malformed request for request type '{request_type}'"
-    #         }
-    #         print(json.dumps(result, indent=4))
-    #         exit()
-        
-    #     try:
-    #         stop = int(str(input_params["stop"]))
-    #     except ValueError:
-    #         result = {
-    #             "code": "ERROR",
-    #             "error_type": "malformed_request: stop must be a valid integer",
-    #             "message": f"Malformed request for request type '{request_type}'"
-    #         }
-    #         print(json.dumps(result, indent=4))
-    #         exit()
-        
-    #     result = beach_search.search_beach_by_zip(zip_code, start, stop)
-    #     result["code"] = "search_beach_by_zip"
+    elif request_type == "check_event":
+        import events
+        import beaches
+        time = datetime.strptime(input_params["time"].replace("Z", "+0000"),"%Y-%m-%dT%H:%M:%S%z")
+        beach_id = input_params["beach_id"]
+        event_name = input_params["event_name"]
 
-    #     print(json.dumps(result, indent=4))
-    #     exit()
-    
+        result = events.check_event(time, beach_id, event_name)
+
+        result["code"] = "check_event"
+
+        print(json.dumps(result, indent=4))
     
 
     # Dummy request types from testing. Will still work, but should be avoided
