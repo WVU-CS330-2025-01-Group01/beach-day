@@ -49,7 +49,7 @@ async function getUserNotificationsHelper(username) { //This and the function be
                 ORDER BY creation_time DESC;
             `
             , [username]
-        );
+        ); // This is a joined table query that joins the users and notifications table, showing the attributes on the first line.  The username is the link, and the notifications are ordered by recency, opposite of events.
         if (notifications.length <= 0) {
             throw new dbErrors.ZeroNotifications();
         }
@@ -88,7 +88,7 @@ module.exports = {
             if (!(await dbHelper.userExists(username))) { // Check if user exists
                 throw new dbErrors.UserNotFound();
             }
-            await connection.query('UPDATE users SET notifications_enabled = ? WHERE username = ?', [enabled ? 1 : 0, username]); // Set notifications_enabled to true/false
+            await connection.query('UPDATE users SET notifications_enabled = ? WHERE username = ?', [enabled ? 1 : 0, username]); // Set notifications_enabled to true/false depending on param
         } catch (e) { // Error
             if (e instanceof dbErrors.UserNotFound) {
                 throw new dbErrors.UserNotFound();
@@ -129,17 +129,7 @@ module.exports = {
                 throw new dbErrors.UserNotFound();
             }
     
-            const [notificationQuery] = await connection.query(
-                `
-                    SELECT * FROM notifications
-                    WHERE username = ? AND notification_id = ?;
-                `
-                , [username, notification_id]
-            );
-    
-            if(notificationQuery.length <= 0) {
-                throw new dbErrors.ZeroNotifications();
-            }
+            await getNotificationFromIDHelper(notification_id); // While we do not grab the results from this query, we do call it to check for the errors
     
             await connection.query(
                 `
@@ -176,7 +166,7 @@ module.exports = {
                     ORDER BY creation_time desc;
                 `
                 , [username]
-            );
+            ); // See above joining query as this is synonymous except for the fact that this checks for not received notifications instead of all
             if (notifications.length <= 0) {
                 throw new dbErrors.ZeroNotifications();
             }
@@ -225,7 +215,7 @@ module.exports = {
                 throw new dbErrors.UserNotFound();
             }
     
-            await getUserNotificationsHelper(username);
+            await getUserNotificationsHelper(username); // Another section where it only calls a function to test for errors.
     
             await connection.query(
                 `
@@ -266,7 +256,7 @@ module.exports = {
         }
     },
 
-    getNotificationFromID: getNotificationFromIDHelper,
+    getNotificationFromID: getNotificationFromIDHelper, // These methods aren't exported in the same manner because they are called in other exported functions.  They must be top level to be called in other functions.
     getUserNotifications: getUserNotificationsHelper,
 
     removeAllReceivedNotificationsFromUser: async function(username) {

@@ -117,11 +117,12 @@ module.exports = {
 		}
 	},
 
-
-	addFavorite: dbFavorite.addFavorite,
+	// This file acts as a hub for the most basic functions, as well as every other function that communicates with the backend. This is to make routing simpler.
+	addFavorite: dbFavorite.addFavorite, 
 	clearFavorites: dbFavorite.clearFavorites,
 	getFavorites: dbFavorite.getFavorites,
 	removeFavorite: dbFavorite.removeFavorites,
+
 	getNotificationCount: dbNotifications.getNotificationCount,
 	receivedNotification: dbNotifications.receivedNotification,
 	getUserNotifications: dbNotifications.getUserNotifications,
@@ -131,6 +132,7 @@ module.exports = {
 	getNotificationFromID: dbNotifications.getNotificationFromID,
 	getUserPendingNotifications: dbNotifications.getUserPendingNotifications,
 	removeAllReceivedNotificationsFromUser: dbNotifications.removeAllReceivedNotificationsFromUser,
+
 	getUserFutureEvents: dbEvents.getUserFutureEvents,
 	getEventCount: dbEvents.getEventCount,
 	removeAllEventsFromUser: dbEvents.removeAllEventsFromUser,
@@ -138,6 +140,7 @@ module.exports = {
 	getUserEvents: dbEvents.getUserEvents,
 	getEventFromId: dbEvents.getEventFromID,
 	removeEventFromID: dbEvents.removeEventFromID,
+	
 	UserAlreadyExists: dbErrors.UserAlreadyExists,
 	ProblemWithDB: dbErrors.ProblemWithDB,
 	UserNotFound: dbErrors.UserNotFound,
