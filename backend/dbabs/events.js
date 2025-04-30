@@ -252,6 +252,41 @@ module.exports = {
         }
     },
 
+    /** 
+	 * Adds an event to the table
+	 * 
+	 * Checks to see if there is no user found or if there is a problem with the database. 
+	 * 
+     * @param {String} eventTime Time of event.
+     * @param {String} message Message of event.
+     * @param {String} relevantBeachID Beach where event takes place
+     * @param {String} username Given username.
+	 * @return nothing
+	 */
+    addEvent: async function(eventTime, message, relevantBeachID, username) {
+        try {
+
+            if(!(await dbHelper.userExists(username))) {
+                throw new dbErrors.UserNotFound();
+            }
+
+            await connection.query(
+                `
+                    INSERT INTO events (event_time, event_message, beach_id, username) 
+                    VALUES (?, ?, ?, ?)
+                `
+                , [eventTime, message, relevantBeachID, username]
+            );
+
+        } catch (e) {
+            if (e instanceof dbErrors.UserNotFound) {
+                throw new dbErrors.UserNotFound();
+            } else {
+                throw new dbErrors.ProblemWithDB()
+            }
+        }
+    },
+
     getEventFromID: getEventFromIDHelper,
     getUserEvents: getUserEventsHelper,
 }
