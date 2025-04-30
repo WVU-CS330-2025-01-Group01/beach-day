@@ -60,7 +60,7 @@ router.post('/set_email', async function(req, res) {
 
 		await db.setEmail(payload.username, req.body.email);
 
-		res.json({ message: 'Success.', jwt: token });
+		res.json({ message: 'Success.' });
 	} catch (err) {
 		errRes.errorResLookup(res, err);
 	}
@@ -75,7 +75,7 @@ router.post('/set_password', async function(req, res) {
 
 		await db.setPassword(payload.username, req.body.password);
 
-		res.json({ message: 'Success.', jwt: token });
+		res.json({ message: 'Success.' });
 	} catch (err) {
 		errRes.errorResLookup(res, err);
 	}
