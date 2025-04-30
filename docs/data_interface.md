@@ -265,6 +265,42 @@ Search for beaches near a location. Get results from `start` (inclusive) to `sto
 ```
 
 
+---
+
+## Check Event for Alerts
+
+Checks if an event has any relevant National Weather Service alerts or advisories, and responds with details for a relevant notification.
+
+### Request format
+
+```JSON
+{
+    "request_type": "check_event",
+    "time": "{ISO 8601-compliant datetime for the event}",
+    "beach_id": "{beach id for the event}",
+    "event_name": "{the user-specified name for the event, used in emails and notification}"
+}
+```
+
+### Response Format
+
+If there are no alerts or warnings:
+```JSON
+{
+    "action": "none",
+    "code": "check_event"
+}
+```
+
+If there are alerts or warnings:
+```JSON
+{
+    "action": "notify",
+    "title": "{the title for the notification}",
+    "message": "{the message for the notification}"
+}
+```
+
 
 
 
