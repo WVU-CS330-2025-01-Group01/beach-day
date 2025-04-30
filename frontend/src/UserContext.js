@@ -5,6 +5,7 @@ export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(() => JSON.parse(localStorage.getItem('authenticated')) || false);
+  const [username, setUsername] = useState(() => localStorage.getItem('username') || '');
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [jwtToken, setJwtToken] = useState(() => Cookies.get('jwt') || null);
@@ -23,7 +24,9 @@ export const UserProvider = ({ children }) => {
         loadingFavorites,
         setLoadingFavorites,
         jwtToken,
-        setJwtToken
+        setJwtToken,
+        username,
+        setUsername
       }}
     >
       {children}

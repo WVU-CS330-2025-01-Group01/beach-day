@@ -1,7 +1,13 @@
+/** 
+ * This class includes handling the connection to the database.
+ * 
+ * @author Ayden Jones, Bhavana Dakshinamoorthy, Austin Bird
+ */
 require('dotenv').config();
 const mysql = require('mysql2');
 const dbErrors = require("./db-errors");
 
+//Creating the mySQL connection and declaring variables.
 const connection = mysql.createPool({
     host: process.env.BEACH_DAY_DB_HOST,
     user: process.env.BEACH_DAY_DB_USER,
@@ -14,24 +20,33 @@ const connection = mysql.createPool({
     ssl: (process.env.BEACH_DAY_DB_SSL_FLAG === undefined) ? (undefined) : ({ ca: process.env.BEACH_DAY_DB_SSL_CERT })
 }).promise();
 
-if(process.env.BEACH_DAY_DB_SSL_FLAG === undefined) {
+if (process.env.BEACH_DAY_DB_SSL_FLAG === undefined) {
     console.error("Manipulating Local Database");
 } else {
     console.error("Manipulating Remote Database");
 }
 
+/** 
+ * Tests a local database connection.
+ * 
+ * Checks to see is a connection is retrieved. If not, an error is thrown. 
+ * The connection is nevertheless released back into the pool.
+ * 
+ * @return Nothing.
+ */
 async function testDatabaseConnection() {
-	let connect;
-	try {
-		connect = await connection.getConnection(); // Get a connection from the pool
-	} catch (err) {
-		console.error('Error connecting to the database:', err.message || err);
-		throw err; // Exit if there’s an error, no need to release connection
-	} finally {
-		if (connect) {
-			connect.release(); // Release the connection back to the pool
-		}
-	}
+    //This does not protect against sql injection.
+    let connect;
+    try {
+        connect = await connection.getConnection(); // Get a connection from the pool
+    } catch (err) {
+        console.error('Error connecting to the database:', err.message || err);
+        throw err; // Exit if there’s an error, no need to release connection
+    } finally {
+        if (connect) {
+            connect.release(); // Release the connection back to the pool
+        }
+    }
 }
 
 /*These are helper functions with initDB.  They are only used if needed, and are expected to ONLY be called by the developer.
@@ -41,95 +56,128 @@ async function testDatabaseConnection() {
 * More functions can be added in the same fashion as the others.
 */
 
-
-async function dropColumn(columnName) { 
-	//just drops the column, no SQL Injection protection, only ran by initDB
-	await connection.query(
-		"ALTER TABLE users DROP COLUMN " + columnName + ";"
-	);
-	//no error is caught either as that should be handled in initDB
+    /** 
+     * Helper to drop a column for the InitDB() function.
+     * 
+     * Drops a column in the table.
+     * 
+     * @return Nothing.
+     */
+async function dropColumn(columnName) {
+    //just drops the column, no SQL Injection protection, only ran by initDB
+    await connection.query(
+        "ALTER TABLE users DROP COLUMN " + columnName + ";"
+    );
 }
 
+    /** 
+     * Helper to retrieve table data.
+     * 
+     * @param {String} databaseName Name of the database
+     * @param {String} field Name of field
+     * @param {String} tableName Name of table
+     * @return Field Attributes Object.
+     */
 async function getFieldAttributes(field, databaseName, tableName) {
-	//no SQL Injection protection, only ran by initDB
-	//no error is caught either as that should be handled in initDB
-	const [attributes] = await connection.query(
-		`
+    const [attributes] = await connection.query(
+        `
 		SELECT * FROM information_schema.columns
 		WHERE COLUMN_NAME = ? AND TABLE_SCHEMA = ? AND TABLE_NAME = ?;
 		`
-	, [field, databaseName, tableName]
+        , [field, databaseName, tableName]
     );
-	
-	return attributes[0];
+
+    return attributes[0];
 }
 
+    /** 
+     * Updates the fields in the table.
+     * 
+     * Prints out error if the fields are unexpected.
+     * 
+     * @param {String} fieldName Given field name.
+     * @param {String} attributes Given attributes.
+     * @param {number} ordinalPos
+     * @param {String} varType
+     * @param {Boolean} isNullAllowed
+     * @param {Boolean} isAutoInc
+     * @param {String} colKey
+     * @param {String} def
+     * @param {String} tableName 
+     * 
+     * @return nothing
+     */
 async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAllowed, isAutoInc, colKey, def, tableName) {
-	//no SQL Injection protection, only ran by initDB
-	//no error is caught either as that should be handled in initDB
-	if(attributes.ORDINAL_POSITION != ordinalPos) { 
-        console.error(" " + fieldName +" position "+  ordinalPos + ", should be " + attributes.ORDINAL_POSITION + " Table ordered wrong, no conflicts should arise however."); 
+    if (attributes.ORDINAL_POSITION != ordinalPos) {
+        console.error(" " + fieldName + " position " + ordinalPos + ", should be " + attributes.ORDINAL_POSITION + " Table ordered wrong, no conflicts should arise however.");
     }
 
-	//This is a string that will be ran as a query. With the syntax of SQL, you can essentially build a command on top of old ones.
-	//It can be quite strict, but this runs conditions whether the field needs new/updated attributes and finally runs that command.
-	//Every condition just adds an extra relevant attribute to the query if ran
-	let neededQuery = 'ALTER TABLE ' + tableName + ' MODIFY COLUMN ' + fieldName + ' ' + varType;
+    //This is a string that will be ran as a query. With the syntax of SQL, you can essentially build a command on top of old ones.
+    //It can be quite strict, but this runs conditions whether the field needs new/updated attributes and finally runs that command.
+    //Every condition just adds an extra relevant attribute to the query if ran
+    let neededQuery = 'ALTER TABLE ' + tableName + ' MODIFY COLUMN ' + fieldName + ' ' + varType;
 
-	if(isNullAllowed && attributes.IS_NULLABLE === "NO") {
-		neededQuery += ' NULL'
-	} else if ((!isNullAllowed) && attributes.IS_NULLABLE !== "NO" && (colKey !== "PRI" && colKey !== "UNI")) {
-		neededQuery += ' NOT NULL'
-	}
+    if (isNullAllowed && attributes.IS_NULLABLE === "NO") {
+        neededQuery += ' NULL'
+    } else if ((!isNullAllowed) && attributes.IS_NULLABLE !== "NO" && (colKey !== "PRI" && colKey !== "UNI")) {
+        neededQuery += ' NOT NULL'
+    }
 
 
-	if(isAutoInc && attributes.EXTRA !== "auto_increment") { //these are joined because you cannot autoincrement and have a default value
-		neededQuery += ' AUTO_INCREMENT';
-	} else if(def !== "NO_DEFAULT") {
-		let tempDefault = def;
-		if(isNaN(parseInt(def)) && !(def.substring(def.length-2, def.length-1) === "(" && def.substring(def.length-1) === ")")) { //so, defaults can be a string, number, or function.  They CANNOT be queried with quotations, which is what parameterization does. Strings need quotes, number/function doesn't.  This checks for that. 
-            tempDefault = '"' + def + '"'; 
+    if (isAutoInc && attributes.EXTRA !== "auto_increment") { //these are joined because you cannot autoincrement and have a default value
+        neededQuery += ' AUTO_INCREMENT';
+    } else if (def !== "NO_DEFAULT") {
+        let tempDefault = def;
+        if (isNaN(parseInt(def)) && !(def.substring(def.length - 2, def.length - 1) === "(" && def.substring(def.length - 1) === ")")) { //so, defaults can be a string, number, or function.  They CANNOT be queried with quotations, which is what parameterization does. Strings need quotes, number/function doesn't.  This checks for that. 
+            tempDefault = '"' + def + '"';
         }
-		neededQuery += ' DEFAULT ' + tempDefault;
-	}
+        neededQuery += ' DEFAULT ' + tempDefault;
+    }
 
-	await connection.query(neededQuery);
-	
-	//These are constraints, or more rather the important ones.  They can be added and dropped in a statement unlike the built query from above.
-	//The order shouldn't entirely matter with how the code is written, but I believe this is better.
-	//Primary is handled much differently, and less programatically.  This is due to the EXTREMELY strict behavior of Primary Keys (PK).
-	//Thus, the only error should be if your ID still has the PK. We will NOT shift Primary Around as it should not be ever again.
-	if(colKey === "PRI" && attributes.COLUMN_KEY !== "PRI") {
+    await connection.query(neededQuery);
 
-		const idAttributes = await getFieldAttributes("id", "authdb");
-		if(idAttributes.COLUMN_KEY === "PRI") { 
-			await connection.query(
-				`
+    //These are constraints, or more rather the important ones.  They can be added and dropped in a statement unlike the built query from above.
+    //The order shouldn't entirely matter with how the code is written, but I believe this is better.
+    //Primary is handled much differently, and less programatically.  This is due to the EXTREMELY strict behavior of Primary Keys (PK).
+    //Thus, the only error should be if your ID still has the PK. We will NOT shift Primary Around as it should not be ever again.
+    if (colKey === "PRI" && attributes.COLUMN_KEY !== "PRI") {
+
+        const idAttributes = await getFieldAttributes("id", "authdb");
+        if (idAttributes.COLUMN_KEY === "PRI") {
+            await connection.query(
+                `
 				ALTER TABLE users
 				DROP PRIMARY KEY,
 				MODIFY id INT NOT NULL UNIQUE,
 				ADD PRIMARY KEY (username);
 				`
-			)
-		}
-		//technically, this should only EVER apply to username.  That's why this case is more hardcoded.  It's purely on the chance you still have the original ID as Primary Key.
-		//Primary keys are extremely fickle, most likely they should NEVER change.  This is here for one case only.
-	}
+            )
+        }
+        //technically, this should only EVER apply to username.  That's why this case is more hardcoded.  It's purely on the chance you still have the original ID as Primary Key.
+        //Primary keys are extremely fickle, most likely they should NEVER change.  This is here for one case only.
+    }
 
-	if(colKey === "UNI" && attributes.COLUMN_KEY !== "UNI") {
-		await connection.query(
-			"ALTER TABLE " + tableName + " ADD UNIQUE (" + fieldName + ");"
-		);
-	}
+    if (colKey === "UNI" && attributes.COLUMN_KEY !== "UNI") {
+        await connection.query(
+            "ALTER TABLE " + tableName + " ADD UNIQUE (" + fieldName + ");"
+        );
+    }
 
-    if(colKey === "MUL" && attributes.COLUMN_KEY !== "MUL") {
-		await connection.query(
-			"ALTER TABLE " + tableName + " ADD FOREIGN KEY (" + fieldName + ") REFERENCES " + fieldName + "(" + fieldName + ");"
-		);
-	}
+    if (colKey === "MUL" && attributes.COLUMN_KEY !== "MUL") {
+        await connection.query(
+            "ALTER TABLE " + tableName + " ADD FOREIGN KEY (" + fieldName + ") REFERENCES " + fieldName + "(" + fieldName + ");"
+        );
+    }
 }
 
-//If any of this can somehow be destructive to a db other than authdb/dbName, I will gladly sign the waver for Caden to be able to kill me.
+    /** 
+     * Checks if the database has all of the necessary fields and constraints. If not,
+     * it corrects your table with the correct fields.
+     * 
+     * Throws errors if fields/constraints are missing from the database/table.
+     * 
+     * @return nothing
+     */
 async function initDB() {
     const dbName = "authdb"; //in case we don't standardize the name, this can be set to a param or process.env
 
@@ -218,7 +266,7 @@ async function initDB() {
             if (table.length <= 0) {
                 console.error("users table does not exist.  creating...");
                 await connection.query(
-                `
+                    `
                     CREATE TABLE users (
                     username VARCHAR(50) PRIMARY KEY,
                     password VARCHAR(255) NOT NULL,
@@ -230,14 +278,14 @@ async function initDB() {
                     );
                 `
                 );
-                
+
                 console.error("created.")
             }
 
             if (notificationTable.length <= 0) {
                 console.error("notifications table does not exist.  creating...");
                 await connection.query(
-                `
+                    `
                     CREATE TABLE notifications (
                     notification_id INT AUTO_INCREMENT PRIMARY KEY,
                     creation_time DATETIME DEFAULT NOW(),
@@ -255,7 +303,7 @@ async function initDB() {
             if (eventsTable.length <= 0) {
                 console.error("events table does not exist.  creating...");
                 await connection.query(
-                `
+                    `
                     CREATE TABLE events (
                     event_id INT AUTO_INCREMENT PRIMARY KEY,
                     event_time DATETIME,
@@ -269,7 +317,7 @@ async function initDB() {
                 console.error("created.")
             }
 
-            if(allEmptyFlag) {
+            if (allEmptyFlag) {
                 return; //this is to save processing time, as if it's created via these queries, we don't need to check with the multitude of field queries
             }
         }
@@ -391,7 +439,7 @@ async function initDB() {
                 DROP COLUMN register_date;
                 `
             );
-        } 
+        }
         //All user table fields have been checked, now checking notification table fields
         const creationField = await getFieldAttributes("creation_time", dbName, "notifications");
 

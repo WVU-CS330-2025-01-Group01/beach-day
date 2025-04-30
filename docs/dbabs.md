@@ -1275,3 +1275,48 @@ ProblemWithDB
 This is exception is thrown if there are issues accessing the database.
 
 </dd>
+
+## `setPassword(username)`
+Setter function for the users passwords.
+
+### Arguments
+<dl>
+<dt>
+
+username
+password
+
+</dt>
+<dd>
+
+The username of the user whose password to set.
+
+</dd>
+</dl>
+
+### Returns
+This function returns nothing.
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the database.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues reading from the database.
+
+</dd>
+</dl>
