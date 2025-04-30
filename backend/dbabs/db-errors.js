@@ -1,3 +1,9 @@
+/** 
+ * This class includes the different errors thrown throughout all 
+ * database functions.
+ * 
+ * @author Ayden Jones, Bhavana Dakshinamoorthy, Austin Bird
+ */
 class UserAlreadyExists extends Error {}
 class ProblemWithDB extends Error {}
 class UserNotFound extends Error {}
