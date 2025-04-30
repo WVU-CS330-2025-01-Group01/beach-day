@@ -15,6 +15,15 @@ states_prefix = os.path.join(base_dir, "beach_data", "by_state", "states")
 # Search for beach by county and state
 def search_beach_by_county_state(county, state, start, stop):
 
+    if not state in ["AK", "AL", "AS", "CA", "CT", "DE", "FL", "GA", "GU", "HI", "IL", "IN", "LA", "MA", "MD", "ME", "MI", "MN", "MP", "MS", "NC", "NH", "NJ", "NY", "OH", "OR", "PA", "PR", "RI", "SC", "ST", "TX", "VA", "VI", "WA", "WI"]:
+        result = {
+            "code": "ERROR",
+            "error_type": "invalid_state_in_search",
+            "message": "The provided state is not valid"
+        }
+        print(json.dumps(result, indent=4))
+        exit()
+
     import beaches as beaches_info
     import basic_weather
 
