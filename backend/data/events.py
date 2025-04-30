@@ -13,8 +13,6 @@ def check_event(time, beach_id, event_name):
 
     point_info = requests.get(f"https://api.weather.gov/zones?type=land&point={lat},{lon}&limit=500").json()
 
-    # print(point_info["features"][0]["properties"]["id"])
-
     zone_id = point_info["features"][0]["properties"]["id"]
 
     alerts = get_alerts(time, zone_id)
@@ -53,7 +51,6 @@ def check_event(time, beach_id, event_name):
         "action": "none"
     }
 
-# beach_search.search_beach_by_lat_lon(55.357081020413204, -131.6843667617338, 0, 1)
 
 def get_alerts(time, zone_id):
     alerts = requests.get(f"https://api.weather.gov/alerts/active?status=actual&message_type=alert,update,cancel&zone={zone_id}&urgency=Immediate,Expected,Future&severity=Extreme,Severe,Moderate,Minor&certainty=Observed,Likely,Possible,Unlikely&limit=500")
