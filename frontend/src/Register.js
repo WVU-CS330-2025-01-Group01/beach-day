@@ -32,7 +32,7 @@ function Register() {
 
   return (
     <div className="register-container">
-      <div className="register-content">
+      <div className="register-box">
         <h1>Register</h1>
         <form onSubmit={handleSubmit}>
           <div className="input-group">

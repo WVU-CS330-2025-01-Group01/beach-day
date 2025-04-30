@@ -11,68 +11,39 @@
   text-align: center;
 }
 
-.login-content {
-  background-color: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px; /* Controls the width of the form */
+.login-box {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center the form content */
-  box-sizing: border-box; /* Ensures padding is included in width */
+  align-items: center; 
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  padding: 50px;
 }
 
-h1 {
-  font-size: 2.8rem; /* Slightly larger for prominence */
-  margin-bottom: 20px;
-  color: var(--primary-color);
-  font-weight: bold;
+.login-box form {
+  display: flex;
+  flex-direction: column;
+  gap:20px;
+  width: 110%;
+  margin-top:7%;
+  align-items: center;
 }
 
-.input-group {
-  margin-bottom: 25px; /* Space between the input fields */
+.login-box button {
+  padding: 10px;
+  width: 55%;
+  margin-top:7%;
+}
+
+.login-box .input-group {
+  display: flex;
+  flex-direction: column;
+  gap:12px;
   width: 100%;
 }
-
-label {
-  font-size: 1.2rem;
-  margin-bottom: 5px;
-  display: block;
-}
-
-input {
-  width: 100%; /* Ensures inputs are the same width as the form */
-  padding: 12px;
-  font-size: 1rem;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  margin-top: 8px;
-  box-sizing: border-box; /* Include padding in width calculation */
-  transition: border-color 0.3s ease; /* Smooth border focus transition */
-}
-
-input:focus {
-  border-color: #0066cc; /* Focused input gets blue border */
-  outline: none;
-}
-
-button {
-  width: 100%; /* Make button match the width of the inputs */
-  padding: 12px;
-  font-size: 1.2rem;
-  color: white;
-  background-color: #0066cc; /* Blue button */
-  border-radius: 50px;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.3s ease;
-  margin-top: 15px; /* Adds space between the button and input fields */
-}
-
-button:hover {
-  background-color: #0055a5; /* Darker blue on hover */
-  transform: scale(1.05); /* Slight scale effect on hover */
+.login-box input {
+  padding: 10px;
 }
 
 .error-message {
@@ -87,7 +58,7 @@ button:hover {
 }
 
 .redirect a {
-  color: #0066cc;
+  color: var(--secondary-color);
   text-decoration: none;
 }
 
