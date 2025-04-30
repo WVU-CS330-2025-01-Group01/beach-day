@@ -5,3 +5,5 @@ dependencies:
   - python=3.8.20
   - pip:
     - noaa-sdk==0.1.21
+    - levenshtein==0.25.1
+    - requests==2.32.3

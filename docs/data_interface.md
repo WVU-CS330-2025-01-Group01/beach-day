@@ -218,6 +218,58 @@ Get info about a beach by ID. [Deprecated]
 
 ---
 
+## Beach Search by County, State
+
+Search for beaches in a given state and county. State must match exactly (use a dropdown box or something), but county uses Levenshtein distance so the user can mistype the county and still get a reasonable result. Results are sorted by Levenshtein distance, with beach_id1 being the id of the closest match, etc.
+
+**List of valid states (All others will return an error):**
+AK, AL, AS, CA, CT, DE, FL, GA, GU, HI, IL, IN, LA, MA, MD, ME, MI, MN, MP, MS, NC, NH, NJ, NY, OH, OR, PA, PR, RI, SC, ST, TX, VA, VI, WA, WI
+
+### Request format
+
+```JSON
+{
+    "request_type": "search_beach_by_county_state",
+    "county": "{county to search for}",
+    "state": "{state to search for}",
+    "start": "{search result to start at}",
+    "stop": "{search result to end before (exclusive)}"
+}
+```
+
+### Response Format
+
+```JSON
+{
+    "order": [
+        "{beach_id1}",
+        "{beach_id2}",
+        "{beach_id3}",
+        ...etc
+    ],
+    "result": {
+        "{beach_id1}": {
+            "beach_name": "{beach_name}",
+            "beach_county": "{beach_county}",
+            ...etc
+            "weather": {
+                ...etc
+            }
+        },
+        "{beach_id2}": {
+            ..etc
+        },
+        "{beach_id3}": {
+            ...etc
+        }
+    },
+    "code": "search_beach_by_lat_lon"
+}
+```
+
+
+---
+
 ## Beach Search by Latitude and Longitude
 
 Search for beaches near a location. Get results from `start` (inclusive) to `stop` (exclusive) in a search sorting by distance to target latitude and longitude. Returns a key containing the order (`order`), and a set of beaches identified by their ids that are not necessarily in order (`result`). The beach info are similar to the beach info requests above, and include the weather in the same way as other request types include the weather.
