@@ -14,18 +14,39 @@
   color: #222;
 }
 
-.form-group span{
+.checkbox-row {
   display: flex;
+  align-items: flex-start;
+  padding-right: 1.3rem;
+}
+
+.checkbox-info {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  font-weight: 100;
-  font-size:medium;
-  color: #444;
+  width: 100%;
+  margin-top: 0.7rem;
+}
+
+.checkbox-info span {
+  font-weight: 400;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.checkbox-info input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  align-items:center;
+  accent-color: var(--primary-color); /* Optional: match your brand color */
+  cursor: pointer;
+  margin-left: 0.7rem;
+  flex-shrink: 0;
 }
 
 .settings-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 2rem;
   max-width: 1100px;
   margin: 0 auto;
 }
@@ -55,7 +76,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  
+  padding: 1rem 1.2rem;          /* tighter vertical and horizontal padding */
+  max-width: 300px;
+  max-height: 300px;              /* reduce horizontal width */
+  margin: 0 auto;                /* center it horizontally if it doesn't span full column */
+  gap: 0;                  /* less space between buttons */
 }
 
 .profile-card form {
@@ -69,8 +94,9 @@
   flex-direction: column;
 }
 
-.form-group label {
+.form-group label, .checkbox-title {
   font-weight: 600;
+  font-size:larger;
   margin-bottom: 0.4rem;
   color: #444;
 }
