@@ -123,7 +123,7 @@ module.exports = {
 			if (e instanceof dbErrors.UserNotFound) {
 				throw new dbErrors.UserNotFound();
 			} else {
-				throw new dbErrors.ProblemWithDB()
+				throw new dbErrors.ProblemWithDB();
 			}
 		}
 	},

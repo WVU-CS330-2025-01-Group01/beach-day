@@ -1234,6 +1234,81 @@ This is exception is thrown if there are issues accessing the database.
 
 </dd>
 
+## `addEvent(eventTime, message, relevantBeachID, username)`
+Adds an event to the table
+
+### Arguments
+<dl>
+<dt>
+
+eventTime
+
+</dt>
+<dd>
+
+The time that the event will start. Formatted like `'YYYY-MM-DD 00:00:00'`
+
+</dd>
+
+<dt>
+
+message
+
+</dt>
+<dd>
+
+The context of the event.
+
+</dd>
+
+<dt>
+
+relevantBeachID
+
+</dt>
+<dd>
+
+The specific beachID where the specified event actually happens.  Must be the beachID.
+
+</dd>
+
+<dt>
+
+username
+
+</dt>
+<dd>
+
+The username the event has been instated under.
+
+</dd>
+
+### Returns
+Nothing
+
+### Exceptions
+<dl>
+<dt>
+
+UserNotFound
+
+</dt>
+<dd>
+
+This exception is thrown if the user does not exist in the users table.
+
+</dd>
+<dt>
+
+ProblemWithDB
+
+</dt>
+<dd>
+
+This is exception is thrown if there are issues accessing the database.
+
+</dd>
+
 ## `removeEventFromID(eventId)`
 Removes an event with a specific ID.
 
@@ -1281,10 +1356,10 @@ Setter function for the users passwords.
 
 ### Arguments
 <dl>
+
 <dt>
 
 username
-password
 
 </dt>
 <dd>
@@ -1292,10 +1367,20 @@ password
 The username of the user whose password to set.
 
 </dd>
+<dt>
+
+password
+
+</dt>
+<dd>
+
+The new password to set.
+
+</dd>
 </dl>
 
 ### Returns
-This function returns nothing.
+Nothing.
 
 ### Exceptions
 <dl>
