@@ -132,7 +132,7 @@ module.exports = {
     },
 
     /** 
-	 * Retrives the number of events for a user.
+	 * Retrives the number of pending events for a user.
 	 * 
 	 * Checks to see if a user does not exist,
      * or if there is a database issue.

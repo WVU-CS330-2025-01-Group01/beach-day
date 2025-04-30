@@ -118,7 +118,7 @@ module.exports = {
 	 * Checks to see if there is no  user found or if there is a problem with the database.
 	 * 
 	 * @param {String} username Given username.
-     * @param {String} enabled Given value for enabled/not enabled.
+     * @param {boolean} enabled Given value for enabled/not enabled.
 	 * @return nothing
 	 */
     setNotificationsEnabled: async function(username, enabled){
@@ -176,7 +176,7 @@ module.exports = {
      * no user found or if there is a problem with the database. 
 	 * 
 	 * @param {String} username Given username.
-     * @param {String} notification_id ID for notifications.
+     * @param {number} notification_id ID for notifications.
 	 * @return nothing
 	 */
     receivedNotification: async function(username, notification_id) {
@@ -224,7 +224,7 @@ module.exports = {
      * no user found or if there is a problem with the database. 
 	 * 
 	 * @param {String} username Given username.
-	 * @return {String} Pending notifications
+	 * @return {Array} Pending notifications
 	 */
     getUserPendingNotifications: async function (username) {
         try {

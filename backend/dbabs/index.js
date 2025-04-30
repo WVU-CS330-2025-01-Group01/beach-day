@@ -107,7 +107,7 @@ module.exports = {
     },
 
 	/** 
-	 * Sets a given password in the databas.
+	 * Sets a given password in the database.
 	 * 
 	 * Checks to see if a user already exists or if there is a database issue.
 	 * 

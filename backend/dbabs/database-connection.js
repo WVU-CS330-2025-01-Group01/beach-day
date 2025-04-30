@@ -7,7 +7,7 @@ require('dotenv').config();
 const mysql = require('mysql2');
 const dbErrors = require("./db-errors");
 
-//Creating the mySQL connection and declraring variables.
+//Creating the mySQL connection and declaring variables.
 const connection = mysql.createPool({
     host: process.env.BEACH_DAY_DB_HOST,
     user: process.env.BEACH_DAY_DB_USER,
@@ -35,6 +35,7 @@ if (process.env.BEACH_DAY_DB_SSL_FLAG === undefined) {
  * @return Nothing.
  */
 async function testDatabaseConnection() {
+    //This does not protect against sql injection.
     let connect;
     try {
         connect = await connection.getConnection(); // Get a connection from the pool
@@ -75,7 +76,7 @@ async function dropColumn(columnName) {
      * @param {String} databaseName Name of the database
      * @param {String} field Name of field
      * @param {String} tableName Name of table
-     * @return Nothing.
+     * @return Field Attributes Object.
      */
 async function getFieldAttributes(field, databaseName, tableName) {
     const [attributes] = await connection.query(
@@ -97,12 +98,12 @@ async function getFieldAttributes(field, databaseName, tableName) {
      * @param {String} fieldName Given field name.
      * @param {String} attributes Given attributes.
      * @param {number} ordinalPos
-     * @param {} varType
-     * @param {} isNullAllowed
-     * @param {} isAutoInc
-     * @param {} colKey
-     * @param {} def
-     * @param {} tableName 
+     * @param {String} varType
+     * @param {Boolean} isNullAllowed
+     * @param {Boolean} isAutoInc
+     * @param {String} colKey
+     * @param {String} def
+     * @param {String} tableName 
      * 
      * @return nothing
      */
@@ -170,7 +171,8 @@ async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAl
 }
 
     /** 
-     * Checks if the database has all of the necessary fields and constraints.
+     * Checks if the database has all of the necessary fields and constraints. If not,
+     * it corrects your table with the correct fields.
      * 
      * Throws errors if fields/constraints are missing from the database/table.
      * 
