@@ -38,7 +38,7 @@
   width: 18px;
   height: 18px;
   align-items:center;
-  accent-color: var(--primary-color); /* Optional: match your brand color */
+  accent-color: var(--primary-color);
   cursor: pointer;
   margin-left: 0.7rem;
   flex-shrink: 0;
@@ -76,11 +76,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem 1.2rem;          /* tighter vertical and horizontal padding */
+  padding: 1rem 1.2rem;
   max-width: 300px;
-  max-height: 300px;              /* reduce horizontal width */
-  margin: 0 auto;                /* center it horizontally if it doesn't span full column */
-  gap: 0;                  /* less space between buttons */
+  max-height: 300px;
+  margin: 0 auto;
 }
 
 .profile-card form {
