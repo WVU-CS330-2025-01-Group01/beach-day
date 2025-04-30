@@ -14,6 +14,7 @@
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   max-width: 1000px;
+  padding-bottom: 2rem;
   text-align: center;
 }
 
@@ -84,7 +85,6 @@
 
 .clear-btn:hover {
   background-color: darkred;
-  /* Or use #b22222 for a softer red */
 }
 
 .favorites-list {
@@ -104,7 +104,7 @@
 }
 
 .favorite-item {
-  background: white;
+  background: var(--secondary-color);
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
