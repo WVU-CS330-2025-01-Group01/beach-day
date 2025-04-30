@@ -70,11 +70,74 @@ In the event of Success, a cookie named `token` is created. This token has a pay
 | --- | --- |
 | `username` | The username of the user who has logged in. |
 
+### `/set_email`
+This is a POST route. It allows frontend to set an email for a user.
+
+#### Request
+
+The request should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `jwt` | The json web token of the user whose email to modify. |
+| `email` | The email to set for the user. |
+
+#### Response
+
+The response should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `message` | String describing if the registration succeeded or what went wrong. |
+
+The following are the status codes and `message`s of the possible outcomes.
+
+| Outcome | Status Code | `message` value |
+| --- | --- | --- |
+| Success | 200 | `Success.` |
+| Token Problem | 500 | `User authentication token absent or invalid.` |
+| Database Problem | 500 | `Trouble accessing database.` |
+| User Doesn't Exist | 500 | `This user does not exist.` |
+| Other Error | 500 | `Undefined error.` |
+
+### `/set_password`
+This is a POST route. It allows frontend to reset the password for a user.
+
+#### Request
+
+The request should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `jwt` | The json web token of the user whose password to modify. |
+| `password` | The password to set for the user. |
+
+#### Response
+
+The response should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `message` | String describing if the registration succeeded or what went wrong. |
+
+The following are the status codes and `message`s of the possible outcomes.
+
+| Outcome | Status Code | `message` value |
+| --- | --- | --- |
+| Success | 200 | `Success.` |
+| Token Problem | 500 | `User authentication token absent or invalid.` |
+| Database Problem | 500 | `Trouble accessing database.` |
+| User Doesn't Exist | 500 | `This user does not exist.` |
+| Other Error | 500 | `Undefined error.` |
+
 ## `routes/weather.js`
 This file contains routing related to weather.
 
 ### `/weather`
 This is a POST route. It will always return a status of 200. The JSON sent to this route will be forwarded directly to the `get_weather.py` script. Caden intends to document the API of this file seperately because it will be rather complicated. This section will be revised to link to this file when it is completed.
+
+## `routes/notifications.js`
+This file contains routing related to notifications.
 
 ### `/favorites`
 This is a POST route. It returns the ids of the beaches the user has favorited.
