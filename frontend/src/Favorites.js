@@ -6,7 +6,7 @@ import { fetchBeachInfoWithWeather, cacheFavorites, refreshWeatherData } from '.
 import Cookies from 'js-cookie';
 import './Favorites.css';
 import { API } from './api';
-import { FiMenu, FiGrid } from 'react-icons/fi';
+import { FiMenu, FiGrid, FiEdit } from 'react-icons/fi';
 
 function Favorites() {
   const {
@@ -155,7 +155,7 @@ function Favorites() {
 
   return (
     <div className="favorites-container">
-      <h2>Favorite Beaches</h2>
+      
       <div className="favorites-box">
       <div className="favorites-toolbar">
         <div className="view-toggle">
@@ -174,16 +174,20 @@ function Favorites() {
             <FiGrid size={20} />
           </button>
         </div>
+        <h2>Favorite Beaches</h2>
+        <div className="edit-container">
         <button
           onClick={() => {
             if (window.confirm("Are you sure you want to clear all favorite beaches?")) {
               clearFavorites();
             }
           }}
-          className="clear-btn"
+            className="edit-btn"
+            title="Edit Favorites"
         >
-          Clear Favorites
+          <FiEdit size={20} />
         </button>
+        </div>
       </div>
 
       <div className={`favorites-list ${viewMode}`}>

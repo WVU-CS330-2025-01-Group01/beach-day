@@ -10,9 +10,6 @@
 
 .favorites-box {
   margin: 0 auto;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   max-width: 1000px;
   padding-bottom: 2rem;
   text-align: center;
@@ -24,9 +21,10 @@
   align-items: center;
   margin: 1rem auto 2rem;
   max-width: 900px;
-  padding: 0 1rem 1rem;
-  border-bottom: 2px #eee solid;
+  padding: 1rem;
+  border-bottom: 2px black solid;
 }
+
 .favorites-list.list .favorite-item {
   width: 100%;
   max-width: 700px;
@@ -38,6 +36,13 @@
 .view-toggle {
   display: flex;
   gap: 10px;
+  width: 25%;
+  justify-content: flex-start;
+}
+
+.favorites-toolbar h2 {
+  width: 50%;
+  margin: 0;
 }
 
 .view-toggle button {
@@ -47,6 +52,7 @@
   width: 40px;
   height: 40px;
   padding: 0;
+  margin: 0;
   cursor: pointer;
   transition: background-color 0.2s ease;
   display: flex;
@@ -74,13 +80,19 @@
   background-color: darkred;
 }
 
-.clear-btn {
-  background-color: red;
-  color: white;
-  padding: 8px 16px;
-  border: none;
+.edit-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
   border-radius: 5px;
   cursor: pointer;
+  margin: 0;
+}
+
+.edit-container {
+  display:flex;
+  width: 25%;
+  justify-content: end;
 }
 
 .clear-btn:hover {
@@ -104,7 +116,7 @@
 }
 
 .favorite-item {
-  background: var(--secondary-color);
+  background: white;
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
