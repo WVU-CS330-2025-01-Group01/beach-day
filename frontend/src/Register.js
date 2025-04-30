@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
-import './Register.css';
-
-const registerURL =
-	'http://' +
-	process.env.REACT_APP_BACKEND_HOST +
-	':' +
-	process.env.REACT_APP_BACKEND_PORT +
-	'/register';
+import './LogReg.css';
+import { API } from './api';
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -21,7 +15,7 @@ function Register() {
       return;
     }
 
-    const response = await fetch(registerURL, {
+    const response = await fetch(API.REGISTER, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
@@ -31,8 +25,8 @@ function Register() {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-box">
+    <div className="logreg-container">
+      <div className="logreg-box">
         <h1>Register</h1>
         <form onSubmit={handleSubmit}>
           <div className="input-group">

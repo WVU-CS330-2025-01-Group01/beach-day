@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useContext } from 'react';
 import { UserContext } from './UserContext';
-import './Login.css';
+import './LogReg.css';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import Cookies from 'js-cookie';  // Import js-cookie
 import { cacheFavorites } from './utils';
@@ -53,8 +53,8 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
+    <div className="logreg-container">
+      <div className="logreg-box">
         <h1>Login</h1>
         <form onSubmit={handleSubmit}>
           <div className="input-group">
