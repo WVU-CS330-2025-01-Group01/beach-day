@@ -6,6 +6,7 @@ import { fetchBeachInfoWithWeather, cacheFavorites, refreshWeatherData } from '.
 import Cookies from 'js-cookie';
 import './Favorites.css';
 import { API } from './api';
+import { FiMenu, FiGrid } from 'react-icons/fi';
 
 function Favorites() {
   const {
@@ -154,11 +155,24 @@ function Favorites() {
 
   return (
     <div className="favorites-container">
-      <div className="favorites-header">
-        <h2>Your Favorite Beaches</h2>
+      <h2>Favorite Beaches</h2>
+      <div className="favorites-box">
+      <div className="favorites-toolbar">
         <div className="view-toggle">
-          <button onClick={() => setViewMode('list')}>List</button>
-          <button onClick={() => setViewMode('grid')}>Grid</button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={viewMode === 'list' ? 'active' : ''}
+            title="List View"
+          >
+            <FiMenu size={20} />
+          </button>
+          <button
+            onClick={() => setViewMode('grid')}
+            className={viewMode === 'grid' ? 'active' : ''}
+            title="Grid View"
+          >
+            <FiGrid size={20} />
+          </button>
         </div>
         <button
           onClick={() => {
@@ -212,6 +226,7 @@ function Favorites() {
           {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
         </div>
       </div>
+    </div >
     </div>
   );
 }

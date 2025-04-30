@@ -1,97 +1,140 @@
 @import './colors.css';
 
 .favorites-container {
-    padding: 20px;
-    text-align: center;
-    background-color: var(--secondary-color); /* Light tan/beach color */
-    min-height: calc(100vh - 120px); 
-  }
-  
-  .favorites-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .view-toggle button {
-    margin: 0 5px;
-    padding: 8px 16px;
-    border: none;
-    cursor: pointer;
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  background-color: var(--secondary-color);
+  /* Light tan/beach color */
+  min-height: calc(100vh - 120px);
+}
+
+.favorites-box {
+  margin: 0 auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 1000px;
+  text-align: center;
+}
+
+.favorites-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem auto 2rem;
+  max-width: 900px;
+  padding: 0 1rem 1rem;
+  border-bottom: 2px #eee solid;
+}
+.favorites-list.list .favorite-item {
+  width: 100%;
+  max-width: 700px;
+  text-align: left;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.view-toggle button {
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.view-toggle button.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.remove-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.remove-btn:hover {
+  background-color: darkred;
+}
+
+.clear-btn {
+  background-color: red;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  background-color: darkred;
+  /* Or use #b22222 for a softer red */
+}
+
+.favorites-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.favorites-list.grid {
+  flex-direction: row;
+}
+
+.favorites-list.list {
+  flex-direction: column;
+  align-items: center;
+}
+
+.favorite-item {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 250px;
+  text-align: center;
+}
+
+.loading-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  /* Light grey */
+  border-top: 4px solid #3498db;
+  /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
 
-  .remove-btn {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
+  100% {
+    transform: rotate(360deg);
   }
-  
-  .remove-btn:hover {
-    background-color: darkred;
-  }
-  
-  .clear-btn {
-    background-color: red;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .clear-btn:hover {
-    background-color: darkred; /* Or use #b22222 for a softer red */
-  }
-
-  .favorites-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-  }
-  
-  .favorites-list.grid {
-    flex-direction: row;
-  }
-  
-  .favorites-list.list {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .favorite-item {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 250px;
-    text-align: center;
-  }
-
-  .loading-container {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .spinner {
-    border: 4px solid #f3f3f3; /* Light grey */
-    border-top: 4px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 2s linear infinite;
-    margin: 0 auto 10px;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+}
