@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 // Modules We Made
+const auth = require("../auth/");
 const db = require("../dbabs/");
 const errRes = require("../routes/error-responses");
 
@@ -45,6 +46,36 @@ router.post('/login', async function(req, res) {
 
 		// res.cookie('token', token, { httpOnly: true, sameSite: 'strict' });
 		res.json({ message: 'Login successful.', jwt: token });
+	} catch (err) {
+		errRes.errorResLookup(res, err);
+	}
+});
+
+/**
+ * Updates a user's email
+ */
+router.post('/set_email', async function(req, res) {
+	try {
+		const payload = auth.verifyJWT(req.body.jwt);
+
+		await db.setEmail(payload.username, req.body.email);
+
+		res.json({ message: 'Success.' });
+	} catch (err) {
+		errRes.errorResLookup(res, err);
+	}
+});
+
+/**
+ * Updates a user's password
+ */
+router.post('/set_password', async function(req, res) {
+	try {
+		const payload = auth.verifyJWT(req.body.jwt);
+
+		await db.setPassword(payload.username, req.body.password);
+
+		res.json({ message: 'Success.' });
 	} catch (err) {
 		errRes.errorResLookup(res, err);
 	}
