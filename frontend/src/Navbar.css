@@ -184,7 +184,7 @@
 
 .dropdown-box {
   position: absolute;
-  top: 100%;
+  top: 120%;
   right: 0;
   margin-top: 0.5rem;
   background-color: white;
@@ -192,11 +192,9 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 280px;
   z-index: 1000;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   font-size: 0.95rem;
-
   opacity: 0;
   transform: translateY(-10px);
   animation: dropdownFadeIn 0.3s ease forwards;
@@ -209,12 +207,26 @@
   }
 }
 
+.dropdown-box::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  right: 29px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  transform: rotate(45deg);
+  border-radius: 2px;
+  
+  z-index: 0;
+}
+
 .dropdown-header {
   display: flex;
   gap: 0.75rem;
   align-items: center;
   padding: 1rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1.5px solid #eee;
 }
 
 .avatar {
