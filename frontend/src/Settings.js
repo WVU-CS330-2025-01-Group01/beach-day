@@ -79,14 +79,17 @@ function Settings() {
               </div>
 
               <div className="form-group">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={alertEnabled}
-                    onChange={(e) => setAlertEnabled(e.target.checked)}
-                  />
-                  Enable Severe Weather Alerts
-                </label>
+                <div className= "fuck">
+                  <label className="checkbox-label"> Enable Weather Alerts
+                    <span>Allow website and email notifications for severe weather alerts</span>
+                    <input
+                      type="checkbox"
+                      checked={alertEnabled}
+                      onChange={(e) => setAlertEnabled(e.target.checked)}
+                    />
+                    
+                  </label>
+                </div>
               </div>
             </div>
 
