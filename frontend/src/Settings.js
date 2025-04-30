@@ -48,44 +48,46 @@ function Settings() {
         <div className="settings-card profile-card">
           <h2>Profile</h2>
           <form onSubmit={handleSaveChanges}>
-            <div className="form-group">
-              <label>Username</label>
-              <input
-                type="text"
-                value={newUsername}
-                onChange={(e) => setNewUsername(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Email for Notifications</label>
-              <input
-                type="email"
-                placeholder="example@domain.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>New Password</label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>
+            <div className="form-row two-column">
+              <div className="form-group">
+                <label>Username</label>
                 <input
-                  type="checkbox"
-                  checked={alertEnabled}
-                  onChange={(e) => setAlertEnabled(e.target.checked)}
+                  type="text"
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
                 />
-                Enable Severe Weather Alerts
-              </label>
+              </div>
+
+              <div className="form-group">
+                <label>Email for Notifications</label>
+                <input
+                  type="email"
+                  placeholder="example@domain.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>New Password</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={alertEnabled}
+                    onChange={(e) => setAlertEnabled(e.target.checked)}
+                  />
+                  Enable Severe Weather Alerts
+                </label>
+              </div>
             </div>
 
             <button type="submit" className="settings-button">
@@ -94,8 +96,9 @@ function Settings() {
           </form>
         </div>
 
+
         {/* Account Actions Section */}
-        <div className="settings-card">
+        <div className="settings-card account-card">
           <h2>Account Actions</h2>
           <button className="settings-button" onClick={handleResetData}>
             Reset Account Data
