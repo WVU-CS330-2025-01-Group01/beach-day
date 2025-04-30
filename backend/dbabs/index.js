@@ -15,8 +15,6 @@ const dbEvents = require('./events');
 const connection = require('./database-connection');
 const salt = 10;
 
-
-
 module.exports = {
 	/** 
 	 * Creates a new user and inserts it into the database.

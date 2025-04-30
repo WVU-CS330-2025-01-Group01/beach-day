@@ -142,7 +142,7 @@ async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAl
     //Thus, the only error should be if your ID still has the PK. We will NOT shift Primary Around as it should not be ever again.
     if (colKey === "PRI" && attributes.COLUMN_KEY !== "PRI") {
 
-        const idAttributes = await getFieldAttributes("id", "authdb");
+        const idAttributes = await getFieldAttributes("id", "authdb", "users");
         if (idAttributes.COLUMN_KEY === "PRI") {
             await connection.query(
                 `
@@ -220,7 +220,6 @@ async function initDB() {
             favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH",
             timezone VARCHAR(3) DEFAULT "GMT",
             notifications_enabled TINYINT(1) NOT NULL DEFAULT 0,
-            id INT NOT NULL UNIQUE AUTO_INCREMENT
             );
             `
             );
@@ -274,7 +273,6 @@ async function initDB() {
                     favorite_beaches VARCHAR(3000) DEFAULT "NULL_BEACH",
                     timezone VARCHAR(3) DEFAULT "GMT",
                     notifications_enabled TINYINT(1) NOT NULL DEFAULT 0,
-                    id INT NOT NULL UNIQUE AUTO_INCREMENT
                     );
                 `
                 );
@@ -419,15 +417,13 @@ async function initDB() {
 
         const idField = await getFieldAttributes("id", dbName, "users");
 
-        if (idField == undefined) {
+        if (idField != undefined) { //cannot be supported in the Azure database
             await connection.query(
                 `
                 ALTER TABLE users
-                ADD id INT NOT NULL UNIQUE AUTO_INCREMENT;
+                DROP COLUMN id;
                 `
             );
-        } else {
-            await updateFields("id", idField, ordinalPositions.ID, "int", false, true, "NO_COLKEY", "NO_DEFAULT", "users");
         }
 
         const registerField = await getFieldAttributes("register_date", dbName, "users");
