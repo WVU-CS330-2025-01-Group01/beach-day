@@ -34,7 +34,7 @@ async function getUserEventsHelper(username) {
                 ORDER BY event_time ASC;
             `
             , [events]
-        );
+        ); // This query joins two tables (events and users) and prints out the attributes on the first line.  It is linked by username. It gets every event in the table at username, in order of soonest to happen.
         if (events.length <= 0) {
             throw new dbErrors.ZeroEvents();
         }
@@ -113,7 +113,7 @@ module.exports = {
                     ORDER BY event_time ASC;
                 `
                 , [username]
-            );
+            ); //This is another joined table query with the added requirement that the stated time of the event for each event much be AFTER the current time as the query is run.
             if (events.length <= 0) {
                 throw new dbErrors.ZeroEvents();
             }
@@ -216,7 +216,7 @@ module.exports = {
                     DELETE FROM events
                     WHERE event_time < NOW();
                 `
-            );
+            ); // The greater-than/less-than operations for the datatime work with less than being a time BEFORE the current time.  So this deletes everything already passed.
         } catch (e) {
             throw new dbErrors.ProblemWithDB()
         }
