@@ -92,7 +92,7 @@
   align-items: center;
   background-color: white;
   border-radius: 30px;
-  padding: 5px 12px;
+  padding: 8px 12px;
   position: relative;
   min-width: 200px;
   max-width: 400px;
@@ -128,7 +128,26 @@
   border: none;
   color:black;
   cursor: pointer;
-  margin-top: 4px;
+}
+
+.search-icon {
+  margin-bottom:-4px;
+}
+
+.search-spinner {
+  width: 26px;
+  height: 26px;
+  size:26px;
+  border: 3px solid #ccc;
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .search-icon-button:hover {

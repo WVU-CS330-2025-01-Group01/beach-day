@@ -21,6 +21,7 @@ function Navbar({ onWeatherData }) {
   const [longitude, setLongitude] = useState("");
   const [error, setError] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -35,6 +36,7 @@ function Navbar({ onWeatherData }) {
 
   const handleSearch = async (e) => {
     if (e) e.preventDefault();
+    if (loading) return;
 
     try {
       let searchResponse, searchData;
@@ -45,7 +47,7 @@ function Navbar({ onWeatherData }) {
           setError("Please enter both county and state.");
           return;
         }
-
+        setLoading(true);
         searchResponse = await fetch(API.BEACHINFO, {
           method: "POST",
           headers: {
@@ -64,6 +66,7 @@ function Navbar({ onWeatherData }) {
 
         if (!searchData.order || searchData.order.length === 0) {
           setError("No beaches found for this county and state.");
+          setLoading(false);
           return;
         }
 
@@ -76,6 +79,7 @@ function Navbar({ onWeatherData }) {
         };
 
         onWeatherData(multiBeachWeather);
+        setLoading(false);
         navigate("/home");
 
       } else if (searchType === "latlon") {
@@ -91,7 +95,7 @@ function Navbar({ onWeatherData }) {
           setError("Coordinates must be within the U.S. including Alaska and Hawaii.");
           return;
         }
-
+        setLoading(true);
         searchResponse = await fetch(API.BEACHINFO, {
           method: "POST",
           headers: {
@@ -110,6 +114,7 @@ function Navbar({ onWeatherData }) {
 
         if (!searchData.order || searchData.order.length === 0) {
           setError("No beaches found near this location.");
+          setLoading(false);
           return;
         }
 
@@ -122,11 +127,72 @@ function Navbar({ onWeatherData }) {
         };
 
         onWeatherData(multiBeachWeather);
+        setLoading(false);
         navigate("/home");
       }
+      else if (searchType === "current_location") {
+        if (!navigator.geolocation) {
+          setError("Geolocation is not supported.");
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            setLatitude(position.coords.latitude.toFixed(6));
+            setLongitude(position.coords.longitude.toFixed(6));
+            setLoading(true);
+            try {
+              const response = await fetch(API.BEACHINFO, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  request_type: "search_beach_by_lat_lon",
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  start: 0,
+                  stop: 5,
+                }),
+              });
+
+              const data = await response.json();
+
+              if (!data.order || data.order.length === 0) {
+                setError("No beaches found near your location.");
+                setLoading(false);
+                return;
+              }
+
+              const multiBeachWeather = {
+                searchType: "latlon",
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                result: data.result,
+                order: data.order,
+              };
+
+              onWeatherData(multiBeachWeather);
+              navigate("/home");
+              setLoading(false);
+            } catch (err) {
+              console.error(err);
+              setError("Failed to fetch location-based data.");
+              setLoading(false);
+            }
+          },
+          (error) => {
+            console.error(error);
+            setError("Could not retrieve your location.");
+            setLoading(false);
+          }
+        );
+      }
+
     } catch (err) {
       console.error(err);
       setError("Error fetching beach data.");
+      setLoading(false);
     }
   };
 
@@ -158,6 +224,7 @@ function Navbar({ onWeatherData }) {
                 >
                   <option value="county_state">County/State</option>
                   <option value="latlon">Coordinates</option>
+                  <option value="current_location">Use My Location</option>
                 </select>
 
                 {searchType === "county_state" ? (
@@ -193,6 +260,7 @@ function Navbar({ onWeatherData }) {
                       placeholder="Latitude"
                       value={latitude}
                       onChange={(e) => setLatitude(e.target.value)}
+                      readOnly={searchType === "current_location"}
                     />
                     <input
                       className="search-input"
@@ -200,12 +268,17 @@ function Navbar({ onWeatherData }) {
                       placeholder="Longitude"
                       value={longitude}
                       onChange={(e) => setLongitude(e.target.value)}
+                      readOnly={searchType === "current_location"}
                     />
                   </>
                 )}
                 <button type="submit" style={{ display: "none" }}></button>
-                <button type="submit" className="search-icon-button">
-                  <FiSearch size={30} />
+                <button type="submit" className="search-icon-button" disabled={loading}>
+                  {loading ? (
+                    <div className="search-spinner" />
+                  ) : (
+                    <div className="search-icon" ><FiSearch size={31} /> </div>
+                  )}
                 </button>
               </div>
             </form>

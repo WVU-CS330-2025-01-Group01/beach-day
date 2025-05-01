@@ -116,6 +116,7 @@ font-size: large;
 
 .favorites-list h3{
   font-size: 1.3rem;
+  color: var(--primary-color)
 }
 
 .favorites-list .location{
