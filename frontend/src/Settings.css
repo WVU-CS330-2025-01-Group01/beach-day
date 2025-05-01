@@ -99,11 +99,63 @@
   flex-direction: column;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  
+}
+
 .form-group label, .checkbox-title {
   font-weight: 600;
   font-size:larger;
   margin-bottom: 0.4rem;
   color: #444;
+}
+
+.email-field .readonly-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f3f3f3;
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.readonly-row .readonly-value {
+  background-color: #f3f3f3;
+  padding: 0;
+  border: none;
+  font-weight: 500;
+  color: #444;
+}
+
+.edit-inline {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-left: 10px;
+  padding: 0;
+}
+
+.edit-inline:hover {
+  text-decoration: underline;
+  background-color: #f3f3f3;
+}
+
+.readonly-value {
+  background-color: #f3f3f3;
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-weight: 500;
+  color: #444;
+}
+
+.password-message {
+  color:red;
 }
 
 .form-group input[type="text"],
@@ -131,15 +183,6 @@
   cursor: pointer;
   width: 12rem;
   transition: background 0.3s ease;
-}
-
-.settings-button:hover {
-  background-color: #0055a5;
-}
-
-.settings-button.secondary {
-  background-color: #e0e0e0;
-  color: #333;
 }
 
 .logout {
@@ -183,17 +226,33 @@
   border: 2px solid #e53935;
 }
 
+  p .error-message {
+  font-size: 0.9rem;
+  color: red;
+  text-align: center;
+  margin-top: -0.5rem;
+}
+
+.email-error {
+  font-size: 1rem;
+  color: red;
+  text-align: center;
+  padding:0.5rem;
+}
+
+.form-group.email {
+  display: flex;
+  flex-direction: column;
+}
 .modal h3 {
   margin: 0;
   font-size: 1.3rem;
   color: #333;
 }
 
-.modal p {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #666;
-}
+.modal.email .modal-buttons {
+  margin-top: 1rem;
+} 
 
 /* === Modal Buttons === */
 .modal-buttons {
@@ -227,13 +286,6 @@
   background-color: #ccc;
 }
 
-/* === Password Message === */
-.password-message {
-  font-size: 0.9rem;
-  color: red;
-  text-align: center;
-  margin-top: -0.5rem;
-}
 
 /* === Modal Animation === */
 @keyframes popIn {

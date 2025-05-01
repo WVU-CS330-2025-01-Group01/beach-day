@@ -7,13 +7,13 @@ function Settings() {
   const {
     setAuthenticated,
     username,
-    setUsername,
     jwtToken
   } = useContext(UserContext);
 
-  const [newUsername, setNewUsername] = useState(username || "");
-  const [email, setEmail] = useState("");  // Can be fetched from context or backend
-  const [password, setPassword] = useState("");
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [alertEnabled, setAlertEnabled] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -46,30 +46,32 @@ function Settings() {
     setAuthenticated(false);
   };
 
-  const handleSaveChanges = async (e) => {
-    e.preventDefault();
+  const handleUpdateEmail = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+
     try {
-      const emailRes = await fetch("http://localhost:3010/set_email", {
+      const res = await fetch("http://localhost:3010/set_email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jwt: jwtToken, email })
+        body: JSON.stringify({ jwt: jwtToken, email: newEmail })
       });
-      const emailData = await emailRes.json();
+      const data = await res.json();
 
-      const alertRes = await fetch("http://localhost:3010/set_alert_preference", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jwt: jwtToken, alertsEnabled: alertEnabled })
-      });
-      const alertData = await alertRes.json();
-
-      if (emailData.message !== "Success." || alertData.message !== "Success.") {
-        alert("Failed to save some settings.");
+      if (res.ok) {
+        setEmail(newEmail);
+        setNewEmail("");
+        setEmailError("");
+        setShowEmailModal(false);
       } else {
-        alert("Settings updated successfully.");
+        setEmailError(data.error || "Failed to update email.");
       }
     } catch (err) {
-      console.error("Error saving settings:", err);
+      console.error("Email update error:", err);
+      setEmailError("Server error.");
     }
   };
 
@@ -105,11 +107,6 @@ function Settings() {
     }
   };
 
-  const handleResetData = () => {
-    // TODO: backend call to clear favorites, saved locations, etc.
-    console.log("Resetting account data...");
-  };
-
   const handleDeleteAccount = async () => {
     try {
       const response = await fetch("http://localhost:3010/delete_account", {
@@ -138,26 +135,26 @@ function Settings() {
         {/* Profile Section */}
         <div className="settings-card profile-card">
           <h2>Profile</h2>
-          <form onSubmit={handleSaveChanges}>
+          <div>
             <div className="form-row two-column">
-              <div className="form-group">
+              <div className="form-group readonly-field">
                 <label>Username</label>
-                <input
-                  type="text"
-                  value={newUsername}
-                  onChange={(e) => setNewUsername(e.target.value)}
-                />
+                <div className="readonly-value">{username}</div>
               </div>
 
-              <div className="form-group">
+              <div className="form-group readonly-field email-field">
                 <label>Email for Notifications</label>
-                <input
-                  type="email"
-                  placeholder="example@domain.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+                <div className="readonly-row">
+                  <div className="readonly-value">{email || "No Email Set"}</div>
+                  <button
+                    className="edit-inline"
+                    onClick={() => setShowEmailModal(true)}
+                  >
+                    {email ? "Change" : "Add"}
+                  </button>
+                </div>
               </div>
+
 
               <div className="form-group">
                 <label>Password</label>
@@ -182,20 +179,13 @@ function Settings() {
                 </label>
               </div>
             </div>
-
-            <button type="submit" className="settings-button">
-              Save Changes
-            </button>
-          </form>
+          </div>
         </div>
 
 
         {/* Account Actions Section */}
         <div className="settings-card account-card">
           <h2>Account Actions</h2>
-          <button className="settings-button reset-account" onClick={handleResetData}>
-            Reset Account Data
-          </button>
           <button className="settings-button delete-account" onClick={() => setShowDeleteModal(true)}>
             Delete Account
           </button>
@@ -208,7 +198,7 @@ function Settings() {
       {showPasswordModal && (
         <div className="modal-overlay">
           <div className="modal">
-            <h3>Change Password</h3>
+            <h2>Change Password</h2>
             <div className="form-group">
               <label>Current Password</label>
               <input
@@ -255,6 +245,45 @@ function Settings() {
               <button className="settings-button delete-account" onClick={handleDeleteAccount}>Yes, Delete</button>
               <button className="settings-button cancel" onClick={() => setShowDeleteModal(false)}>Cancel</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showEmailModal && (
+        <div className="modal-overlay">
+          <div className="modal email">
+            <h2>{email ? "Change Email" : "Add Email"}</h2>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleUpdateEmail();
+              }}
+            >
+              <div className="form-group">
+                <label>New Email</label>
+                <input
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="example@domain.com"
+                />
+              </div>
+              {emailError && <p className="email-error">{emailError}</p>}
+              <div className="modal-buttons">
+                <button type="submit" className="settings-button">Submit</button>
+                <button
+                  type="button"
+                  className="settings-button cancel"
+                  onClick={() => {
+                    setNewEmail("");
+                    setEmailError("");
+                    setShowEmailModal(false);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
