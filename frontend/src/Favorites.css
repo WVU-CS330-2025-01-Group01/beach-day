@@ -1,97 +1,152 @@
 @import './colors.css';
 
 .favorites-container {
-    padding: 20px;
-    text-align: center;
-    background-color: var(--secondary-color); /* Light tan/beach color */
-    min-height: calc(100vh - 120px); 
-  }
-  
-  .favorites-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .view-toggle button {
-    margin: 0 5px;
-    padding: 8px 16px;
-    border: none;
-    cursor: pointer;
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 5px;
-  }
+  padding: 20px;
+  text-align: center;
+  background-color: var(--secondary-color);
+  min-height: calc(100vh - 120px);
+}
 
-  .remove-btn {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  
-  .remove-btn:hover {
-    background-color: darkred;
-  }
-  
-  .clear-btn {
-    background-color: red;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .clear-btn:hover {
-    background-color: darkred; /* Or use #b22222 for a softer red */
-  }
+.favorites-box {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding-bottom: 2rem;
+  text-align: center;
+}
 
-  .favorites-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-  }
-  
-  .favorites-list.grid {
-    flex-direction: row;
-  }
-  
-  .favorites-list.list {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .favorite-item {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 250px;
-    text-align: center;
-  }
+.favorites-toolbar {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1rem auto 2rem ;
+  max-width: 1200px;
+  padding: 1rem;
+  border-bottom: 2px black solid;
+}
 
-  .loading-container {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
-  .spinner {
-    border: 4px solid #f3f3f3; /* Light grey */
-    border-top: 4px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 2s linear infinite;
-    margin: 0 auto 10px;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+.favorites-toolbar h2 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+button:hover {
+  background: #0055a5;
+}
+
+.remove-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.remove-btn:hover {
+  background-color: darkred;
+}
+
+.edit-btn {
+  width:fit-content;
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem;
+  gap:.6rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right:auto;
+}
+
+.edit-btn span{
+margin-top: 1px;
+font-size: large;
+}
+
+.clear-btn {
+  background-color: red;
+  padding: 0.6rem;
+}
+
+.clear-btn:hover {
+  background-color: darkred;
+}
+
+.favorites-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.favorites-list.grid {
+  flex-direction: row;
+}
+
+.favorites-list.list {
+  flex-direction: column;
+  align-items: center;
+}
+
+.favorite-item {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 275px;
+  height:360px;
+  text-align: center;
+}
+
+.info-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.favorites-list h3{
+  font-size: 1.3rem;
+}
+
+.favorites-list .location{
+  font-size: 0.9rem;
+  font-weight:400;
+}
+
+.favorites-list .forecast{
+  font-size: 1.2rem;
+  margin-top: auto;
+}
+
+.favorites-list .data {
+  width: fit-content;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  background-color: #E8E8E8;
+  color:#6e6565;
+}
+
+.favorites-list .data-big{
+  width:70%;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  background-color: #E8E8E8;
+  color:#6e6565;
+}
+
+.favorites-list .info-container p {
+  color:black;
+  font-weight:500;
+  font-size: large;
+  text-align: center;
+}
+
+.loading-container {
+  text-align: center;
+  margin-top: 20px;
+}

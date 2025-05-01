@@ -6,6 +6,7 @@ import { fetchBeachInfoWithWeather, cacheFavorites, refreshWeatherData } from '.
 import Cookies from 'js-cookie';
 import './Favorites.css';
 import { API } from './api';
+import { FiMenu, FiGrid, FiEdit } from 'react-icons/fi';
 
 function Favorites() {
   const {
@@ -21,6 +22,7 @@ function Favorites() {
   const [error, setError] = useState(null); // Error state
   const [newBeachId, setNewBeachId] = useState(''); // Beach ID for adding new favorites
   const [adding, setAdding] = useState(false); // State to manage adding new beach
+  const [editing, setEditing] = useState(false); // State to manage editing beach list
 
   // updates favorites used within interval
   const favoritesRef = useRef(favorites);
@@ -154,64 +156,55 @@ function Favorites() {
 
   return (
     <div className="favorites-container">
-      <div className="favorites-header">
-        <h2>Your Favorite Beaches</h2>
-        <div className="view-toggle">
-          <button onClick={() => setViewMode('list')}>List</button>
-          <button onClick={() => setViewMode('grid')}>Grid</button>
-        </div>
-        <button
-          onClick={() => {
-            if (window.confirm("Are you sure you want to clear all favorite beaches?")) {
-              clearFavorites();
-            }
-          }}
-          className="clear-btn"
-        >
-          Clear Favorites
-        </button>
-      </div>
-
-      <div className={`favorites-list ${viewMode}`}>
-        {favorites.map((beach, index) => (
-          <div key={beach.id} className="favorite-item">
-            <h3>{beach.name}</h3>
-            <p>{beach.county ? `${beach.county}, ` : ''}{beach.state}</p>
-            <p>Temperature: {beach.temperature === 'N/A' ? 'Data not available' : `${beach.temperature}°F`}</p>
-            <p>Forecast: {beach.forecast === 'N/A' ? 'Data not available' : beach.forecast}</p>
-            <button onClick={() => removeFavorite(beach.id)} className="remove-btn">Remove</button>
-          </div>
-        ))}
-
-        {/* Show loading spinner inline if more beaches are still coming */}
-        {loadingFavorites && (
-          <div className="favorite-item loading">
-            <p>Loading next beach...</p>
-            <div className="spinner"></div>
-          </div>
-        )}
-
-        {/* Add Beach Block */}
-        <div className="favorite-item add-favorite">
-          <h3>Add a Beach by ID</h3>
-          <input
-            type="text"
-            placeholder="Enter BeachID"
-            value={newBeachId}
-            onChange={(e) => {
-              setNewBeachId(e.target.value);
-              setError(null);
-            }}
-            style={{ marginRight: '10px' }}
-          />
-          <button onClick={addFavorite} disabled={adding}>
-            {adding ? 'Adding...' : 'Add Beach'}
+      <div className="favorites-box">
+        <div className="favorites-toolbar">
+          <h2>Favorite Beaches</h2>
+          <button
+            onClick={() => {setEditing(!editing); }}
+            className="edit-btn"
+            title="Edit Favorites"
+          > <span>Edit</span>
+            <FiEdit size={20} />
           </button>
-
-          {/* Show error below input if any */}
-          {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
+          {editing && (<button
+            onClick={() => {
+              if (window.confirm("Are you sure you want to clear all favorite beaches?")) {
+                clearFavorites();
+              }
+            }}
+            className="clear-btn"
+            title="Clear favorites"
+          > Clear Favorites
+          </button>)}
+          
         </div>
-      </div>
+
+        <div className="favorites-list">
+          {favorites.map((beach, index) => (
+            <div key={beach.id} className="favorite-item">
+              <h3>{beach.name}</h3>
+              <div className="location">{beach.county ? `${beach.county}, ` : ''}{beach.state}</div>
+              <div className="forecast">{beach.forecast === null ? 'No forecast available' : beach.forecast}</div>
+              <div className="info-container">
+                <div className="data-big">Beach Access<p>{beach.access === null ? 'Unavailable' : beach.access}</p></div>
+                <div className="data">Temperature <p>{beach.temperature === null ? 'Unavailable' : `${beach.temperature}°F`}</p></div>
+                <div className="data">UV Index <p>{beach.uvIndex === null ? 'Unavailable' : beach.uvIndex}</p></div>
+                <div className="data-big">Wind Speed and Direction
+                  <p>{(beach.windSpeed === null && beach.windDirection === null) ? 'Unavailable' : beach.windSpeed + " " + beach.windDirection}</p></div>
+              </div>
+              {editing && (<button onClick={() => removeFavorite(beach.id)} className="remove-btn">Remove</button>)}
+            </div>
+          ))}
+
+          {/* Show loading spinner inline if more beaches are still coming */}
+          {loadingFavorites && (
+            <div className="favorite-item loading">
+              <p>Loading next beach...</p>
+              <div className="spinner"></div>
+            </div>
+          )}
+        </div>
+      </div >
     </div>
   );
 }

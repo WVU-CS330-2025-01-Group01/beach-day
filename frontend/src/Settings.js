@@ -81,7 +81,7 @@ function Settings() {
               <div className="form-group checkbox-row">
                 <div className="checkbox-title">Enable Weather Alerts</div>
                 <label className="checkbox-info">
-                    <span>Receive website and email notifications for weather alerts</span>
+                  <span>Receive website and email notifications for weather alerts</span>
                   <input
                     type="checkbox"
                     checked={alertEnabled}
@@ -101,14 +101,14 @@ function Settings() {
         {/* Account Actions Section */}
         <div className="settings-card account-card">
           <h2>Account Actions</h2>
-          <button className="settings-button" onClick={handleResetData}>
+          <button className="settings-button reset-account" onClick={handleResetData}>
             Reset Account Data
           </button>
-          <button className="settings-button logout-button" onClick={handleLogout}>
-            Logout
-          </button>
-          <button className="settings-button secondary" onClick={handleDeleteAccount}>
+          <button className="settings-button delete-account" onClick={handleDeleteAccount}>
             Delete Account
+          </button>
+          <button className="settings-button logout" onClick={handleLogout}>
+            Logout
           </button>
         </div>
       </div>

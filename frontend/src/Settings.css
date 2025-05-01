@@ -56,12 +56,14 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.06);
+  height:fit-content;
 }
 
 .form-row.two-column {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .settings-card h2 {
@@ -72,14 +74,18 @@
   padding-bottom: 0.5rem;
 }
 
+.account-card h2 {
+  margin-bottom: 0;
+}
+
 .account-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem 1.2rem;
   max-width: 300px;
   max-height: 300px;
   margin: 0 auto;
+  gap:1.2rem;
 }
 
 .profile-card form {
@@ -116,14 +122,14 @@
 }
 
 .settings-button {
-  margin-top: 1rem;
-  padding: 0.8rem 1.2rem;
+  padding: 0.7rem 1.2rem;
   font-size: 1rem;
   background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  width: 12rem;
   transition: background 0.3s ease;
 }
 
@@ -136,10 +142,10 @@
   color: #333;
 }
 
-.logout-button {
+.logout {
   background-color: #ff5a5a;
 }
 
-.logout-button:hover {
+.logout:hover {
   background-color: #e04444;
 }

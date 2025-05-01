@@ -250,10 +250,8 @@ function Navbar({ onWeatherData }) {
       </div>
       {error && (
         <div className="error-bar">
-          <div className="error-bar-inner">
-            {error}
+            <p>{error}</p>
             <button className="error-dismiss" onClick={() => setError("")}>✕</button>
-          </div>
         </div>
       )}
     </>
