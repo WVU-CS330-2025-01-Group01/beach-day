@@ -9,15 +9,17 @@ on:
   workflow_dispatch:   # Allow manual triggering from the Actions UI
 
 jobs:
-  build_and_deploy:    # Job identifier
-    runs-on: ubuntu-latest   # Host runner image
-
+  build_and_deploy_job:
+    runs-on: ubuntu-latest
+    name: Build and Deploy Frontend
+    
     # Environment variables available during the build step
     env:
       REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}  # Inject backend URL at build time
 
     steps:
       # Step 1: Check out the repo without trying to fetch any submodules
+      - name: Checkout repository
       - uses: actions/checkout@v3
         with:
           submodules: false
