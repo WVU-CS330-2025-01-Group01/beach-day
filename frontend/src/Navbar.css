@@ -102,7 +102,7 @@
   align-items: center;
   background-color: white;
   border-radius: 30px;
-  padding: 8px 12px;
+  padding: 5px 12px;
   position: relative;
   min-width: 200px;
   max-width: 400px;
@@ -132,10 +132,18 @@
   width: 100%;
 }
 
-.search-icon {
-  width: 30px;
-  height: 30px;
-  pointer-events: none;
+.search-icon-button {
+  background: none;
+  padding:0;
+  border: none;
+  color:black;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.search-icon-button:hover {
+  background: none;
+  transform: scale(1.15);
 }
 
 .error-bar {

@@ -2,11 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Navigate } from 'react-router-dom'; // Import Navigate for redirection
 import { useContext } from 'react';
 import { UserContext } from './UserContext';
-import { fetchBeachInfoWithWeather, cacheFavorites, refreshWeatherData } from './utils';
-import Cookies from 'js-cookie';
+import { fetchBeachInfoWithWeather, refreshWeatherData } from './utils';
 import './Favorites.css';
 import { API } from './api';
-import { FiMenu, FiGrid, FiEdit, FiDelete, FiTrash, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2 } from 'react-icons/fi';
 
 function Favorites() {
   const {
@@ -18,10 +17,8 @@ function Favorites() {
     setFavorites
   } = useContext(UserContext);
 
-  const [viewMode, setViewMode] = useState('grid'); // Display mode (grid/list)
   const [error, setError] = useState(null); // Error state
   const [newBeachId, setNewBeachId] = useState(''); // Beach ID for adding new favorites
-  const [adding, setAdding] = useState(false); // State to manage adding new beach
   const [editing, setEditing] = useState(false); // State to manage editing beach list
 
   // updates favorites used within interval
@@ -97,7 +94,6 @@ function Favorites() {
     }
 
     try {
-      setAdding(true);
       const beachInfo = await fetchBeachInfoWithWeather(newBeachId);
 
       // if user enters invalid BeachID
@@ -129,7 +125,6 @@ function Favorites() {
       console.error('Error adding favorite:', err);
       setError('Could not add favorite. Please try again later.');
     } finally {
-      setAdding(false);
     }
   };
 
