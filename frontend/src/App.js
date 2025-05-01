@@ -8,6 +8,7 @@ import Navbar from './Navbar';
 import Favorites from './Favorites';
 import Settings from './Settings';
 import BeachInfo from './BeachInfo';
+import About from './About';
 
 function App() {
   const { authenticated } = useContext(UserContext);
@@ -40,6 +41,9 @@ function App() {
         <Route
           path="/beach-info"
           element={<BeachInfo />} />
+        <Route
+          path="/about"
+          element={<About />} />
       </Routes>
     </Router>
   );
