@@ -160,14 +160,21 @@ function Navbar({ onWeatherData }) {
                       value={county}
                       onChange={(e) => setCounty(e.target.value)}
                     />
-                    <input
-                      className="search-input"
-                      type="text"
-                      placeholder="State Abbr."
+                    <select
+                      className="search-dropdown"
                       value={state}
-                      onChange={(e) => setState(e.target.value.toUpperCase())}
-                      maxLength={2}
-                    />
+                      onChange={(e) => setState(e.target.value)}
+                    >
+                      <option value="">Select State</option>
+                      {[
+                        "AK", "AL", "AS", "CA", "CT", "DE", "FL", "GA", "GU", "HI",
+                        "IL", "IN", "LA", "MA", "MD", "ME", "MI", "MN", "MP", "MS",
+                        "NC", "NH", "NJ", "NY", "OH", "OR", "PA", "PR", "RI", "SC",
+                        "ST", "TX", "VA", "VI", "WA", "WI"
+                      ].map((abbr) => (
+                        <option key={abbr} value={abbr}>{abbr}</option>
+                      ))}
+                    </select>
                   </>
                 ) : (
                   <>
@@ -194,8 +201,51 @@ function Navbar({ onWeatherData }) {
           </div>
 
           {/* Links and Profile — unchanged */}
-          {/* ... */}
+          <div className="navbar-right">
+            <div className="navbar-links">
+              <Link to="/home" className="navbar-link">Home</Link>
 
+              {/* Only show Favorites and Settings if authenticated */}
+              {authenticated && (
+                <>
+                  <Link to="/favorites" className="navbar-link">Favorites</Link>
+                  <div className="profile-dropdown">
+                    <span onClick={toggleDropdown} className="navbar-link">
+                      Profile
+                    </span>
+
+                    {dropdownOpen && (
+                      <div className="dropdown-box">
+                        <div className="dropdown-header">
+                          <div className="avatar">
+                            {username ? username.charAt(0).toUpperCase() : "?"}
+                          </div> {/* Optional: Just first letter of name */}
+                          <div>
+                            <div className="dropdown-name">
+                              {username}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="dropdown-body">
+                          <Link to="/settings" onClick={() => setDropdownOpen(false)}>Settings</Link>
+                        </div>
+                        <button onClick={handleLogout} className="dropdown-logout">Logout</button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Show About always */}
+              <Link to="/about" className="navbar-link">About</Link>
+
+              {/* Login or Logout */}
+              {!authenticated && (
+                <Link to="/login" className="navbar-link">Login</Link>
+              )}
+            </div>
+          </div>
         </div>
       </div>
       {error && (
