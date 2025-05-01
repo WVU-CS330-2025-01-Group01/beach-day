@@ -14,8 +14,9 @@ function Navbar({ onWeatherData }) {
     username
   } = useContext(UserContext);
 
-  const [searchType, setSearchType] = useState("zipcode");
-  const [zipCode, setZipCode] = useState("");
+  const [searchType, setSearchType] = useState("county_state");
+  const [county, setCounty] = useState("");
+  const [state, setState] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [error, setError] = useState("");
@@ -29,32 +30,60 @@ function Navbar({ onWeatherData }) {
     localStorage.removeItem('lastUpdated');
     localStorage.removeItem('username');
     setAuthenticated(false);
-    navigate("/login"); // after logout, go to login page
+    navigate("/login");
   };
 
   const handleSearch = async (e) => {
-    if (e) e.preventDefault(); // Important: allow calling manually without needing a form submit event
-  
-    let requestBody;
-    if (searchType === "zipcode") {
-      if (!zipCode.trim()) {
-        setError("Please enter a ZIP code.");
-        return;
-      }
-      requestBody = {
-        request_type: "current_basic_weather",
-        zip_code: zipCode,
-        country_code: "US",
-      };
-    } else if (searchType === "latlon") {
-      if (!latitude.trim() || !longitude.trim()) {
-        setError("Please enter both latitude and longitude.");
-        return;
-      }
-  
-      try {
-        // Step 1: Get beach information (including weather) near lat/lon
-        const searchResponse = await fetch(API.BEACHINFO, {
+    if (e) e.preventDefault();
+
+    try {
+      let searchResponse, searchData;
+
+      if (searchType === "county_state") {
+        if (!county.trim() || !state.trim()) {
+          setError("Please enter both county and state.");
+          return;
+        }
+
+        searchResponse = await fetch(API.BEACHINFO, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            request_type: "search_beach_by_county_state",
+            county,
+            state,
+            start: 0,
+            stop: 5,
+          }),
+        });
+
+        searchData = await searchResponse.json();
+
+        if (!searchData.order || searchData.order.length === 0) {
+          setError("No beaches found for this county and state.");
+          return;
+        }
+
+        const multiBeachWeather = {
+          searchType,
+          county,
+          state,
+          result: searchData.result,
+          order: searchData.order,
+        };
+
+        onWeatherData(multiBeachWeather);
+        navigate("/home");
+
+      } else if (searchType === "latlon") {
+        if (!latitude.trim() || !longitude.trim()) {
+          setError("Please enter both latitude and longitude.");
+          return;
+        }
+
+        searchResponse = await fetch(API.BEACHINFO, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -64,34 +93,31 @@ function Navbar({ onWeatherData }) {
             latitude,
             longitude,
             start: 0,
-            stop: 5, // Top 5 nearest beaches
+            stop: 5,
           }),
         });
-  
-        const searchData = await searchResponse.json();
+
+        searchData = await searchResponse.json();
+
         if (!searchData.order || searchData.order.length === 0) {
           setError("No beaches found near this location.");
           return;
         }
-  
-        const beachIds = searchData.order;
-  
-        // Step 2: Get weather data from the same response (included in searchData.result)
+
         const multiBeachWeather = {
           searchType,
           latitude,
           longitude,
-          result: searchData.result, // Already contains beach info and weather data
-          order: beachIds,
+          result: searchData.result,
+          order: searchData.order,
         };
-  
+
         onWeatherData(multiBeachWeather);
         navigate("/home");
-  
-      } catch (err) {
-        console.error(err);
-        setError("Error fetching beach data.");
       }
+    } catch (err) {
+      console.error(err);
+      setError("Error fetching beach data.");
     }
   };
 
@@ -121,18 +147,35 @@ function Navbar({ onWeatherData }) {
                   value={searchType}
                   onChange={(e) => setSearchType(e.target.value)}
                 >
-                  <option value="zipcode">ZIP Code</option>
+                  <option value="county_state">County/State</option>
                   <option value="latlon">Coordinates</option>
                 </select>
 
-                {searchType === "zipcode" ? (
-                  <input
-                    className="search-input"
-                    type="text"
-                    placeholder="Enter ZIP code"
-                    value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value)}
-                  />
+                {searchType === "county_state" ? (
+                  <>
+                    <input
+                      className="search-input"
+                      type="text"
+                      placeholder="County"
+                      value={county}
+                      onChange={(e) => setCounty(e.target.value)}
+                    />
+                    <select
+                      className="search-dropdown"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                    >
+                      <option value="">Select State</option>
+                      {[
+                        "AK", "AL", "AS", "CA", "CT", "DE", "FL", "GA", "GU", "HI",
+                        "IL", "IN", "LA", "MA", "MD", "ME", "MI", "MN", "MP", "MS",
+                        "NC", "NH", "NJ", "NY", "OH", "OR", "PA", "PR", "RI", "SC",
+                        "ST", "TX", "VA", "VI", "WA", "WI"
+                      ].map((abbr) => (
+                        <option key={abbr} value={abbr}>{abbr}</option>
+                      ))}
+                    </select>
+                  </>
                 ) : (
                   <>
                     <input
@@ -157,9 +200,7 @@ function Navbar({ onWeatherData }) {
             </form>
           </div>
 
-
-
-          {/* Links */}
+          {/* Links and Profile — unchanged */}
           <div className="navbar-right">
             <div className="navbar-links">
               <Link to="/home" className="navbar-link">Home</Link>
