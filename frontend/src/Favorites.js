@@ -175,9 +175,16 @@ function Favorites() {
 
           {/* Show loading spinner inline if more beaches are still coming */}
           {loadingFavorites && (
-            <div className="favorite-item loading">
-              <p>Loading next beach...</p>
-              <div className="spinner"></div>
+            <div className="favorite-item skeleton-card">
+              <div className="skeleton skeleton-title" />
+              <div className="skeleton skeleton-subtitle" />
+              <div className="skeleton skeleton-forecast" />
+              <div className="info-container">
+                <div className="skeleton skeleton-data-wide" />
+                <div className="skeleton skeleton-data" />
+                <div className="skeleton skeleton-data" />
+                <div className="skeleton skeleton-data-wide" />
+              </div>
             </div>
           )}
         </div>
