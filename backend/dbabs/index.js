@@ -149,7 +149,7 @@ module.exports = {
 			}
 			
 	
-			connection.query(
+			await connection.query(
 				`
 					DELETE FROM USERS
 					WHERE username = ?;
