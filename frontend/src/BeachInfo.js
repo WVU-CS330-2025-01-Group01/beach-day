@@ -8,11 +8,11 @@ import { fetchBeachInfoWithWeather } from './utils';
 function BeachInfo() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { 
-    jwtToken, 
-    favorites, 
+  const {
+    jwtToken,
+    favorites,
     setFavorites,
-    setGlobalError 
+    setGlobalError
   } = useContext(UserContext);
 
   const { beachId, beach, weather } = location.state || {};
@@ -76,47 +76,65 @@ function BeachInfo() {
 
   return (
     <div className="beach-info-container">
-  <h2>{beach.beach_name}</h2>
+      <h2>{beach.beach_name}</h2>
 
-  <div className="beach-info-cards">
-    {/* Beach Info Card */}
-    <div className="info-card">
-      <div className="card-header">
-        <h3>Beach Info</h3>
-        <button className="favorite-button" onClick={addFavorite} disabled={adding}>
-          {adding ? "Adding..." : "Add to Favorites"}
-        </button>
+      <div className="beach-info-cards">
+        {/* Beach Info Card */}
+        <div className="info-card">
+          <div className="card-header">
+            <h3>Beach Info</h3>
+            <button className="favorite-button" onClick={addFavorite} disabled={adding}>
+              {adding ? "Adding..." : "Add to Favorites"}
+            </button>
+          </div>
+          <p><strong>Location:</strong> {beach.beach_county ? `${beach.beach_county}, ` : ''}{beach.beach_state}</p>
+          <p><strong>Latitude:</strong> {beach.latitude}</p>
+          <p><strong>Longitude:</strong> {beach.longitude}</p>
+          <p><strong>Beach Access:</strong> {beach.beach_access || "Unavailable"}</p>
+          <p><strong>Length:</strong> {beach.beach_length || "Unavailable"} miles</p>
+        </div>
+
+        {/* Weather Info Card */}
+        <div className="info-card">
+          <div className="card-header">
+            <h3>Weather Info</h3>
+          </div>
+          {weather.temperature?.toString().trim() && (
+            <p><strong>Temperature:</strong> {weather.temperature}°F</p>
+          )}
+          {weather.relHumidity?.toString().trim() && (
+            <p><strong>Humidity:</strong> {weather.relHumidity}%</p>
+          )}
+          {(weather.windSpeed?.toString().trim() || weather.windDirection?.toString().trim()) && (
+            <p><strong>Wind:</strong> {weather.windSpeed || "?"} {weather.windDirection || ""}</p>
+          )}
+          {weather.forecastSummary?.trim() && (
+            <p><strong>Forecast:</strong> {weather.forecastSummary}</p>
+          )}
+          {weather.probPrecip?.toString().trim() && (
+            <p><strong>Precipitation:</strong> {weather.probPrecip}%</p>
+          )}
+          {weather.uvIndex?.toString().trim() && (
+            <p><strong>UV Index:</strong> {weather.uvIndex}</p>
+          )}
+          {weather.airQuality?.toString().trim() && (
+            <p><strong>Air Quality:</strong> {weather.airQuality}</p>
+          )}
+          {weather.ecoli?.toString().trim() && (
+            <p><strong>E. Coli:</strong> {weather.ecoli}</p>
+          )}
+          {Array.isArray(weather.alerts) && weather.alerts.length > 0 && (
+            <p><strong>Alerts:</strong> {weather.alerts.join(", ")}</p>
+          )}
+        </div>
       </div>
-      <p><strong>Location:</strong> {beach.beach_county}, {beach.beach_state}</p>
-      <p><strong>Latitude:</strong> {beach.latitude}</p>
-      <p><strong>Longitude:</strong> {beach.longitude}</p>
-      <p><strong>Beach Access:</strong> {beach.beach_access || "Unavailable"}</p>
-      <p><strong>Length:</strong> {beach.beach_length || "Unavailable"} miles</p>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <button className="go-back-button" onClick={() => navigate(-1)}>
+        ← Go Back
+      </button>
     </div>
-
-    {/* Weather Info Card */}
-    <div className="info-card">
-      <div className="card-header">
-        <h3>Weather Info</h3>
-      </div>
-      <p><strong>Temperature:</strong> {weather.temperature}°F</p>
-      <p><strong>Humidity:</strong> {weather.relHumidity}%</p>
-      <p><strong>Wind:</strong> {weather.windSpeed} {weather.windDirection}</p>
-      <p><strong>Forecast:</strong> {weather.forecastSummary}</p>
-      <p><strong>Precipitation:</strong> {weather.probPrecip}%</p>
-      <p><strong>UV Index:</strong> {weather.uvIndex}</p>
-      <p><strong>Air Quality:</strong> {weather.airQuality}</p>
-      <p><strong>E. Coli:</strong> {weather.ecoli || "Unavailable"}</p>
-      <p><strong>Alerts:</strong> {weather.alerts?.length > 0 ? weather.alerts.join(", ") : "None"}</p>
-    </div>
-  </div>
-
-  {error && <p style={{ color: "red" }}>{error}</p>}
-
-  <button className="go-back-button" onClick={() => navigate("/home")}>
-    ← Go Back
-  </button>
-</div>
   );
 }
 

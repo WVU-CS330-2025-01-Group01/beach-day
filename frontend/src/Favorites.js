@@ -95,7 +95,7 @@ function Favorites() {
 
   return (
     <div className="favorites-container">
-      <div className="favorites-box">
+      <div className="favorites-box fade-in">
         <div className="favorites-toolbar">
           <h2>Favorite Beaches</h2>
           <button
