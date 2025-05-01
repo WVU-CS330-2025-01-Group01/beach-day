@@ -56,13 +56,13 @@ async function testDatabaseConnection() {
 * More functions can be added in the same fashion as the others.
 */
 
-    /** 
-     * Helper to drop a column for the InitDB() function.
-     * 
-     * Drops a column in the table.
-     * 
-     * @return Nothing.
-     */
+/** 
+ * Helper to drop a column for the InitDB() function.
+ * 
+ * Drops a column in the table.
+ * 
+ * @return Nothing.
+ */
 async function dropColumn(columnName) {
     //just drops the column, no SQL Injection protection, only ran by initDB
     await connection.query(
@@ -70,14 +70,14 @@ async function dropColumn(columnName) {
     );
 }
 
-    /** 
-     * Helper to retrieve table data.
-     * 
-     * @param {String} databaseName Name of the database
-     * @param {String} field Name of field
-     * @param {String} tableName Name of table
-     * @return Field Attributes Object.
-     */
+/** 
+ * Helper to retrieve table data.
+ * 
+ * @param {String} databaseName Name of the database
+ * @param {String} field Name of field
+ * @param {String} tableName Name of table
+ * @return Field Attributes Object.
+ */
 async function getFieldAttributes(field, databaseName, tableName) {
     const [attributes] = await connection.query(
         `
@@ -90,23 +90,23 @@ async function getFieldAttributes(field, databaseName, tableName) {
     return attributes[0];
 }
 
-    /** 
-     * Updates the fields in the table.
-     * 
-     * Prints out error if the fields are unexpected.
-     * 
-     * @param {String} fieldName Given field name.
-     * @param {String} attributes Given attributes.
-     * @param {number} ordinalPos
-     * @param {String} varType
-     * @param {Boolean} isNullAllowed
-     * @param {Boolean} isAutoInc
-     * @param {String} colKey
-     * @param {String} def
-     * @param {String} tableName 
-     * 
-     * @return nothing
-     */
+/** 
+ * Updates the fields in the table.
+ * 
+ * Prints out error if the fields are unexpected.
+ * 
+ * @param {String} fieldName Given field name.
+ * @param {String} attributes Given attributes.
+ * @param {number} ordinalPos
+ * @param {String} varType
+ * @param {Boolean} isNullAllowed
+ * @param {Boolean} isAutoInc
+ * @param {String} colKey
+ * @param {String} def
+ * @param {String} tableName 
+ * 
+ * @return nothing
+ */
 async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAllowed, isAutoInc, colKey, def, tableName) {
     if (attributes.ORDINAL_POSITION != ordinalPos) {
         console.error(" " + fieldName + " position " + ordinalPos + ", should be " + attributes.ORDINAL_POSITION + " Table ordered wrong, no conflicts should arise however.");
@@ -125,7 +125,13 @@ async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAl
 
 
     if (isAutoInc && attributes.EXTRA !== "auto_increment") { //these are joined because you cannot autoincrement and have a default value
+        // Check the max current value of the id field
+        const [[{ maxId }]] = await connection.query(`SELECT MAX(${fieldName}) as maxId FROM ${tableName}`);
+        if (maxId !== null) {
+            await connection.query(`ALTER TABLE ${tableName} AUTO_INCREMENT = ?`, [maxId + 1]);
+        }
         neededQuery += ' AUTO_INCREMENT';
+
     } else if (def !== "NO_DEFAULT") {
         let tempDefault = def;
         if (isNaN(parseInt(def)) && !(def.substring(def.length - 2, def.length - 1) === "(" && def.substring(def.length - 1) === ")")) { //so, defaults can be a string, number, or function.  They CANNOT be queried with quotations, which is what parameterization does. Strings need quotes, number/function doesn't.  This checks for that. 
@@ -170,14 +176,14 @@ async function updateFields(fieldName, attributes, ordinalPos, varType, isNullAl
     }
 }
 
-    /** 
-     * Checks if the database has all of the necessary fields and constraints. If not,
-     * it corrects your table with the correct fields.
-     * 
-     * Throws errors if fields/constraints are missing from the database/table.
-     * 
-     * @return nothing
-     */
+/** 
+ * Checks if the database has all of the necessary fields and constraints. If not,
+ * it corrects your table with the correct fields.
+ * 
+ * Throws errors if fields/constraints are missing from the database/table.
+ * 
+ * @return nothing
+ */
 async function initDB() {
     const dbName = "authdb"; //in case we don't standardize the name, this can be set to a param or process.env
 
