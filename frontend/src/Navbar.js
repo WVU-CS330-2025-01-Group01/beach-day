@@ -4,7 +4,7 @@ import { UserContext } from './UserContext';
 import './Navbar.css';
 import beachIcon from './beachIcon.png';
 import Cookies from 'js-cookie';
-import searchIcon from './search.png';
+import { FiSearch } from 'react-icons/fi';
 import { API } from './api';
 
 function Navbar({ onWeatherData }) {
@@ -38,6 +38,7 @@ function Navbar({ onWeatherData }) {
 
     try {
       let searchResponse, searchData;
+      setError("");
 
       if (searchType === "county_state") {
         if (!county.trim() || !state.trim()) {
@@ -78,8 +79,16 @@ function Navbar({ onWeatherData }) {
         navigate("/home");
 
       } else if (searchType === "latlon") {
-        if (!latitude.trim() || !longitude.trim()) {
-          setError("Please enter both latitude and longitude.");
+        const latNum = parseFloat(latitude);
+        const lonNum = parseFloat(longitude);
+
+        if (isNaN(latNum) || isNaN(lonNum)) {
+          setError("Please enter valid numbers for latitude and longitude.");
+          return;
+        }
+
+        if (latNum < 18.9 || latNum > 71.4 || lonNum < -179.15 || lonNum > -66.9) {
+          setError("Coordinates must be within the U.S. including Alaska and Hawaii.");
           return;
         }
 
@@ -195,12 +204,14 @@ function Navbar({ onWeatherData }) {
                   </>
                 )}
                 <button type="submit" style={{ display: "none" }}></button>
-                <img src={searchIcon} alt="Search" className="search-icon" />
+                <button type="submit" className="search-icon-button">
+                  <FiSearch size={30} />
+                </button>
               </div>
             </form>
           </div>
 
-          {/* Links and Profile — unchanged */}
+          {/* Links and Profile */}
           <div className="navbar-right">
             <div className="navbar-links">
               <Link to="/home" className="navbar-link">Home</Link>
@@ -250,8 +261,8 @@ function Navbar({ onWeatherData }) {
       </div>
       {error && (
         <div className="error-bar">
-            <p>{error}</p>
-            <button className="error-dismiss" onClick={() => setError("")}>✕</button>
+          <p>{error}</p>
+          <button className="error-dismiss" onClick={() => setError("")}>✕</button>
         </div>
       )}
     </>
