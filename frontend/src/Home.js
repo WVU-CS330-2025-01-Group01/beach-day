@@ -10,12 +10,18 @@ function Home({ weather }) {
       {weather ? (
         <>
           <h2 className="weather-header">
-            {weather.searchType === "zipcode" ? (
+            {weather.searchType === "zipcode" && (
               <Link to="/beach-info" state={{ weather }} className="zipcode-link">
                 Zip Code {weather.zipCode}
               </Link>
-            ) : (
-              `Beaches near: ${weather.latitude}, ${weather.longitude}`
+            )}
+
+            {weather.searchType === "latlon" && (
+              <>Beaches near: {weather.latitude}, {weather.longitude}</>
+            )}
+
+            {weather.searchType === "county_state" && (
+              <>Beaches in {weather.county} County, {weather.state}</>
             )}
           </h2>
 
@@ -34,7 +40,11 @@ function Home({ weather }) {
                   <p>Forecast: {w.forecastSummary || "No summary available"}</p>
                   <p>Precipitation: {w.probPrecip || "N/A"}%</p>
                   <p>UV Index: {w.uvIndex || "N/A"}</p>
+                  <p>Air Quality: {w.airQuality || "N/A"}</p>
+                  <p>E. Coli Level: {w.ecoli || "N/A"}</p>
+                  <p>Alerts: {w.alerts && w.alerts.length > 0 ? w.alerts.join(", ") : "None"}</p>
                 </div>
+
               );
             })
           ) : (
