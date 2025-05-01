@@ -264,6 +264,8 @@
   color: #0077cc;
   text-decoration: none;
   text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .dropdown-body a:hover {
@@ -273,7 +275,7 @@
 .dropdown-logout {
   margin: 0.5rem 1rem 1rem;
   align-self: center;
-  padding: 0.3rem 0.6rem;
+  padding: 0.7rem 3.5rem;
   border: none;
   background-color: #e53935;
   font-weight: 500;
@@ -281,7 +283,7 @@
   color: white;
   border-radius: 6px;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1rem;
   transition: background-color 0.3s ease;
 }
 
