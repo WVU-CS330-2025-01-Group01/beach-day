@@ -32,19 +32,33 @@ function Home({ weather }) {
               const w = beach.weather; // Access weather data for each beach
               return (
                 <div key={beachId} className="weather-box">
-                  <h3>{beach.beach_name}, {beach.beach_county}</h3>
+                  <h3>
+                    <Link
+                      to="/beach-info"
+                      state={{ beachId, beach, weather: w }} // Pass beach and weather data to the BeachInfo page
+                      className="beach-link"
+                    >
+                      {beach.beach_name}, {beach.beach_county}
+                    </Link>
+                  </h3>
                   <p>Temperature: {w.temperature}°F</p>
-                  <p>Humidity: {w.relHumidity || "N/A"}%</p>
-                  <p>Wind Speed: {w.windSpeed || "N/A"}</p>
-                  <p>Wind Direction: {w.windDirection || "N/A"}</p>
-                  <p>Forecast: {w.forecastSummary || "No summary available"}</p>
-                  <p>Precipitation: {w.probPrecip || "N/A"}%</p>
-                  <p>UV Index: {w.uvIndex || "N/A"}</p>
-                  <p>Air Quality: {w.airQuality || "N/A"}</p>
-                  <p>E. Coli Level: {w.ecoli || "N/A"}</p>
+                  <p>Humidity: {w.relHumidity || null}%</p>
+                  <p>Wind Speed: {w.windSpeed || null}</p>
+                  <p>Wind Direction: {w.windDirection || null}</p>
+                  <p>Forecast: {w.forecastSummary || null}</p>
+                  <p>Precipitation: {w.probPrecip || null}%</p>
+                  <p>UV Index: {w.uvIndex || null}</p>
+                  <p>Air Quality: {w.airQuality || null}</p>
+                  <p>E. Coli Level: {w.ecoli || null}</p>
+                  <p>Latitude: {beach.latitude || null}</p>
+                  <p>Longitude: {beach.longitude || null}</p>
+                  <p>Beach Access: {beach.beach_access || null}</p>
+                  <p>Beach Length: {beach.beach_length || null} miles</p>
+                  <p>Beach County: {beach.beach_county || null}</p>
+                  <p>Beach State: {beach.beach_state || null}</p>
+                  <p>Beach ID: {beachId || null}</p>
                   <p>Alerts: {w.alerts && w.alerts.length > 0 ? w.alerts.join(", ") : "None"}</p>
                 </div>
-
               );
             })
           ) : (
