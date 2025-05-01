@@ -6,7 +6,7 @@ import { API } from "./api";
 
 function Home({ weather: propWeather }) {
   const location = useLocation();
-  const {username} = useContext(UserContext);
+  const { username } = useContext(UserContext);
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState("");
 
@@ -21,32 +21,28 @@ function Home({ weather: propWeather }) {
 
   return (
     <div className="home-container">
-      <h1 className="home-header">{username ? `Welcome back, ${username}!` : 'Plan your next Beach Day'}</h1>
+      {!weather && (
+        <h1 className="home-header">
+          {username ? `Welcome back, ${username}!` : 'Plan your next Beach Day'}
+        </h1>
+      )}
       {error && <p className="error-message">{error}</p>}
 
-      <div className="beach-list-container">
+      <div className="beach-list-container fade-in">
         {weather ? (
           <>
-            <h2 className="weather-header">
-              {weather.searchType === "zipcode" && (
-                <Link to="/beach-info" state={{ weather }} className="zipcode-link">
-                  Zip Code {weather.zipCode}
-                </Link>
-              )}
-              {weather.searchType === "latlon" && (
-                <p>Search for beaches closest to: {weather.latitude}, {weather.longitude}</p>
-              )}
-              {weather.searchType === "county_state" && (
-                <p>Search for beaches near {weather.county} County, {weather.state}</p>
-              )}
-            </h2>
+            <h2 className="weather-results-header">Search Results</h2>
+            <p className="weather-subtext">
+              {weather.searchType === "latlon" && `Closest to: ${weather.latitude}°, ${weather.longitude}°`}
+              {weather.searchType === "county_state" && `Near ${weather.county} County, ${weather.state}`}
+            </p>
 
             {weather.result ? (
               weather.order.map((beachId) => {
                 const beach = weather.result[beachId];
                 const w = beach.weather;
                 return (
-                  <div key={beachId} className="beach-box">
+                  <div key={beachId} className="beach-box fade-in">
                     <Link
                       to="/beach-info"
                       state={{ beachId, beach, weather: w }}
@@ -64,12 +60,10 @@ function Home({ weather: propWeather }) {
                 );
               })
             ) : (
-              <div className="weather-box">
-                <p>No weather data available.</p>
-              </div>
+              <h2>No beaches found</h2>
             )}
           </>
-        ) : "Use the Navigation Bar to search for beaches!"}
+        ) : "🌴 Start your search using the bar above to discover nearby beaches!"}
       </div>
     </div>
   );

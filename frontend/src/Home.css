@@ -22,7 +22,18 @@
   color: var(--primary-color);
 }
 
+.weather-results-header {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+  color: #003366;
+}
 
+.weather-subtext {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
 
 .location-button {
   background-color: var(--accent-color);
@@ -53,6 +64,21 @@
   max-width: 1200px;
   padding-bottom: 2rem;
   text-align: center;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .beach-card {
