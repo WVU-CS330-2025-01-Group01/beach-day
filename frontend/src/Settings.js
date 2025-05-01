@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import "./Settings.css";
 import { UserContext } from "./UserContext";
 import Cookies from "js-cookie";
+import { API } from "./api";
 
 function Settings() {
   const {
@@ -26,7 +27,7 @@ function Settings() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch("http://localhost:3010/get_email", {
+        const response = await fetch(API.GET_EMAIL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ jwt: jwtToken })
@@ -54,7 +55,7 @@ function Settings() {
     }
 
     try {
-      const res = await fetch("http://localhost:3010/set_email", {
+      const res = await fetch(API.SET_EMAIL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jwt: jwtToken, email: newEmail })
@@ -82,7 +83,7 @@ function Settings() {
     }
 
     try {
-      const response = await fetch("http://localhost:3010/change_password", {
+      const response = await fetch(API.CHANGE_PASSWORD, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -129,9 +130,9 @@ function Settings() {
 
   return (
     <div className="settings-page">
-      <h1 className="settings-title">Account Settings</h1>
+      <h1 className="settings-title ">Account Settings</h1>
 
-      <div className="settings-grid">
+      <div className="settings-grid fade-in">
         {/* Profile Section */}
         <div className="settings-card profile-card">
           <h2>Profile</h2>
@@ -186,11 +187,11 @@ function Settings() {
         {/* Account Actions Section */}
         <div className="settings-card account-card">
           <h2>Account Actions</h2>
-          <button className="settings-button delete-account" onClick={() => setShowDeleteModal(true)}>
-            Delete Account
-          </button>
           <button className="settings-button logout" onClick={handleLogout}>
             Logout
+          </button>
+          <button className="settings-button logout" onClick={() => setShowDeleteModal(true)}>
+            Delete Account
           </button>
         </div>
       </div>

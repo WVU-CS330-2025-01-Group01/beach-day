@@ -106,6 +106,17 @@ font-size: large;
   text-align: center;
 }
 
+.favorite-item-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.favorite-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
 .info-container {
   display: flex;
   flex-wrap: wrap;

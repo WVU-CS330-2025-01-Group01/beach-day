@@ -11,7 +11,9 @@ function Navbar({ onWeatherData }) {
   const {
     authenticated,
     setAuthenticated,
-    username
+    username,
+    globalError,
+    setGlobalError
   } = useContext(UserContext);
 
   const [searchType, setSearchType] = useState("county_state");
@@ -19,7 +21,6 @@ function Navbar({ onWeatherData }) {
   const [state, setState] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [error, setError] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -40,11 +41,11 @@ function Navbar({ onWeatherData }) {
 
     try {
       let searchResponse, searchData;
-      setError("");
+      setGlobalError("");
 
       if (searchType === "county_state") {
         if (!county.trim() || !state.trim()) {
-          setError("Please enter both county and state.");
+          setGlobalError("Please enter both county and state.");
           return;
         }
         setLoading(true);
@@ -65,7 +66,7 @@ function Navbar({ onWeatherData }) {
         searchData = await searchResponse.json();
 
         if (!searchData.order || searchData.order.length === 0) {
-          setError("No beaches found for this county and state.");
+          setGlobalError("No beaches found for this county and state.");
           setLoading(false);
           return;
         }
@@ -87,12 +88,12 @@ function Navbar({ onWeatherData }) {
         const lonNum = parseFloat(longitude);
 
         if (isNaN(latNum) || isNaN(lonNum)) {
-          setError("Please enter valid numbers for latitude and longitude.");
+          setGlobalError("Please enter valid numbers for latitude and longitude.");
           return;
         }
 
         if (latNum < 18.9 || latNum > 71.4 || lonNum < -179.15 || lonNum > -66.9) {
-          setError("Coordinates must be within the U.S. including Alaska and Hawaii.");
+          setGlobalError("Coordinates must be within the U.S. including Alaska and Hawaii.");
           return;
         }
         setLoading(true);
@@ -113,7 +114,7 @@ function Navbar({ onWeatherData }) {
         searchData = await searchResponse.json();
 
         if (!searchData.order || searchData.order.length === 0) {
-          setError("No beaches found near this location.");
+          setGlobalError("No beaches found near this location.");
           setLoading(false);
           return;
         }
@@ -132,7 +133,7 @@ function Navbar({ onWeatherData }) {
       }
       else if (searchType === "current_location") {
         if (!navigator.geolocation) {
-          setError("Geolocation is not supported.");
+          setGlobalError("Geolocation is not supported.");
           return;
         }
 
@@ -159,7 +160,7 @@ function Navbar({ onWeatherData }) {
               const data = await response.json();
 
               if (!data.order || data.order.length === 0) {
-                setError("No beaches found near your location.");
+                setGlobalError("No beaches found near your location.");
                 setLoading(false);
                 return;
               }
@@ -177,13 +178,13 @@ function Navbar({ onWeatherData }) {
               setLoading(false);
             } catch (err) {
               console.error(err);
-              setError("Failed to fetch location-based data.");
+              setGlobalError("Failed to fetch location-based data.");
               setLoading(false);
             }
           },
           (error) => {
             console.error(error);
-            setError("Could not retrieve your location.");
+            setGlobalError("Could not retrieve your location.");
             setLoading(false);
           }
         );
@@ -191,7 +192,7 @@ function Navbar({ onWeatherData }) {
 
     } catch (err) {
       console.error(err);
-      setError("Error fetching beach data.");
+      setGlobalError("Error fetching beach data.");
       setLoading(false);
     }
   };
@@ -332,10 +333,10 @@ function Navbar({ onWeatherData }) {
           </div>
         </div>
       </div>
-      {error && (
+      {globalError && (
         <div className="error-bar">
-          <p>{error}</p>
-          <button className="error-dismiss" onClick={() => setError("")}>✕</button>
+          <p>{globalError}</p>
+          <button className="error-dismiss" onClick={() => setGlobalError("")}>✕</button>
         </div>
       )}
     </>

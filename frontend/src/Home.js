@@ -2,13 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from './UserContext';
 import { Link, useLocation } from "react-router-dom";
 import "./Home.css";
-import { API } from "./api";
 
 function Home({ weather: propWeather }) {
   const location = useLocation();
   const { username } = useContext(UserContext);
   const [weather, setWeather] = useState(null);
-  const [error, setError] = useState("");
 
   // Combine weather from props and location.state
   useEffect(() => {
@@ -26,7 +24,6 @@ function Home({ weather: propWeather }) {
           {username ? `Welcome back, ${username}!` : 'Plan your next Beach Day'}
         </h1>
       )}
-      {error && <p className="error-message">{error}</p>}
 
       <div className="beach-list-container fade-in">
         {weather ? (
