@@ -159,7 +159,16 @@ function Favorites() {
                   <div className="data-big">Wind Speed and Direction
                     <p>{(beach.windSpeed === null && beach.windDirection === null) ? 'Unavailable' : beach.windSpeed + " " + beach.windDirection}</p></div>
                 </div>
-                {editing && (<button onClick={() => removeFavorite(beach.id)} className="remove-btn"><FiTrash2 size={20} />Remove</button>)}
+                {editing && (<button
+                  onClick={(e) => {
+                    e.preventDefault(); // prevent the link from triggering
+                    e.stopPropagation(); // stop the click from bubbling up
+                    removeFavorite(beach.id);
+                  }}
+                  className="remove-btn"
+                >
+                  <FiTrash2 size={20} />Remove
+                </button>)}
               </div>
             </Link>
           ))}
