@@ -6,7 +6,7 @@ import { fetchBeachInfoWithWeather, cacheFavorites, refreshWeatherData } from '.
 import Cookies from 'js-cookie';
 import './Favorites.css';
 import { API } from './api';
-import { FiMenu, FiGrid, FiEdit } from 'react-icons/fi';
+import { FiMenu, FiGrid, FiEdit, FiDelete, FiTrash, FiTrash2 } from 'react-icons/fi';
 
 function Favorites() {
   const {
@@ -192,7 +192,7 @@ function Favorites() {
                 <div className="data-big">Wind Speed and Direction
                   <p>{(beach.windSpeed === null && beach.windDirection === null) ? 'Unavailable' : beach.windSpeed + " " + beach.windDirection}</p></div>
               </div>
-              {editing && (<button onClick={() => removeFavorite(beach.id)} className="remove-btn">Remove</button>)}
+              {editing && (<button onClick={() => removeFavorite(beach.id)} className="remove-btn"><FiTrash2 size={20} />Remove</button>)}
             </div>
           ))}
 
