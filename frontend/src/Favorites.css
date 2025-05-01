@@ -4,7 +4,6 @@
   padding: 20px;
   text-align: center;
   background-color: var(--secondary-color);
-  /* Light tan/beach color */
   min-height: calc(100vh - 120px);
 }
 
