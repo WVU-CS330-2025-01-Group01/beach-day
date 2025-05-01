@@ -1,51 +1,67 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from './UserContext';
+import { Link, useLocation } from "react-router-dom";
 import "./Home.css";
 
-function Home({ weather }) {
+function Home({ weather: propWeather }) {
+  const location = useLocation();
+  const { username } = useContext(UserContext);
+  const [weather, setWeather] = useState(null);
+
+  // Combine weather from props and location.state
+  useEffect(() => {
+    if (propWeather) {
+      setWeather(propWeather);
+    } else if (location.state && location.state.weather) {
+      setWeather(location.state.weather);
+    }
+  }, [propWeather, location.state]);
+
   return (
     <div className="home-container">
-      <h1>Welcome to Beach Day</h1>
-
-      {weather ? (
-        <>
-          <h2 className="weather-header">
-            {weather.searchType === "zipcode" ? (
-              <Link to="/beach-info" state={{ weather }} className="zipcode-link">
-                Zip Code {weather.zipCode}
-              </Link>
-            ) : (
-              `Beaches near: ${weather.latitude}, ${weather.longitude}`
-            )}
-          </h2>
-
-          {weather.result ? (
-            // Loop through the beaches and display their weather information
-            weather.order.map((beachId) => {
-              const beach = weather.result[beachId];
-              const w = beach.weather; // Access weather data for each beach
-              return (
-                <div key={beachId} className="weather-box">
-                  <h3>{beach.beach_name}, {beach.beach_county}</h3>
-                  <p>Temperature: {w.temperature}°F</p>
-                  <p>Humidity: {w.relHumidity || "N/A"}%</p>
-                  <p>Wind Speed: {w.windSpeed || "N/A"}</p>
-                  <p>Wind Direction: {w.windDirection || "N/A"}</p>
-                  <p>Forecast: {w.forecastSummary || "No summary available"}</p>
-                  <p>Precipitation: {w.probPrecip || "N/A"}%</p>
-                  <p>UV Index: {w.uvIndex || "N/A"}</p>
-                </div>
-              );
-            })
-          ) : (
-            <div className="weather-box">
-              <p>No weather data available.</p>
-            </div>
-          )}
-        </>
-      ) : (
-        <p>Search for a beach to see the weather!</p>
+      {!weather && (
+        <h1 className="home-header">
+          {username ? `Welcome back, ${username}!` : 'Plan your next Beach Day'}
+        </h1>
       )}
+
+      <div className="beach-list-container fade-in">
+        {weather ? (
+          <>
+            <h2 className="weather-results-header">Search Results</h2>
+            <p className="weather-subtext">
+              {weather.searchType === "latlon" && `Closest to: ${weather.latitude}°, ${weather.longitude}°`}
+              {weather.searchType === "county_state" && `Near ${weather.county} County, ${weather.state}`}
+            </p>
+
+            {weather.result ? (
+              weather.order.map((beachId) => {
+                const beach = weather.result[beachId];
+                const w = beach.weather;
+                return (
+                  <div key={beachId} className="beach-box fade-in">
+                    <Link
+                      to="/beach-info"
+                      state={{ beachId, beach, weather: w }}
+                      className="beach-card"
+                    >
+                      <div className="beach-title">{beach.beach_name}</div>
+                      <div className="beach-location">
+                        {beach.beach_county ? `${beach.beach_county}, ` : ''}{beach.beach_state}
+                      </div>
+                      <div className="beach-access">
+                        Beach Access: {beach.beach_access || "Unavailable"}
+                      </div>
+                    </Link>
+                  </div>
+                );
+              })
+            ) : (
+              <h2>No beaches found</h2>
+            )}
+          </>
+        ) : "🌴 Start your search using the bar above to discover nearby beaches!"}
+      </div>
     </div>
   );
 }

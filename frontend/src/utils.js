@@ -10,13 +10,25 @@ export async function fetchBeachInfoWithWeather(beachId) {
 
         const result = await response.json();
         console.log('Beach info result:', result);
-        const { beach_name, beach_county, beach_state, weather } = result;
+        const { beach_name, beach_county, beach_state, beach_access, beach_longitude, beach_latitude, beach_length, weather } = result;
         return {
             name: beach_name || null,
             county: beach_county || null,
             state: beach_state,
-            temperature: weather?.temperature || 'N/A',
-            forecast: weather?.forecastSummary || 'No forecast available',
+            access: beach_access || null,
+            longitude: beach_longitude || null,
+            latitude: beach_latitude || null,
+            length: beach_length || null,
+            temperature: weather?.temperature || null,
+            forecast: weather?.forecastSummary || null,
+            probPrecip: weather?.probPrecip || null,
+            humidity: weather?.relHumidity || null,
+            windSpeed: weather?.windSpeed || null,
+            windDirection: weather?.windDirection || null,
+            uvIndex: weather?.uvIndex || null,
+            airQuality: weather?.airQuality || null,
+            ecoli: weather?.ecoli || null,
+            alerts: weather?.alerts || [""]
         };
     } catch (error) {
         console.error('Failed to fetch beach info with weather:', error);

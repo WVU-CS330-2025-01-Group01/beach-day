@@ -5,5 +5,9 @@ export const API = {
     REGISTER: `${API_BASE}/register`,
     FAVORITES: `${API_BASE}/favorites`,
     UPDATE_FAVORITES: `${API_BASE}/update_favorites`,
-    BEACHINFO: `${API_BASE}/weather`
+    BEACHINFO: `${API_BASE}/weather`,
+    GET_EMAIL: `${API_BASE}/get_email`,
+    SET_EMAIL: `${API_BASE}/set_email`,
+    DELETE_ACCOUNT:`${API_BASE}/delete_account`,
+    CHANGE_PASSWORD:`${API_BASE}/change_password`
   }; 

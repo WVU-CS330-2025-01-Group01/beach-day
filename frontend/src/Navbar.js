@@ -4,22 +4,25 @@ import { UserContext } from './UserContext';
 import './Navbar.css';
 import beachIcon from './beachIcon.png';
 import Cookies from 'js-cookie';
-import searchIcon from './search.png';
+import { FiSearch } from 'react-icons/fi';
 import { API } from './api';
 
 function Navbar({ onWeatherData }) {
   const {
     authenticated,
     setAuthenticated,
-    username
+    username,
+    globalError,
+    setGlobalError
   } = useContext(UserContext);
 
-  const [searchType, setSearchType] = useState("zipcode");
-  const [zipCode, setZipCode] = useState("");
+  const [searchType, setSearchType] = useState("county_state");
+  const [county, setCounty] = useState("");
+  const [state, setState] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [error, setError] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -29,32 +32,72 @@ function Navbar({ onWeatherData }) {
     localStorage.removeItem('lastUpdated');
     localStorage.removeItem('username');
     setAuthenticated(false);
-    navigate("/login"); // after logout, go to login page
+    navigate("/login");
   };
 
   const handleSearch = async (e) => {
-    if (e) e.preventDefault(); // Important: allow calling manually without needing a form submit event
-  
-    let requestBody;
-    if (searchType === "zipcode") {
-      if (!zipCode.trim()) {
-        setError("Please enter a ZIP code.");
-        return;
-      }
-      requestBody = {
-        request_type: "current_basic_weather",
-        zip_code: zipCode,
-        country_code: "US",
-      };
-    } else if (searchType === "latlon") {
-      if (!latitude.trim() || !longitude.trim()) {
-        setError("Please enter both latitude and longitude.");
-        return;
-      }
-  
-      try {
-        // Step 1: Get beach information (including weather) near lat/lon
-        const searchResponse = await fetch(API.BEACHINFO, {
+    if (e) e.preventDefault();
+    if (loading) return;
+
+    try {
+      let searchResponse, searchData;
+      setGlobalError("");
+
+      if (searchType === "county_state") {
+        if (!county.trim() || !state.trim()) {
+          setGlobalError("Please enter both county and state.");
+          return;
+        }
+        setLoading(true);
+        searchResponse = await fetch(API.BEACHINFO, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            request_type: "search_beach_by_county_state",
+            county,
+            state,
+            start: 0,
+            stop: 5,
+          }),
+        });
+
+        searchData = await searchResponse.json();
+
+        if (!searchData.order || searchData.order.length === 0) {
+          setGlobalError("No beaches found for this county and state.");
+          setLoading(false);
+          return;
+        }
+
+        const multiBeachWeather = {
+          searchType,
+          county,
+          state,
+          result: searchData.result,
+          order: searchData.order,
+        };
+
+        onWeatherData(multiBeachWeather);
+        setLoading(false);
+        navigate("/home");
+
+      } else if (searchType === "latlon") {
+        const latNum = parseFloat(latitude);
+        const lonNum = parseFloat(longitude);
+
+        if (isNaN(latNum) || isNaN(lonNum)) {
+          setGlobalError("Please enter valid numbers for latitude and longitude.");
+          return;
+        }
+
+        if (latNum < 18.9 || latNum > 71.4 || lonNum < -179.15 || lonNum > -66.9) {
+          setGlobalError("Coordinates must be within the U.S. including Alaska and Hawaii.");
+          return;
+        }
+        setLoading(true);
+        searchResponse = await fetch(API.BEACHINFO, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -64,34 +107,93 @@ function Navbar({ onWeatherData }) {
             latitude,
             longitude,
             start: 0,
-            stop: 5, // Top 5 nearest beaches
+            stop: 5,
           }),
         });
-  
-        const searchData = await searchResponse.json();
+
+        searchData = await searchResponse.json();
+
         if (!searchData.order || searchData.order.length === 0) {
-          setError("No beaches found near this location.");
+          setGlobalError("No beaches found near this location.");
+          setLoading(false);
           return;
         }
-  
-        const beachIds = searchData.order;
-  
-        // Step 2: Get weather data from the same response (included in searchData.result)
+
         const multiBeachWeather = {
           searchType,
           latitude,
           longitude,
-          result: searchData.result, // Already contains beach info and weather data
-          order: beachIds,
+          result: searchData.result,
+          order: searchData.order,
         };
-  
+
         onWeatherData(multiBeachWeather);
+        setLoading(false);
         navigate("/home");
-  
-      } catch (err) {
-        console.error(err);
-        setError("Error fetching beach data.");
       }
+      else if (searchType === "current_location") {
+        if (!navigator.geolocation) {
+          setGlobalError("Geolocation is not supported.");
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            setLatitude(position.coords.latitude.toFixed(6));
+            setLongitude(position.coords.longitude.toFixed(6));
+            setLoading(true);
+            try {
+              const response = await fetch(API.BEACHINFO, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  request_type: "search_beach_by_lat_lon",
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  start: 0,
+                  stop: 5,
+                }),
+              });
+
+              const data = await response.json();
+
+              if (!data.order || data.order.length === 0) {
+                setGlobalError("No beaches found near your location.");
+                setLoading(false);
+                return;
+              }
+
+              const multiBeachWeather = {
+                searchType: "latlon",
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                result: data.result,
+                order: data.order,
+              };
+
+              onWeatherData(multiBeachWeather);
+              navigate("/home");
+              setLoading(false);
+            } catch (err) {
+              console.error(err);
+              setGlobalError("Failed to fetch location-based data.");
+              setLoading(false);
+            }
+          },
+          (error) => {
+            console.error(error);
+            setGlobalError("Could not retrieve your location.");
+            setLoading(false);
+          }
+        );
+      }
+
+    } catch (err) {
+      console.error(err);
+      setGlobalError("Error fetching beach data.");
+      setLoading(false);
     }
   };
 
@@ -121,18 +223,36 @@ function Navbar({ onWeatherData }) {
                   value={searchType}
                   onChange={(e) => setSearchType(e.target.value)}
                 >
-                  <option value="zipcode">ZIP Code</option>
+                  <option value="county_state">County/State</option>
                   <option value="latlon">Coordinates</option>
+                  <option value="current_location">Use My Location</option>
                 </select>
 
-                {searchType === "zipcode" ? (
-                  <input
-                    className="search-input"
-                    type="text"
-                    placeholder="Enter ZIP code"
-                    value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value)}
-                  />
+                {searchType === "county_state" ? (
+                  <>
+                    <input
+                      className="search-input"
+                      type="text"
+                      placeholder="County"
+                      value={county}
+                      onChange={(e) => setCounty(e.target.value)}
+                    />
+                    <select
+                      className="search-dropdown"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                    >
+                      <option value="">Select State</option>
+                      {[
+                        "AK", "AL", "AS", "CA", "CT", "DE", "FL", "GA", "GU", "HI",
+                        "IL", "IN", "LA", "MA", "MD", "ME", "MI", "MN", "MP", "MS",
+                        "NC", "NH", "NJ", "NY", "OH", "OR", "PA", "PR", "RI", "SC",
+                        "ST", "TX", "VA", "VI", "WA", "WI"
+                      ].map((abbr) => (
+                        <option key={abbr} value={abbr}>{abbr}</option>
+                      ))}
+                    </select>
+                  </>
                 ) : (
                   <>
                     <input
@@ -141,6 +261,7 @@ function Navbar({ onWeatherData }) {
                       placeholder="Latitude"
                       value={latitude}
                       onChange={(e) => setLatitude(e.target.value)}
+                      readOnly={searchType === "current_location"}
                     />
                     <input
                       className="search-input"
@@ -148,18 +269,23 @@ function Navbar({ onWeatherData }) {
                       placeholder="Longitude"
                       value={longitude}
                       onChange={(e) => setLongitude(e.target.value)}
+                      readOnly={searchType === "current_location"}
                     />
                   </>
                 )}
                 <button type="submit" style={{ display: "none" }}></button>
-                <img src={searchIcon} alt="Search" className="search-icon" />
+                <button type="submit" className="search-icon-button" disabled={loading}>
+                  {loading ? (
+                    <div className="search-spinner" />
+                  ) : (
+                    <div className="search-icon" ><FiSearch size={31} /> </div>
+                  )}
+                </button>
               </div>
             </form>
           </div>
 
-
-
-          {/* Links */}
+          {/* Links and Profile */}
           <div className="navbar-right">
             <div className="navbar-links">
               <Link to="/home" className="navbar-link">Home</Link>
@@ -207,12 +333,10 @@ function Navbar({ onWeatherData }) {
           </div>
         </div>
       </div>
-      {error && (
+      {globalError && (
         <div className="error-bar">
-          <div className="error-bar-inner">
-            {error}
-            <button className="error-dismiss" onClick={() => setError("")}>✕</button>
-          </div>
+          <p>{globalError}</p>
+          <button className="error-dismiss" onClick={() => setGlobalError("")}>✕</button>
         </div>
       )}
     </>

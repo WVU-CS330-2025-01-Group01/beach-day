@@ -3,102 +3,114 @@
 .home-container {
   text-align: center;
   padding: 20px;
-  background-color: var(--secondary-color); /* Tan beach background */
-  color: #0066cc; /* Blue text */
-  min-height: calc(100vh - 120px); /* Ensure at least 100vh space for the container */
+  background-color: var(--secondary-color);
+  /* Tan beach background */
+  color: #0066cc;
+  /* Blue text */
+  min-height: calc(100vh - 120px);
+  /* Ensure at least 100vh space for the container */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
 }
 
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px; /* Increased margin */
-  font-family: 'Arial', sans-serif;
-   /* Adds a thin line under each row */
-
+.home-header {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
 }
 
-h2 {
-  font-size: 2.0rem;
-  margin-bottom: 10px; /* Increased margin */
-  font-family: 'Arial', sans-serif;
-  color: #000000;
-  border-bottom: 1px solid #000000;
+.weather-results-header {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+  color: #003366;
 }
 
-.search-form {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 10px; /* Adds space between the search input and button */
-  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+.weather-subtext {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
 }
 
-input {
-  padding: 15px; /* Increased padding for input */
-  font-size: 1.2rem; /* Increased font size */
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  width: 300px; /* Increased width of search bar */
-  max-width: 100%; /* Makes input responsive */
-}
-
-select {
-  padding: 8px 12px; /* Adjust padding for drop-down to make it less tall */
-  font-size: 1.1rem; /* Slightly smaller font for better balance */
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  width: 125px; /* Set a fixed width for the drop-down menu */
-  background-color: #fff;
-  color: #0066cc; /* Matching text color */
-}
-
-button {
-  padding: 15px 25px; /* Increased padding for button */
-  font-size: 1.2rem; /* Increased font size */
+.location-button {
+  background-color: var(--accent-color);
   color: white;
-  background: #0066cc;
-  border-radius: 5px;
-  margin-left: 10px;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
-  width: 180px; /* Adjust button width to be larger */
-  transition: background 0.3s ease; /* Smooth transition for hover effect */
+  margin-bottom: 1.5rem;
+  transition: background-color 0.2s;
 }
 
-button:hover {
-  background: #0055a5;
+.location-button:hover {
+  background-color: #004999;
 }
 
-.weather-info-container {
-  margin-top: 10px; /* Increased margin */
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Two columns for weather info */
-  gap: 10px; /* Reduced gap between columns */
-  text-align: justify;
-  width: 80%; /* Adjust container width */
-  max-width: 1000px;
+.weather-header {
+  font-size: 1.2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  color: #333;
 }
 
-.weather-info {
-  font-size: 1.5rem; /* Larger font for weather info */
-  font-weight: bold; /* Makes the weather info stand out */
-  margin: 0; /* No margin */
-  padding: 5px 0; /* Added padding for spacing */
-  border-bottom: 1px solid #ddd; /* Adds a thin line under each row */
+.beach-list-container {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding-bottom: 2rem;
+  text-align: center;
 }
 
-.weather-info p {
-  margin: 0; /* Remove default paragraph margin */
-  padding: 5px 0; /* Add some spacing between lines */
+
+
+.beach-card {
+  display: block;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+  margin-bottom: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  width: 100%;
+  max-width: 700px;
+  box-sizing: border-box;
 }
 
-.beach-image {
-  width: 100%; /* Makes the image scale responsively */
-  max-width: 1000px; /* Allow the image to be larger */
-  height: auto;
-  margin-top: 30px; /* Increased margin */
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Added box shadow for depth */
+.beach-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.15);
+}
+
+.beach-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+  /* use your main blue */
+  transition: color 0.2s ease;
+}
+
+.beach-card:hover .beach-title {
+  color: #004999;
+  /* slightly darker on hover */
+}
+
+.beach-location {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+.beach-access {
+  font-size: 1rem;
+  font-style: italic;
+  color: #777;
 }

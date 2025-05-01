@@ -115,6 +115,40 @@ try:
         print(json.dumps(result, indent=4))
         exit()
     
+    # Beach search by county and state
+    elif request_type == "search_beach_by_county_state":
+        import beach_search
+
+        county = input_params["county"]
+        state = input_params["state"]
+
+        try:
+            start = int(str(input_params["start"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: start must be a valid integer",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+        
+        try:
+            stop = int(str(input_params["stop"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: stop must be a valid integer",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+
+        result = beach_search.search_beach_by_county_state(county, state, start, stop)
+        result["code"] = "search_beach_by_county_state"
+
+        print(json.dumps(result, indent=4))
+        exit()
 
     # Beach search by latitude and longitude
     elif request_type == "search_beach_by_lat_lon":

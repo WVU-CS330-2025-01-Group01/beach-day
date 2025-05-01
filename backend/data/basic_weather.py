@@ -3,6 +3,8 @@
 import json
 import requests
 
+import sys, os
+
 # Interface to NOAA weather forecasting
 from noaa_sdk import NOAA
 
@@ -80,7 +82,35 @@ def get_basic_weather_latlon(lat, lon):
         print(json.dumps(result, indent=4))
         return result  # Return the error response instead of making a request
     
-    res = N.points_forecast(lat, lon, type="forecast")
+    temp_stdout = sys.stdout
+    sys.stdout = open(os.devnull, "w")
+    try:
+
+        res = N.points_forecast(lat, lon, type="forecast")
+
+    except Exception:
+        sys.stdout = temp_stdout
+        return {
+            "startTime": "",
+            "endTime": "",
+
+            "isDaytime": "",
+
+            "temperature": "",
+
+            "probPrecip": "",
+            "relHumidity": "",
+
+            "windSpeed": "",
+            "windDirection": "",
+
+            "forecastSummary": "",
+
+            "uvIndex": ""
+        }
+    
+    sys.stdout = temp_stdout
+
     now = res['properties']['periods'][0]
 
     startTime = now.get("startTime", "")

@@ -1,6 +1,8 @@
 import json
 import os
 
+from Levenshtein import distance as edit_distance
+
 MAX_SEARCH_CACHE = 20
 MAX_SEARCH_RESULTS = 500
 
@@ -8,27 +10,64 @@ MAX_SEARCH_RESULTS = 500
 base_dir = os.path.dirname(__file__)  # Get the directory of the current script
 json_path = os.path.join(base_dir, "beach_data", "beach_attributes.json")
 
-cache_path = os.path.join(base_dir, "caching", "search_cache.json")
+states_prefix = os.path.join(base_dir, "beach_data", "by_state", "states")
 
-beaches = {}
-with open(json_path, 'r') as beaches_file:
-    beaches = json.loads(beaches_file.read())
+# Search for beach by county and state
+def search_beach_by_county_state(county, state, start, stop):
+
+    if not state in ["AK", "AL", "AS", "CA", "CT", "DE", "FL", "GA", "GU", "HI", "IL", "IN", "LA", "MA", "MD", "ME", "MI", "MN", "MP", "MS", "NC", "NH", "NJ", "NY", "OH", "OR", "PA", "PR", "RI", "SC", "ST", "TX", "VA", "VI", "WA", "WI"]:
+        result = {
+            "code": "ERROR",
+            "error_type": "invalid_state_in_search",
+            "message": "The provided state is not valid"
+        }
+        print(json.dumps(result, indent=4))
+        exit()
+
+    import beaches as beaches_info
+    import basic_weather
+
+    path = os.path.join(states_prefix, f"{state}.json")
+    beaches = {}
+    with open(path, 'r') as beaches_file:
+        beaches = json.loads(beaches_file.read())
+
+    results = {key: val for key, val in sorted(beaches.items(), key=lambda item: edit_distance(county, item[1]["BEACH_COUNTY"]))}
+
+    results = list(results.keys())[start:stop]
+
+    beach_elements = {}
+
+    for key in results:
+        beach_info = beaches_info.get_beach_info_by_id(key)
+
+        lat = beach_info["latitude"]
+        lon = beach_info["longitude"]
+
+        beach_weather = basic_weather.get_basic_weather_latlon(lat, lon)
+
+        beach_info["weather"] = beach_weather
+        beach_elements[key] = beach_info
+
+    result = {
+        "order": results,
+        "result": beach_elements
+    }
+
+    return result
 
 
 # Search for beach by latitude and longitude
 def search_beach_by_lat_lon(lat, lon, start, stop):
 
+    beaches = {}
+    with open(json_path, 'r') as beaches_file:
+        beaches = json.loads(beaches_file.read())
+
     import beaches as beaches_info
     import basic_weather
 
     results = {key: val for key, val in sorted(beaches.items(), key=lambda item: distance(float(lat), float(lon), item[1]))}
-    count = 0
-    # for res in results.items():
-    #     if count < 20:
-    #         print(f"{res[0]}:\t{res[1]}")
-    #         count += 1
-    #     else:
-    #         break
     
     results = list(results.keys())[start:stop]
 
