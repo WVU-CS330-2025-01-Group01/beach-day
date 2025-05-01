@@ -7,21 +7,26 @@ import { fetchBeachInfoWithWeather } from './utils';
 
 function BeachInfo() {
   const location = useLocation();
-  const { beachId, beach, weather } = location.state || {};
   const navigate = useNavigate();
+  const {
+    jwtToken,
+    favorites,
+    setFavorites,
+    setGlobalError
+  } = useContext(UserContext);
 
-  const { jwtToken, favorites, setFavorites } = useContext(UserContext);
+  const { beachId, beach, weather } = location.state || {};
   const [error, setError] = useState(null);
   const [adding, setAdding] = useState(false);
 
   const addFavorite = async () => {
     if (!beachId) {
-      setError("Missing beach ID.");
+      setGlobalError("Missing beach ID.");
       return;
     }
 
     if (favorites.some(fav => fav.id === beachId)) {
-      setError("This beach is already in your favorites.");
+      setGlobalError("This beach is already in your favorites.");
       return;
     }
 
@@ -30,7 +35,7 @@ function BeachInfo() {
       const beachInfo = await fetchBeachInfoWithWeather(beachId);
 
       if (beachInfo.name === null) {
-        setError("Invalid Beach ID.");
+        setGlobalError("Invalid Beach ID.");
         return;
       }
 
@@ -43,7 +48,7 @@ function BeachInfo() {
       const data = await response.json();
 
       if (data.message !== "Success.") {
-        setError(data.message || "Failed to add beach to favorites.");
+        setGlobalError(data.message || "Failed to add beach to favorites.");
         return;
       }
 
@@ -54,7 +59,7 @@ function BeachInfo() {
       setError(null);
     } catch (err) {
       console.error("Add favorite error:", err);
-      setError("Could not add favorite. Try again later.");
+      setGlobalError("Could not add favorite. Try again later.");
     } finally {
       setAdding(false);
     }
@@ -71,37 +76,64 @@ function BeachInfo() {
 
   return (
     <div className="beach-info-container">
-      <h2>{beach.beach_name} Weather Info</h2>
+      <h2>{beach.beach_name}</h2>
 
-      <div className="beach-info">
-        <h3>Location: {beach.beach_county}, {beach.beach_state}</h3>
-        <p>Latitude: {beach.latitude}</p>
-        <p>Longitude: {beach.longitude}</p>
-        <p>Beach Access: {beach.beach_access || "Unavailable"}</p>
-        <p>Beach Length: {beach.beach_length || "Unavailable"} miles</p>
-        <div>-------------------------------------------</div>
-        <h3>Weather Information:</h3>
-        <p>Temperature: {weather.temperature}°F</p>
-        <p>Humidity: {weather.relHumidity}%</p>
-        <p>Wind Speed: {weather.windSpeed}</p>
-        <p>Wind Direction: {weather.windDirection}</p>
-        <p>Forecast: {weather.forecastSummary}</p>
-        <p>Precipitation: {weather.probPrecip}%</p>
-        <p>UV Index: {weather.uvIndex}</p>
-        <p>Air Quality: {weather.airQuality}</p>
-        <p>E. Coli Level: {weather.ecoli || "Unavailable"}</p>
-        <p>Alerts: {weather.alerts?.length > 0 ? weather.alerts.join(", ") : "None"}</p>
-        <div>-------------------------------------------</div>
-        <h3>Beach ID:</h3>
-        <p>{beachId}</p>
+      <div className="beach-info-cards">
+        {/* Beach Info Card */}
+        <div className="info-card">
+          <div className="card-header">
+            <h3>Beach Info</h3>
+            <button className="favorite-button" onClick={addFavorite} disabled={adding}>
+              {adding ? "Adding..." : "Add to Favorites"}
+            </button>
+          </div>
+          <p><strong>Location:</strong> {beach.beach_county ? `${beach.beach_county}, ` : ''}{beach.beach_state}</p>
+          <p><strong>Latitude:</strong> {beach.latitude}</p>
+          <p><strong>Longitude:</strong> {beach.longitude}</p>
+          <p><strong>Beach Access:</strong> {beach.beach_access || "Unavailable"}</p>
+          <p><strong>Length:</strong> {beach.beach_length || "Unavailable"} miles</p>
+        </div>
 
-        <button disabled={adding} onClick={addFavorite}>
-          {adding ? "Adding..." : "Add to Favorites"}
-        </button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {/* Weather Info Card */}
+        <div className="info-card">
+          <div className="card-header">
+            <h3>Weather Info</h3>
+          </div>
+          {weather.temperature?.toString().trim() && (
+            <p><strong>Temperature:</strong> {weather.temperature}°F</p>
+          )}
+          {weather.relHumidity?.toString().trim() && (
+            <p><strong>Humidity:</strong> {weather.relHumidity}%</p>
+          )}
+          {(weather.windSpeed?.toString().trim() || weather.windDirection?.toString().trim()) && (
+            <p><strong>Wind:</strong> {weather.windSpeed || "?"} {weather.windDirection || ""}</p>
+          )}
+          {weather.forecastSummary?.trim() && (
+            <p><strong>Forecast:</strong> {weather.forecastSummary}</p>
+          )}
+          {weather.probPrecip?.toString().trim() && (
+            <p><strong>Precipitation:</strong> {weather.probPrecip}%</p>
+          )}
+          {weather.uvIndex?.toString().trim() && (
+            <p><strong>UV Index:</strong> {weather.uvIndex}</p>
+          )}
+          {weather.airQuality?.toString().trim() && (
+            <p><strong>Air Quality:</strong> {weather.airQuality}</p>
+          )}
+          {weather.ecoli?.toString().trim() && (
+            <p><strong>E. Coli:</strong> {weather.ecoli}</p>
+          )}
+          {Array.isArray(weather.alerts) && weather.alerts.length > 0 && (
+            <p><strong>Alerts:</strong> {weather.alerts.join(", ")}</p>
+          )}
+        </div>
       </div>
 
-      <button onClick={() => navigate("/home")}>Go Back</button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <button className="go-back-button" onClick={() => navigate(-1)}>
+        ← Go Back
+      </button>
     </div>
   );
 }

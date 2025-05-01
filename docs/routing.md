@@ -100,8 +100,8 @@ The following are the status codes and `message`s of the possible outcomes.
 | User Doesn't Exist | 500 | `This user does not exist.` |
 | Other Error | 500 | `Undefined error.` |
 
-### `/set_password`
-This is a POST route. It allows frontend to reset the password for a user.
+### `/change_password`
+This is a POST route. It allows frontend to change the password for a user.
 
 #### Request
 
@@ -110,7 +110,8 @@ The request should be a JSON object of the following form.
 | Key | Value |
 | --- | --- |
 | `jwt` | The json web token of the user whose password to modify. |
-| `password` | The password to set for the user. |
+| `oldPassword` | The old password to confirm with. |
+| `newPassword` | The new password to set for the user. |
 
 #### Response
 
@@ -128,6 +129,54 @@ The following are the status codes and `message`s of the possible outcomes.
 | Token Problem | 500 | `User authentication token absent or invalid.` |
 | Database Problem | 500 | `Trouble accessing database.` |
 | User Doesn't Exist | 500 | `This user does not exist.` |
+| Other Error | 500 | `Undefined error.` |
+
+### `/get_email`
+This is a POST route. It allows frontend to retrieve the email of the user.
+
+#### Request
+
+| Key | Value |
+| --- | --- |
+| `jwt` | The json web token of the user whose profile to retrieve. |
+
+#### Response
+
+| Key | Value |
+| --- | --- |
+| `email` | Email on file for the user, or `null` if not set. |
+
+| Outcome | Status Code | `message` value |
+| --- | --- | --- |
+| Success | 200 | — |
+| Token Problem | 500 | `User authentication token absent or invalid.` |
+| User Doesn't Exist | 500 | `This user does not exist.` |
+| Database Problem | 500 | `Trouble accessing database.` |
+| Other Error | 500 | `Undefined error.` |
+
+### `/delete_account`
+This is a POST route. It allows a user to permanently delete their account.
+
+#### Request
+
+| Key | Value |
+| --- | --- |
+| `jwt` | The json web token of the user whose account to delete. |
+| `password` | The current password of the user whose account to delete |
+
+
+#### Response
+
+| Key | Value |
+| --- | --- |
+| `message` | Confirmation message of account deletion. |
+
+| Outcome | Status Code | `message` value |
+| --- | --- | --- |
+| Success | 200 | `Account deleted successfully.` |
+| Token Problem | 500 | `User authentication token absent or invalid.` |
+| User Doesn't Exist | 500 | `This user does not exist.` |
+| Database Problem | 500 | `Trouble accessing database.` |
 | Other Error | 500 | `Undefined error.` |
 
 ## `routes/weather.js`

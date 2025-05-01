@@ -149,7 +149,7 @@ module.exports = {
 			}
 			
 	
-			connection.query(
+			await connection.query(
 				`
 					DELETE FROM USERS
 					WHERE username = ?;
@@ -198,6 +198,7 @@ module.exports = {
 	clearFavorites: dbFavorite.clearFavorites,
 	getFavorites: dbFavorite.getFavorites,
 	removeFavorite: dbFavorite.removeFavorites,
+	getUserData: dbHelper.getUserData,
 
 	getNotificationCount: dbNotifications.getNotificationCount,
 	receivedNotification: dbNotifications.receivedNotification,

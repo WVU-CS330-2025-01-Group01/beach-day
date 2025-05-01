@@ -9,6 +9,7 @@ export const UserProvider = ({ children }) => {
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [jwtToken, setJwtToken] = useState(() => Cookies.get('jwt') || null);
+  const [globalError, setGlobalError] = useState("");
 
   useEffect(() => {
     localStorage.setItem('authenticated', JSON.stringify(authenticated));
@@ -26,7 +27,9 @@ export const UserProvider = ({ children }) => {
         jwtToken,
         setJwtToken,
         username,
-        setUsername
+        setUsername,
+        globalError,
+        setGlobalError
       }}
     >
       {children}

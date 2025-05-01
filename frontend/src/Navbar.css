@@ -92,7 +92,7 @@
   align-items: center;
   background-color: white;
   border-radius: 30px;
-  padding: 5px 12px;
+  padding: 8px 12px;
   position: relative;
   min-width: 200px;
   max-width: 400px;
@@ -128,7 +128,26 @@
   border: none;
   color:black;
   cursor: pointer;
-  margin-top: 4px;
+}
+
+.search-icon {
+  margin-bottom:-4px;
+}
+
+.search-spinner {
+  width: 26px;
+  height: 26px;
+  size:26px;
+  border: 3px solid #ccc;
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .search-icon-button:hover {
@@ -264,6 +283,8 @@
   color: #0077cc;
   text-decoration: none;
   text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .dropdown-body a:hover {
@@ -273,7 +294,7 @@
 .dropdown-logout {
   margin: 0.5rem 1rem 1rem;
   align-self: center;
-  padding: 0.3rem 0.6rem;
+  padding: 0.7rem 3.5rem;
   border: none;
   background-color: #e53935;
   font-weight: 500;
@@ -281,7 +302,7 @@
   color: white;
   border-radius: 6px;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1rem;
   transition: background-color 0.3s ease;
 }
 
