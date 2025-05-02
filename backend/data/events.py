@@ -20,7 +20,6 @@ def check_event(time, beach_id, event_name):
     messages = []
 
     for alert in alerts:
-        print(json.dumps(alert, indent=4))
         start = alert["properties"]["onset"]
         end = alert["properties"]["ends"]
 
