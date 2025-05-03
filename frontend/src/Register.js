@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './LogReg.css';
 import { API } from './api';
+import { Link } from 'react-router-dom';
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -63,7 +64,7 @@ function Register() {
         </form>
         {message && <p className="error-message">{message}</p>}
         <p className="redirect">
-          Already have an account? <a href="/login">Login here</a>
+          Already have an account? <Link to="/login">Login here</Link>
         </p>
       </div>
     </div>
