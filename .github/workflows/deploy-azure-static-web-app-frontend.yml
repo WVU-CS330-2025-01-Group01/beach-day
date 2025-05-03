@@ -14,7 +14,9 @@ jobs:
 
     # Environment variables available during the build step
     env:
-      REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}  # Inject backend URL at build time
+      CI: false
+      REACT_APP_BACKEND_HOST: localhost
+      REACT_APP_BACKEND_PORT: 3010
 
     steps:
       # Step 1: Check out the repo without trying to fetch any submodules
