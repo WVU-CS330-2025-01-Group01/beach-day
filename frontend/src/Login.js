@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useContext } from 'react';
 import { UserContext } from './UserContext';
 import './LogReg.css';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';  // Import useNavigate
 import Cookies from 'js-cookie';  // Import js-cookie
 import { cacheFavorites } from './utils';
 import { API } from './api';
@@ -81,7 +81,7 @@ function Login() {
         </form>
         {message && <p className="error-message">{message}</p>}
         <p className="redirect">
-          Don't have an account? <a href="/register">Register here</a>
+          Don't have an account? <Link to="/register">Register here</Link>
         </p>
       </div>
     </div>
