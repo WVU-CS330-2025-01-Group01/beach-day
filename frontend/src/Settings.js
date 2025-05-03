@@ -110,7 +110,7 @@ function Settings() {
 
   const handleDeleteAccount = async () => {
     try {
-      const response = await fetch("http://localhost:3010/delete_account", {
+      const response = await fetch(API.DELETE_ACCOUNT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jwt: jwtToken, password: deletePassword })
