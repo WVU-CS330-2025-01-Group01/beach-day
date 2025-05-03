@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
 import './Navbar.css';
@@ -13,9 +13,12 @@ function Navbar({ onWeatherData }) {
     setAuthenticated,
     username,
     globalError,
-    setGlobalError
+    setGlobalError,
+    jwtToken
   } = useContext(UserContext);
 
+  const [notificationCount, setNotificationCount] = useState(0);  // default to 0
+  const [notifications, setNotifications] = useState("");
   const [searchType, setSearchType] = useState("county_state");
   const [county, setCounty] = useState("");
   const [state, setState] = useState("");
@@ -25,6 +28,33 @@ function Navbar({ onWeatherData }) {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  // Fetch notification count when authenticated
+  useEffect(() => {
+    const fetchNotificationCount = async () => {
+      if (authenticated && jwtToken) {
+        try {
+          const response = await fetch(API.COUNT_NOTIFICATIONS, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${jwtToken}`
+            },
+            body: JSON.stringify({ jwt: jwtToken }),
+          });
+          const data = await response.json();
+          if (response.ok && data.message === 'Success.') {
+            setNotificationCount(data.count);
+          }
+        } catch (err) {
+          console.error('Error fetching notifications count:', err);
+          setGlobalError("Failed to fetch notification count.");
+        }
+      }
+    };
+
+    fetchNotificationCount();
+  }, [authenticated, jwtToken, setGlobalError]);
 
   const handleLogout = () => {
     Cookies.remove('jwt');
@@ -205,7 +235,7 @@ function Navbar({ onWeatherData }) {
     <>
       <div className="navbar">
         <div className="navbar-container">
-
+  
           {/* Logo */}
           <div className="navbar-left">
             <Link to="/home" className="navbar-home-link">
@@ -213,7 +243,7 @@ function Navbar({ onWeatherData }) {
               <h1 className="navbar-title">Beach Day</h1>
             </Link>
           </div>
-
+  
           {/* Search */}
           <div className="navbar-center">
             <form onSubmit={handleSearch} className="custom-search-form">
@@ -227,7 +257,7 @@ function Navbar({ onWeatherData }) {
                   <option value="latlon">Coordinates</option>
                   <option value="current_location">Use My Location</option>
                 </select>
-
+  
                 {searchType === "county_state" ? (
                   <>
                     <input
@@ -244,11 +274,11 @@ function Navbar({ onWeatherData }) {
                     >
                       <option value="">Select State</option>
                       {[
-                        "AK", "AL", "AS", "CA", "CT", "DE", "FL", "GA", "GU", "HI",
-                        "IL", "IN", "LA", "MA", "MD", "ME", "MI", "MN", "MP", "MS",
-                        "NC", "NH", "NJ", "NY", "OH", "OR", "PA", "PR", "RI", "SC",
-                        "ST", "TX", "VA", "VI", "WA", "WI"
-                      ].map((abbr) => (
+                        "AK","AL","AS","CA","CT","DE","FL","GA","GU","HI",
+                        "IL","IN","LA","MA","MD","ME","MI","MN","MP","MS",
+                        "NC","NH","NJ","NY","OH","OR","PA","PR","RI","SC",
+                        "ST","TX","VA","VI","WA","WI"
+                      ].map(abbr => (
                         <option key={abbr} value={abbr}>{abbr}</option>
                       ))}
                     </select>
@@ -260,7 +290,7 @@ function Navbar({ onWeatherData }) {
                       type="text"
                       placeholder="Latitude"
                       value={latitude}
-                      onChange={(e) => setLatitude(e.target.value)}
+                      onChange={e => setLatitude(e.target.value)}
                       readOnly={searchType === "current_location"}
                     />
                     <input
@@ -268,79 +298,92 @@ function Navbar({ onWeatherData }) {
                       type="text"
                       placeholder="Longitude"
                       value={longitude}
-                      onChange={(e) => setLongitude(e.target.value)}
+                      onChange={e => setLongitude(e.target.value)}
                       readOnly={searchType === "current_location"}
                     />
                   </>
                 )}
-                <button type="submit" style={{ display: "none" }}></button>
+  
+                <button type="submit" style={{ display: "none" }} />
                 <button type="submit" className="search-icon-button" disabled={loading}>
-                  {loading ? (
-                    <div className="search-spinner" />
-                  ) : (
-                    <div className="search-icon" ><FiSearch size={31} /> </div>
-                  )}
+                  {loading ? <div className="search-spinner" /> 
+                           : <div className="search-icon"><FiSearch size={31} /></div>}
                 </button>
               </div>
             </form>
           </div>
-
+  
           {/* Links and Profile */}
           <div className="navbar-right">
             <div className="navbar-links">
               <Link to="/home" className="navbar-link">Home</Link>
-
-              {/* Only show Favorites and Settings if authenticated */}
+  
               {authenticated && (
                 <>
                   <Link to="/favorites" className="navbar-link">Favorites</Link>
                   <div className="profile-dropdown">
-                    <span onClick={toggleDropdown} className="navbar-link">
-                      Profile
-                    </span>
-
+                    <span onClick={toggleDropdown} className="navbar-link">Profile</span>
+  
                     {dropdownOpen && (
                       <div className="dropdown-box">
                         <div className="dropdown-header">
                           <div className="avatar">
                             {username ? username.charAt(0).toUpperCase() : "?"}
-                          </div> {/* Optional: Just first letter of name */}
+                          </div>
                           <div>
-                            <div className="dropdown-name">
-                              {username}
-                            </div>
+                            <div className="dropdown-name">{username}</div>
                           </div>
                         </div>
-
+  
                         <div className="dropdown-body">
-                          <Link to="/settings" onClick={() => setDropdownOpen(false)}>Settings</Link>
+                          <Link to="/settings" onClick={() => setDropdownOpen(false)}>
+                            Settings
+                          </Link>
                         </div>
-                        <button onClick={handleLogout} className="dropdown-logout">Logout</button>
+  
+                        {/* ← HERE IS THE NOTIFICATIONS SECTION → */}
+                        <div className="notifications-link">
+                          <Link to="/notifications" onClick={() => setDropdownOpen(false)}>
+                            Notifications
+                          </Link>
+                          <span className="notification-badge">
+                            {notificationCount}
+                          </span>
+                        </div>
+  
+                        <button
+                          onClick={handleLogout}
+                          className="dropdown-logout"
+                        >
+                          Logout
+                        </button>
                       </div>
                     )}
                   </div>
                 </>
               )}
-
-              {/* Show About always */}
+  
               <Link to="/about" className="navbar-link">About</Link>
-
-              {/* Login or Logout */}
-              {!authenticated && (
-                <Link to="/login" className="navbar-link">Login</Link>
-              )}
+              {!authenticated && <Link to="/login" className="navbar-link">Login</Link>}
             </div>
           </div>
         </div>
       </div>
+  
       {globalError && (
         <div className="error-bar">
           <p>{globalError}</p>
-          <button className="error-dismiss" onClick={() => setGlobalError("")}>✕</button>
+          <button
+            className="error-dismiss"
+            onClick={() => setGlobalError("")}
+          >
+            ✕
+          </button>
         </div>
       )}
     </>
   );
+  
 }
 
 export default Navbar;

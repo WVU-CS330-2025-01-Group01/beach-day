@@ -15,7 +15,7 @@ function About() {
           and up-to-date information, some features and data may not be 100% reliable or fully implemented.
         </p>
         <p className="about-credits">
-          This project is developed by a team of students at West Virginia University as part of an Computer Science course.
+          This project is developed by a team of students at West Virginia University as part of a Computer Science course.
           We appreciate your understanding as we continue to improve the app.
         </p>
       </div>

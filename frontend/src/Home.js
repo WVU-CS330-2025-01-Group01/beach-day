@@ -3,38 +3,50 @@ import { UserContext } from './UserContext';
 import { Link, useLocation } from "react-router-dom";
 import "./Home.css";
 
-function Home({ weather: propWeather }) {
+function Home({ weather: propWeather = {} }) {
   const location = useLocation();
   const { username } = useContext(UserContext);
   const [weather, setWeather] = useState(null);
 
-  // Combine weather from props and location.state
   useEffect(() => {
-    if (propWeather) {
+    // Prefer propWeather if it has content
+    if (propWeather && Object.keys(propWeather).length > 0) {
       setWeather(propWeather);
-    } else if (location.state && location.state.weather) {
+    }
+    // Otherwise fall back to location.state.weather
+    else if (
+      location.state &&
+      location.state.weather &&
+      Object.keys(location.state.weather).length > 0
+    ) {
       setWeather(location.state.weather);
+    }
+    // If neither, clear out weather
+    else {
+      setWeather(null);
     }
   }, [propWeather, location.state]);
 
   return (
     <div className="home-container">
-      {!weather && (
+      {!weather ? (
         <h1 className="home-header">
           {username ? `Welcome back, ${username}!` : 'Plan your next Beach Day'}
         </h1>
-      )}
+      ) : null}
 
       <div className="beach-list-container fade-in">
         {weather ? (
           <>
             <h2 className="weather-results-header">Search Results</h2>
             <p className="weather-subtext">
-              {weather.searchType === "latlon" && `Closest to: ${weather.latitude}°, ${weather.longitude}°`}
-              {weather.searchType === "county_state" && `Near ${weather.county} County, ${weather.state}`}
+              {weather.searchType === "latlon" &&
+                `Closest to: ${weather.latitude}°, ${weather.longitude}°`}
+              {weather.searchType === "county_state" &&
+                `Near ${weather.county} County, ${weather.state}`}
             </p>
 
-            {weather.result ? (
+            {weather.result && weather.order.length > 0 ? (
               weather.order.map((beachId) => {
                 const beach = weather.result[beachId];
                 const w = beach.weather;
@@ -47,7 +59,8 @@ function Home({ weather: propWeather }) {
                     >
                       <div className="beach-title">{beach.beach_name}</div>
                       <div className="beach-location">
-                        {beach.beach_county ? `${beach.beach_county}, ` : ''}{beach.beach_state}
+                        {beach.beach_county ? `${beach.beach_county}, ` : ''}
+                        {beach.beach_state}
                       </div>
                       <div className="beach-access">
                         Beach Access: {beach.beach_access || "Unavailable"}
@@ -60,7 +73,11 @@ function Home({ weather: propWeather }) {
               <h2>No beaches found</h2>
             )}
           </>
-        ) : "🌴 Start your search using the bar above to discover nearby beaches!"}
+        ) : (
+          <p className="home-prompt">
+            🌴 Start your search using the bar above to discover nearby beaches!
+          </p>
+        )}
       </div>
     </div>
   );
