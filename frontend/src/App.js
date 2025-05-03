@@ -35,7 +35,7 @@ function App() {
         />
         <Route
           path="/home"
-          element={<Home weather={weather} />} />
+           />} />
         <Route
           path="/settings"
           element={authenticated ? <Settings /> : <Navigate to="/login" replace />} />
