@@ -341,7 +341,6 @@ function Navbar({ onWeatherData }) {
                           </Link>
                         </div>
   
-                        {/* ← HERE IS THE NOTIFICATIONS SECTION → */}
                         <div className="notifications-link">
                           <Link to="/notifications" onClick={() => setDropdownOpen(false)}>
                             Notifications
