@@ -1,0 +1,14 @@
+.notifications-container {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--secondary-color);
+    /* Tan beach background */
+    color: #0066cc;
+    /* Blue text */
+    min-height: calc(100vh - 120px);
+    /* Ensure at least 100vh space for the container */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
