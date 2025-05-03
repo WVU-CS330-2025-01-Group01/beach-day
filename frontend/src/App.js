@@ -8,6 +8,7 @@ import Navbar from './Navbar';
 import Favorites from './Favorites';
 import Settings from './Settings';
 import BeachInfo from './BeachInfo';
+import Notifications from './Notifications';
 import About from './About';
 
 function App() {
@@ -44,6 +45,9 @@ function App() {
         <Route
           path="/about"
           element={<About />} />
+        <Route
+          path="/notifications"
+          element={<Notifications />} />
       </Routes>
     </Router>
   );
