@@ -11,8 +11,15 @@ from noaa_sdk import NOAA
 # Access NOAA forecast data
 N = NOAA()
 
-# Get weather info at a zip code
+
 def get_basic_weather_zip(zip_code, country_code):
+    """
+    Fulfill a basic request for weather data at a given zip and country code
+
+    :param zip_code: the zip code to search for
+    :param country_code: (default="us") the country to search in
+    :results: JSON-compatible map with weather information at the provided location.
+    """
     res = N.get_forecasts(zip_code, country_code)
     now = res[0]
 
@@ -70,8 +77,16 @@ def get_basic_weather_zip(zip_code, country_code):
 
 
 
-# Get weather info at a latitude, longitude
+
 def get_basic_weather_latlon(lat, lon):
+    """
+    Fulfill a basic request for weather data at a given latitude and longitude
+
+    :param lat: latitude to search at
+    :param lon: longitude to search at
+    :results: JSON-compatible map with weather information at the provided location.
+    """
+
     # Check if latitude or longitude is "N/A"
     if lat == "N/A" or lon == "N/A":
         result = {
@@ -168,6 +183,13 @@ def get_basic_weather_latlon(lat, lon):
 
 
 def get_uv_index(lat, lon):
+    """
+    Helper function for finding the UV index at a latitude and longitude
+
+    :param lat: latitude to search at
+    :param lon: longitude to search at
+    :returns: UV index at the provided location
+    """
     lines = requests.get("https://www.cpc.ncep.noaa.gov/products/stratosphere/uv_index/bulletin.txt").text.split("\n")
 
     i = 0
@@ -201,10 +223,25 @@ def get_uv_index(lat, lon):
     return uvmap.get(closest_city, "")
 
 def distance(a_lat, a_lon, b_lat, b_lon):
+    """
+    Distance between to points (simplified to Cartesian distance)
+
+    :param a_lat: latitude of point a
+    :param a_lon: longitude of point a
+    :param b_lat: latitude of point b
+    :param b_lon: longitude of point b
+    :returns: Cartesian distance between points a and b
+    """
     return ((float(b_lat) - float(a_lat)) ** 2 + (float(b_lon) - float(a_lon)) ** 2) ** 0.5
 
 
 def get_closest_uv_city(lat, lon):
+    """
+    Get the city on the UV request bulletin that is closest to a given locaton
+
+    :param lat: the latitude to search at
+    :param lon: the longitude to search at
+    """
 
     city_map = {
         "ALBUQUERQUE NM": (35.093779, -106.645375),

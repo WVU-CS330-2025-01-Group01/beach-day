@@ -196,7 +196,7 @@ def get_dummy_beach_info_by_id(beach_id):
 
         return result
         
-    # If requested beach ID doest not exist, exit and respond with an error response
+    # If requested beach ID doesnt not exist, exit and respond with an error response
     except KeyError as e:
         result = {
             "code": "ERROR",
