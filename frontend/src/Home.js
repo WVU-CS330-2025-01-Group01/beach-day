@@ -5,8 +5,14 @@ import "./Home.css";
 
 function Home({ weather: propWeather = {} }) {
   const location = useLocation();
-  const { username } = useContext(UserContext);
+  const {
+    username,
+    usingCurrentLocation,
+    latitude,
+    longitude
+  } = useContext(UserContext);
   const [weather, setWeather] = useState(null);
+
 
   useEffect(() => {
     // Prefer propWeather if it has content
@@ -26,6 +32,24 @@ function Home({ weather: propWeather = {} }) {
       setWeather(null);
     }
   }, [propWeather, location.state]);
+
+  function getDistanceInMiles(lat1, lon1, lat2, lon2) {
+    const R = 3958.8; // Earth radius in miles
+    const toRad = angle => angle * (Math.PI / 180);
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) ** 2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c;
+
+    return Math.round(distance * 10) / 10; // round to 1 decimal place
+  }
 
   return (
     <div className="home-container">
@@ -59,8 +83,8 @@ function Home({ weather: propWeather = {} }) {
                     >
                       <div className="beach-title">{beach.beach_name}</div>
                       <div className="beach-location">
-                        {beach.beach_county ? `${beach.beach_county}, ` : ''}
-                        {beach.beach_state}
+                        {beach.beach_county ? `${beach.beach_county}, ` : ""}
+                        {beach.beach_state} {usingCurrentLocation ? `(${getDistanceInMiles(beach.latitude, beach.longitude, latitude, longitude)} mi) ` : ""}
                       </div>
                       <div className="beach-access">
                         Beach Access: {beach.beach_access || "Unavailable"}
@@ -82,5 +106,7 @@ function Home({ weather: propWeather = {} }) {
     </div>
   );
 }
+
+
 
 export default Home;

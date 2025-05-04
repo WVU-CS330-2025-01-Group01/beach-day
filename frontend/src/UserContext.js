@@ -10,6 +10,9 @@ export const UserProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
   const [jwtToken, setJwtToken] = useState(() => Cookies.get('jwt') || null);
   const [globalError, setGlobalError] = useState("");
+  const [usingCurrentLocation, setUsingCurrentLocation] = useState(false);
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
 
   useEffect(() => {
     localStorage.setItem('authenticated', JSON.stringify(authenticated));
@@ -29,7 +32,13 @@ export const UserProvider = ({ children }) => {
         username,
         setUsername,
         globalError,
-        setGlobalError
+        setGlobalError,
+        usingCurrentLocation,
+        setUsingCurrentLocation,
+        latitude,
+        setLatitude,
+        longitude,
+        setLongitude
       }}
     >
       {children}
