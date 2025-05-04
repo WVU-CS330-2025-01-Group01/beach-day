@@ -5,9 +5,19 @@ import { UserContext } from "./UserContext";
 import { API } from './api';
 import { fetchBeachInfoWithWeather } from './utils';
 
+/**
+ * BeachInfo component displays detailed information about a selected beach,
+ * including both static beach details and dynamic weather data.
+ * Allows authenticated users to add the beach to their favorites list.
+ *
+ * @component
+ * @returns {JSX.Element} A page showing beach and weather info with an "Add to Favorites" option
+ */
 function BeachInfo() {
-  const location = useLocation();
+  const location = useLocation(); // Get passed state from previous navigation
   const navigate = useNavigate();
+
+  // Pull global user state and setters from context
   const {
     jwtToken,
     favorites,
@@ -15,23 +25,30 @@ function BeachInfo() {
     setGlobalError
   } = useContext(UserContext);
 
+  // Get beach info and weather from router state
   const { beachId, beach, weather } = location.state || {};
   const [error, setError] = useState(null);
   const [adding, setAdding] = useState(false);
 
+  /**
+   * Handles adding the current beach to user's favorites.
+   * Performs validation, API call, and updates local/remote state.
+   */
   const addFavorite = async () => {
     if (!beachId) {
       setGlobalError("Missing beach ID.");
       return;
     }
 
+    // Prevent duplicate favorites
     if (favorites.some(fav => fav.id === beachId)) {
       setGlobalError("This beach is already in your favorites.");
       return;
     }
 
     try {
-      setAdding(true);
+      setAdding(true); // Show "Adding..." while processing
+
       const beachInfo = await fetchBeachInfoWithWeather(beachId);
 
       if (beachInfo.name === null) {
@@ -39,6 +56,7 @@ function BeachInfo() {
         return;
       }
 
+      // POST request to add beach to user's favorites
       const response = await fetch(API.UPDATE_FAVORITES, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -52,6 +70,7 @@ function BeachInfo() {
         return;
       }
 
+      // Update global state and local cache
       const newFavorite = { id: beachId, ...beachInfo };
       const updatedFavorites = [...favorites, newFavorite];
       setFavorites(updatedFavorites);
@@ -65,6 +84,7 @@ function BeachInfo() {
     }
   };
 
+  // Fallback for missing beach/weather data
   if (!beach || !weather) {
     return (
       <div className="beach-info-container">
@@ -87,14 +107,22 @@ function BeachInfo() {
               {adding ? "Adding..." : "Add to Favorites"}
             </button>
           </div>
+
           <p><strong>Location:</strong> {beach.beach_county ? `${beach.beach_county}, ` : ''}{beach.beach_state}</p>
+
+          {/* Conditionally show latitude if valid */}
           {beach.latitude?.toString().trim() && (
             <p><strong>Latitude:</strong> {parseFloat(beach.latitude).toFixed(6)}</p>
           )}
+
+          {/* Conditionally show longitude if valid */}
           {beach.longitude?.toString().trim() && (
             <p><strong>Longitude:</strong> {parseFloat(beach.longitude).toFixed(6)}</p>
           )}
+
           <p><strong>Beach Access:</strong> {beach.beach_access || "Unavailable"}</p>
+
+          {/* Conditionally show beach length if valid */}
           {beach.beach_length?.toString().trim() && (
             <p><strong>Length:</strong> {`${parseFloat(beach.beach_length).toFixed(3)} mi`}</p>
           )}
@@ -105,6 +133,7 @@ function BeachInfo() {
           <div className="card-header">
             <h3>Weather Info</h3>
           </div>
+
           {weather.temperature?.toString().trim() && (
             <p><strong>Temperature:</strong> {weather.temperature}°F</p>
           )}
@@ -135,8 +164,10 @@ function BeachInfo() {
         </div>
       </div>
 
+      {/* Local error message */}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
+      {/* Back navigation */}
       <button className="go-back-button" onClick={() => navigate(-1)}>
         ← Go Back
       </button>
