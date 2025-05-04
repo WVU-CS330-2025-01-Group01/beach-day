@@ -14,7 +14,12 @@ function Navbar({ onWeatherData }) {
     username,
     globalError,
     setGlobalError,
-    jwtToken
+    jwtToken,
+    setUsingCurrentLocation,
+    latitude,
+    setLatitude,
+    longitude,
+    setLongitude
   } = useContext(UserContext);
 
   const [notificationCount, setNotificationCount] = useState(0);  // default to 0
@@ -22,8 +27,6 @@ function Navbar({ onWeatherData }) {
   const [searchType, setSearchType] = useState("county_state");
   const [county, setCounty] = useState("");
   const [state, setState] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -110,6 +113,7 @@ function Navbar({ onWeatherData }) {
         };
 
         onWeatherData(multiBeachWeather);
+        setUsingCurrentLocation(false);
         setLoading(false);
         navigate("/home");
 
@@ -158,6 +162,7 @@ function Navbar({ onWeatherData }) {
         };
 
         onWeatherData(multiBeachWeather);
+        setUsingCurrentLocation(false);
         setLoading(false);
         navigate("/home");
       }
@@ -204,6 +209,7 @@ function Navbar({ onWeatherData }) {
               };
 
               onWeatherData(multiBeachWeather);
+              setUsingCurrentLocation(true);
               navigate("/home");
               setLoading(false);
             } catch (err) {

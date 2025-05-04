@@ -88,10 +88,16 @@ function BeachInfo() {
             </button>
           </div>
           <p><strong>Location:</strong> {beach.beach_county ? `${beach.beach_county}, ` : ''}{beach.beach_state}</p>
-          <p><strong>Latitude:</strong> {beach.latitude}</p>
-          <p><strong>Longitude:</strong> {beach.longitude}</p>
+          {beach.latitude?.toString().trim() && (
+            <p><strong>Latitude:</strong> {parseFloat(beach.latitude).toFixed(6)}</p>
+          )}
+          {beach.longitude?.toString().trim() && (
+            <p><strong>Longitude:</strong> {parseFloat(beach.longitude).toFixed(6)}</p>
+          )}
           <p><strong>Beach Access:</strong> {beach.beach_access || "Unavailable"}</p>
-          <p><strong>Length:</strong> {beach.beach_length || "Unavailable"} miles</p>
+          {beach.beach_length?.toString().trim() && (
+            <p><strong>Length:</strong> {`${parseFloat(beach.beach_length).toFixed(3)} mi`}</p>
+          )}
         </div>
 
         {/* Weather Info Card */}
