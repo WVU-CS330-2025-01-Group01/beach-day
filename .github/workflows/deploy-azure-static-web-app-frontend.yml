@@ -17,6 +17,7 @@ jobs:
       CI: false
       REACT_APP_BACKEND_HOST: beachdaybackend.eastus.cloudapp.azure.com
       REACT_APP_BACKEND_PORT: 3010
+      REACT_APP_USE_HTTPS: 1
 
     steps:
       # Step 1: Check out the repo without trying to fetch any submodules
