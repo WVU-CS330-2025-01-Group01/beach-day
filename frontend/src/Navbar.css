@@ -1,5 +1,6 @@
-@import './colors.css';
+@import './colors.css'; /* Import global color variables */
 
+/* === Top Navigation Bar === */
 .navbar {
   background-color: var(--primary-color);
   padding: 10px 0;
@@ -15,6 +16,7 @@
   margin: 0 auto;
 }
 
+/* === Navbar Sections: Left, Center, Right === */
 .navbar-left,
 .navbar-right {
   flex: 1 1 25%;
@@ -26,6 +28,7 @@
   min-width: 200px;
 }
 
+/* === Logo and Title === */
 .navbar-icon {
   width: 60px;
   height: 60px;
@@ -49,6 +52,7 @@
   text-decoration: none;
 }
 
+/* === Navigation Links === */
 .navbar-links {
   display: flex;
   align-items: center;
@@ -67,6 +71,7 @@
   color: #e0e0e0;
 }
 
+/* === Logout Button Style (unused class if not dynamic) === */
 .logout-btn {
   border: none;
   cursor: pointer;
@@ -81,6 +86,7 @@
   background-color: #d32f2f;
 }
 
+/* === Search Box === */
 .custom-search-form {
   display: flex;
   justify-content: center;
@@ -113,8 +119,8 @@
   border: none;
   font-size: 1rem;
   outline: none;
-  margin-bottom: 0px;
   color: #333;
+  margin-bottom: 0;
 }
 
 .search-box input[type="text"] {
@@ -122,6 +128,7 @@
   width: 100%;
 }
 
+/* === Search Icon Button === */
 .search-icon-button {
   background: none;
   padding: 0;
@@ -137,7 +144,6 @@
 .search-spinner {
   width: 26px;
   height: 26px;
-  size: 26px;
   border: 3px solid #ccc;
   border-top: 3px solid var(--primary-color);
   border-radius: 50%;
@@ -155,6 +161,7 @@
   transform: scale(1.15);
 }
 
+/* === Error Bar === */
 .error-bar {
   display: flex;
   background-color: rgba(244, 67, 54, 0.9);
@@ -172,7 +179,6 @@
     transform: scaleY(0);
     opacity: 0;
   }
-
   to {
     transform: scaleY(1);
     opacity: 1;
@@ -202,7 +208,7 @@
   background: none;
 }
 
-/* PROFILE DROPDOWN STYLING */
+/* === Profile Dropdown Styling === */
 .profile-dropdown {
   position: relative;
   display: inline-block;
@@ -243,10 +249,10 @@
   background-color: white;
   transform: rotate(45deg);
   border-radius: 2px;
-
   z-index: 0;
 }
 
+/* === Dropdown Content === */
 .dropdown-header {
   display: flex;
   gap: 0.75rem;
@@ -302,9 +308,9 @@
   cursor: pointer;
   color: white;
   border-radius: 6px;
-  text-align: center;
   font-size: 1rem;
   transition: background-color 0.3s ease;
+  text-align: center;
 }
 
 .dropdown-logout:hover {

@@ -7,6 +7,16 @@ import Cookies from 'js-cookie';
 import { FiSearch } from 'react-icons/fi';
 import { API } from './api';
 
+/**
+ * Navbar component displays top-level navigation and search form.
+ * Supports geolocation, state/county, and coordinate-based beach searches.
+ * Also handles user authentication, profile dropdown, and notifications.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onWeatherData - Callback to pass weather search results
+ * @returns {JSX.Element}
+ */
 function Navbar({ onWeatherData }) {
   const {
     authenticated,
@@ -22,8 +32,7 @@ function Navbar({ onWeatherData }) {
     setLongitude
   } = useContext(UserContext);
 
-  const [notificationCount, setNotificationCount] = useState(0);  // default to 0
-  const [notifications, setNotifications] = useState("");
+  const [notificationCount, setNotificationCount] = useState(0);
   const [searchType, setSearchType] = useState("county_state");
   const [county, setCounty] = useState("");
   const [state, setState] = useState("");
@@ -32,7 +41,7 @@ function Navbar({ onWeatherData }) {
 
   const navigate = useNavigate();
 
-  // Fetch notification count when authenticated
+  // Fetch notification count when user is authenticated
   useEffect(() => {
     const fetchNotificationCount = async () => {
       if (authenticated && jwtToken) {
@@ -45,6 +54,7 @@ function Navbar({ onWeatherData }) {
             },
             body: JSON.stringify({ jwt: jwtToken }),
           });
+
           const data = await response.json();
           if (response.ok && data.message === 'Success.') {
             setNotificationCount(data.count);
@@ -59,6 +69,7 @@ function Navbar({ onWeatherData }) {
     fetchNotificationCount();
   }, [authenticated, jwtToken, setGlobalError]);
 
+  // Handle user logout
   const handleLogout = () => {
     Cookies.remove('jwt');
     localStorage.removeItem('cachedFavorites');
@@ -68,12 +79,15 @@ function Navbar({ onWeatherData }) {
     navigate("/login");
   };
 
+  /**
+   * Handle beach search based on selected method (county/state, coordinates, or current location).
+   * Validates user input and fetches results from the backend.
+   */
   const handleSearch = async (e) => {
     if (e) e.preventDefault();
     if (loading) return;
 
     try {
-      let searchResponse, searchData;
       setGlobalError("");
 
       if (searchType === "county_state") {
@@ -81,12 +95,11 @@ function Navbar({ onWeatherData }) {
           setGlobalError("Please enter both county and state.");
           return;
         }
+
         setLoading(true);
-        searchResponse = await fetch(API.BEACHINFO, {
+        const res = await fetch(API.BEACHINFO, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             request_type: "search_beach_by_county_state",
             county,
@@ -96,28 +109,21 @@ function Navbar({ onWeatherData }) {
           }),
         });
 
-        searchData = await searchResponse.json();
+        const data = await res.json();
 
-        if (!searchData.order || searchData.order.length === 0) {
+        if (!data.order || data.order.length === 0) {
           setGlobalError("No beaches found for this county and state.");
           setLoading(false);
           return;
         }
 
-        const multiBeachWeather = {
-          searchType,
-          county,
-          state,
-          result: searchData.result,
-          order: searchData.order,
-        };
-
-        onWeatherData(multiBeachWeather);
+        onWeatherData({ searchType, county, state, ...data });
         setUsingCurrentLocation(false);
-        setLoading(false);
         navigate("/home");
+        setLoading(false);
+      }
 
-      } else if (searchType === "latlon") {
+      else if (searchType === "latlon") {
         const latNum = parseFloat(latitude);
         const lonNum = parseFloat(longitude);
 
@@ -130,12 +136,11 @@ function Navbar({ onWeatherData }) {
           setGlobalError("Coordinates must be within the U.S. including Alaska and Hawaii.");
           return;
         }
+
         setLoading(true);
-        searchResponse = await fetch(API.BEACHINFO, {
+        const res = await fetch(API.BEACHINFO, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             request_type: "search_beach_by_lat_lon",
             latitude,
@@ -145,27 +150,20 @@ function Navbar({ onWeatherData }) {
           }),
         });
 
-        searchData = await searchResponse.json();
+        const data = await res.json();
 
-        if (!searchData.order || searchData.order.length === 0) {
+        if (!data.order || data.order.length === 0) {
           setGlobalError("No beaches found near this location.");
           setLoading(false);
           return;
         }
 
-        const multiBeachWeather = {
-          searchType,
-          latitude,
-          longitude,
-          result: searchData.result,
-          order: searchData.order,
-        };
-
-        onWeatherData(multiBeachWeather);
+        onWeatherData({ searchType, latitude, longitude, ...data });
         setUsingCurrentLocation(false);
-        setLoading(false);
         navigate("/home");
+        setLoading(false);
       }
+
       else if (searchType === "current_location") {
         if (!navigator.geolocation) {
           setGlobalError("Geolocation is not supported.");
@@ -174,25 +172,26 @@ function Navbar({ onWeatherData }) {
 
         navigator.geolocation.getCurrentPosition(
           async (position) => {
-            setLatitude(position.coords.latitude.toFixed(6));
-            setLongitude(position.coords.longitude.toFixed(6));
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            setLatitude(lat.toFixed(6));
+            setLongitude(lon.toFixed(6));
             setLoading(true);
+
             try {
-              const response = await fetch(API.BEACHINFO, {
+              const res = await fetch(API.BEACHINFO, {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   request_type: "search_beach_by_lat_lon",
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude,
+                  latitude: lat,
+                  longitude: lon,
                   start: 0,
                   stop: 5,
                 }),
               });
 
-              const data = await response.json();
+              const data = await res.json();
 
               if (!data.order || data.order.length === 0) {
                 setGlobalError("No beaches found near your location.");
@@ -200,15 +199,13 @@ function Navbar({ onWeatherData }) {
                 return;
               }
 
-              const multiBeachWeather = {
+              onWeatherData({
                 searchType: "latlon",
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                result: data.result,
-                order: data.order,
-              };
+                latitude: lat,
+                longitude: lon,
+                ...data
+              });
 
-              onWeatherData(multiBeachWeather);
               setUsingCurrentLocation(true);
               navigate("/home");
               setLoading(false);
@@ -225,7 +222,6 @@ function Navbar({ onWeatherData }) {
           }
         );
       }
-
     } catch (err) {
       console.error(err);
       setGlobalError("Error fetching beach data.");
@@ -233,6 +229,7 @@ function Navbar({ onWeatherData }) {
     }
   };
 
+  // Toggle profile dropdown
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -241,16 +238,16 @@ function Navbar({ onWeatherData }) {
     <>
       <div className="navbar">
         <div className="navbar-container">
-  
-          {/* Logo */}
+
+          {/* Logo Section */}
           <div className="navbar-left">
             <Link to="/home" className="navbar-home-link">
               <img src={beachIcon} alt="Beach Day Icon" className="navbar-icon" />
               <h1 className="navbar-title">Beach Day</h1>
             </Link>
           </div>
-  
-          {/* Search */}
+
+          {/* Search Form */}
           <div className="navbar-center">
             <form onSubmit={handleSearch} className="custom-search-form">
               <div className="search-box">
@@ -263,7 +260,8 @@ function Navbar({ onWeatherData }) {
                   <option value="latlon">Coordinates</option>
                   <option value="current_location">Use My Location</option>
                 </select>
-  
+
+                {/* Dynamic search inputs based on type */}
                 {searchType === "county_state" ? (
                   <>
                     <input
@@ -309,57 +307,52 @@ function Navbar({ onWeatherData }) {
                     />
                   </>
                 )}
-  
+
+                {/* Invisible button for Enter key support */}
                 <button type="submit" style={{ display: "none" }} />
+
+                {/* Visible button with icon/spinner */}
                 <button type="submit" className="search-icon-button" disabled={loading}>
-                  {loading ? <div className="search-spinner" /> 
-                           : <div className="search-icon"><FiSearch size={31} /></div>}
+                  {loading ? <div className="search-spinner" /> : <div className="search-icon"><FiSearch size={31} /></div>}
                 </button>
               </div>
             </form>
           </div>
-  
-          {/* Links and Profile */}
+
+          {/* Right Side Links and Profile Menu */}
           <div className="navbar-right">
             <div className="navbar-links">
               <Link to="/home" className="navbar-link">Home</Link>
-  
+
               {authenticated && (
                 <>
                   <Link to="/favorites" className="navbar-link">Favorites</Link>
                   <div className="profile-dropdown">
                     <span onClick={toggleDropdown} className="navbar-link">Profile</span>
-  
+
                     {dropdownOpen && (
                       <div className="dropdown-box">
                         <div className="dropdown-header">
                           <div className="avatar">
                             {username ? username.charAt(0).toUpperCase() : "?"}
                           </div>
-                          <div>
-                            <div className="dropdown-name">{username}</div>
-                          </div>
+                          <div className="dropdown-name">{username}</div>
                         </div>
-  
+
                         <div className="dropdown-body">
                           <Link to="/settings" onClick={() => setDropdownOpen(false)}>
                             Settings
                           </Link>
                         </div>
-  
+
                         <div className="notifications-link">
                           <Link to="/notifications" onClick={() => setDropdownOpen(false)}>
                             Notifications
                           </Link>
-                          <span className="notification-badge">
-                            {notificationCount}
-                          </span>
+                          <span className="notification-badge">{notificationCount}</span>
                         </div>
-  
-                        <button
-                          onClick={handleLogout}
-                          className="dropdown-logout"
-                        >
+
+                        <button onClick={handleLogout} className="dropdown-logout">
                           Logout
                         </button>
                       </div>
@@ -367,28 +360,25 @@ function Navbar({ onWeatherData }) {
                   </div>
                 </>
               )}
-  
+
               <Link to="/about" className="navbar-link">About</Link>
               {!authenticated && <Link to="/login" className="navbar-link">Login</Link>}
             </div>
           </div>
         </div>
       </div>
-  
+
+      {/* Error Banner */}
       {globalError && (
         <div className="error-bar">
           <p>{globalError}</p>
-          <button
-            className="error-dismiss"
-            onClick={() => setGlobalError("")}
-          >
+          <button className="error-dismiss" onClick={() => setGlobalError("")}>
             ✕
           </button>
         </div>
       )}
     </>
   );
-  
 }
 
 export default Navbar;
