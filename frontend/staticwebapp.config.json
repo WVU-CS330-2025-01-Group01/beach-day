@@ -2,6 +2,8 @@
     "globalHeaders": {
       "content-security-policy": "default-src * 'unsafe-eval' 'unsafe-inline'; object-src 'none'",
       "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
       "X-Frame-Options": "SAMEORIGIN",
       "X-Permitted-Cross-Domain-Policies": "none",
       "Referrer-Policy":"no-referrer",
