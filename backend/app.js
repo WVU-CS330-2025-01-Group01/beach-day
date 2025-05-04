@@ -13,7 +13,10 @@ app.use(cors());
 
 // Create/Update Conda and the Environment
 const wrapper = require("./data/");
-wrapper.runScript("update conda env");
+const AUTO_UPDATE_CONDA = process.env.AUTO_UPDATE_CONDA || 1;
+if (AUTO_UPDATE_CONDA == 1) {
+	wrapper.runScript("update conda env");
+}
 
 // Add the Routes
 const authRoutes = require('./routes/auth');
