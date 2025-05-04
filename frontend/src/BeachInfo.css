@@ -1,65 +1,64 @@
 .beach-info-container {
-    text-align: center;
-    padding: 2rem;
-    background-color: var(--secondary-color);
-    min-height: 100vh;
-    font-family: Arial, sans-serif;
-    color: #0066cc;
-  }
-  
-  .beach-info-cards {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-  
-  .info-card {
-    background-color: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 500px;
-    text-align: left;
-    color: #003366;
-  }
-  
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  
-  .favorite-button {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-  
-  .favorite-button:hover {
-    background-color: #004999;
-  }
-  
-  .go-back-button {
-    margin-top: 2rem;
-    background-color: transparent;
-    border: 2px solid var(--primary-color);
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    border-radius: 8px;
-    color: var(--primary-color);
-    cursor: pointer;
-  }
-  
-  .go-back-button:hover {
-    background-color: var(--primary-color);
-    color: white;
-  }
-  
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--secondary-color); /* Light background */
+  min-height: 100vh; /* Full viewport height */
+  font-family: Arial, sans-serif;
+  color: #0066cc; /* Default text color */
+}
+
+.beach-info-cards {
+  display: flex;
+  flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
+  justify-content: center;
+  gap: 2rem; /* Spacing between cards */
+  margin-top: 2rem;
+}
+
+.info-card {
+  background-color: white;
+  border-radius: 12px; /* Rounded corners */
+  padding: 1.5rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  width: 90%; /* Responsive width */
+  max-width: 500px;
+  text-align: left;
+  color: #003366; /* Darker blue for card content */
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between; /* Title on left, button on right */
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.favorite-button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.favorite-button:hover {
+  background-color: #004999; /* Darker blue on hover */
+}
+
+.go-back-button {
+  margin-top: 2rem;
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.go-back-button:hover {
+  background-color: var(--primary-color);
+  color: white; /* Invert colors on hover */
+}

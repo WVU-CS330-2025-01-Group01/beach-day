@@ -1,14 +1,11 @@
-@import './colors.css';
+@import './colors.css'; /* Import theme color variables */
 
 .home-container {
   text-align: center;
   padding: 20px;
-  background-color: var(--secondary-color);
-  /* Tan beach background */
-  color: #0066cc;
-  /* Blue text */
-  min-height: calc(100vh - 120px);
-  /* Ensure at least 100vh space for the container */
+  background-color: var(--secondary-color); /* Tan beach background */
+  color: #0066cc; /* Default blue text */
+  min-height: calc(100vh - 120px); /* Ensure full screen minus navbar/footer */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -19,22 +16,23 @@
   font-size: 2rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: var(--primary-color);
+  color: var(--primary-color); /* Emphasize greeting */
 }
 
 .weather-results-header {
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 0.2rem;
-  color: #003366;
+  color: #003366; /* Darker blue for result titles */
 }
 
 .weather-subtext {
   font-size: 1rem;
-  color: #666;
+  color: #666; /* Subtle supporting text */
   margin-bottom: 1.5rem;
 }
 
+/* Button used for "Use My Location" (if applicable) */
 .location-button {
   background-color: var(--accent-color);
   color: white;
@@ -59,6 +57,7 @@
   color: #333;
 }
 
+/* Container for list of beaches */
 .beach-list-container {
   margin: 0 auto;
   max-width: 1200px;
@@ -66,8 +65,7 @@
   text-align: center;
 }
 
-
-
+/* Clickable beach card */
 .beach-card {
   display: block;
   background: white;
@@ -78,14 +76,13 @@
   text-decoration: none;
   color: inherit;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-
   width: 100%;
   max-width: 700px;
   box-sizing: border-box;
 }
 
 .beach-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-4px); /* Slight lift on hover */
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.15);
 }
 
@@ -93,24 +90,22 @@
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: var(--primary-color);
-  /* use your main blue */
+  color: var(--primary-color); /* Brand color */
   transition: color 0.2s ease;
 }
 
 .beach-card:hover .beach-title {
-  color: #004999;
-  /* slightly darker on hover */
+  color: #004999; /* Darker blue on hover */
 }
 
 .beach-location {
   font-size: 1rem;
   margin-bottom: 0.5rem;
-  color: #555;
+  color: #555; /* Subdued location text */
 }
 
 .beach-access {
   font-size: 1rem;
   font-style: italic;
-  color: #777;
+  color: #777; /* Light gray for access info */
 }

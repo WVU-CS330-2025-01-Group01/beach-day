@@ -3,6 +3,11 @@ import { UserContext } from './UserContext';
 import './Notifications.css';
 import { API } from './api';
 
+/**
+ * Notification component displays and manages user notifications.
+ * @component
+ * @returns {JSX.Element} Notification UI
+ */
 function Notification() {
   const { jwtToken, setGlobalError } = useContext(UserContext);
 
@@ -12,11 +17,17 @@ function Notification() {
   const [messageInput, setMessageInput] = useState('');
   const [notificationCount, setNotificationCount] = useState(0);
 
+  // Load notifications and count when component mounts
   useEffect(() => {
     fetchNotifications();
     fetchNotificationCount();
   }, [jwtToken]);
 
+  /**
+   * Fetches all pending notifications for the authenticated user.
+   * @async
+   * @returns {Promise<void>}
+   */
   async function fetchNotifications() {
     setLoading(true);
     try {
@@ -41,6 +52,11 @@ function Notification() {
     }
   }
 
+  /**
+   * Fetches the current count of pending notifications.
+   * @async
+   * @returns {Promise<void>}
+   */
   async function fetchNotificationCount() {
     try {
       const response = await fetch(API.COUNT_NOTIFICATIONS, {
@@ -59,6 +75,12 @@ function Notification() {
     }
   }
 
+  /**
+   * Handles form submission to add a new notification.
+   * @param {React.FormEvent} e - Form submit event
+   * @async
+   * @returns {Promise<void>}
+   */
   async function handleAddNotification(e) {
     e.preventDefault();
 
@@ -93,6 +115,12 @@ function Notification() {
     }
   }
 
+  /**
+   * Marks a specific notification as received (removes from view).
+   * @param {number} notificationId - ID of the notification to update
+   * @async
+   * @returns {Promise<void>}
+   */
   async function handleMarkAsReceived(notificationId) {
     try {
       const response = await fetch(API.RECEIVE_NOTIFICATION, {
@@ -119,6 +147,11 @@ function Notification() {
     }
   }
 
+  /**
+   * Removes all notifications for the user.
+   * @async
+   * @returns {Promise<void>}
+   */
   async function handleRemoveAllNotifications() {
     try {
       const response = await fetch(API.REMOVE_NOTIFICATIONS, {
@@ -146,53 +179,54 @@ function Notification() {
   return (
     <div className="notifications-container">
       <h2>Notifications ({notificationCount})</h2>
+      <div className="notifications-box fade-in">
+        {loading ? (
+          <p>Loading notifications...</p>
+        ) : notifications.length === 0 ? (
+          <p>No new notifications.</p>
+        ) : (
+          <ul className="notification-list">
+            {notifications.map((notif) => (
+              <li key={notif.notification_id} className="notification-item">
+                <strong className="notification-title">
+                  {notif.notification_title || 'No Title'}
+                </strong>
+                : {notif.message || 'No Message'}
+                <br />
+                <button onClick={() => handleMarkAsReceived(notif.notification_id)}>
+                  Mark as Received
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
 
-      {loading ? (
-        <p>Loading notifications...</p>
-      ) : notifications.length === 0 ? (
-        <p>No new notifications.</p>
-      ) : (
-        <ul className="notification-list">
-          {notifications.map((notif) => (
-            <li key={notif.notification_id} className="notification-item">
-              <strong className="notification-title">
-                {notif.notification_title || 'No Title'}
-              </strong>
-              : {notif.message || 'No Message'}
-              <br />
-              <button onClick={() => handleMarkAsReceived(notif.notification_id)}>
-                Mark as Received
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+        <form onSubmit={handleAddNotification} className="add-notification-form">
+          <h3>Add Notification</h3>
+          <input
+            type="text"
+            placeholder="Title"
+            value={titleInput}
+            onChange={(e) => setTitleInput(e.target.value)}
+          />
+          <br />
+          <input
+            type="text"
+            placeholder="Message"
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+          />
+          <br />
+          <button type="submit">Add Notification</button>
+        </form>
 
-      <form onSubmit={handleAddNotification} className="add-notification-form">
-        <h3>Add Notification</h3>
-        <input
-          type="text"
-          placeholder="Title"
-          value={titleInput}
-          onChange={(e) => setTitleInput(e.target.value)}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="Message"
-          value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
-        />
-        <br />
-        <button type="submit">Add Notification</button>
-      </form>
+        <hr />
 
-      <hr />
-
-      <h3>Manage</h3>
-      <button className="remove-all-button" onClick={handleRemoveAllNotifications}>
-        Remove All Notifications
-      </button>
+        <h3>Manage</h3>
+        <button className="remove-all-button" onClick={handleRemoveAllNotifications}>
+          Remove All Notifications
+        </button>
+      </div>
     </div>
   );
 }

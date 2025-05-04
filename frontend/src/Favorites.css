@@ -1,10 +1,11 @@
-@import './colors.css';
+@import './colors.css'; /* Shared color variables */
 
+/* Page container */
 .favorites-container {
   padding: 20px;
   text-align: center;
   background-color: var(--secondary-color);
-  min-height: calc(100vh - 120px);
+  min-height: calc(100vh - 120px); /* Account for navbar/footer */
 }
 
 .favorites-box {
@@ -14,26 +15,30 @@
   text-align: center;
 }
 
+/* Toolbar at top of favorites list */
 .favorites-toolbar {
   display: flex;
   align-items: center;
   text-align: center;
-  margin: 1rem auto 2rem ;
+  margin: 1rem auto 2rem;
   max-width: 1200px;
   padding: 1rem;
   border-bottom: 2px black solid;
 }
 
+/* Center the title inside the toolbar */
 .favorites-toolbar h2 {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
 }
 
+/* Generic hover effect for buttons */
 button:hover {
   background: #0055a5;
 }
 
+/* Remove button in each favorite card */
 .remove-btn {
   background-color: red;
   align-items: center;
@@ -46,29 +51,31 @@ button:hover {
   border-radius: 5px;
   cursor: pointer;
   margin: 10px auto 0;
-  width: 82%
+  width: 82%;
 }
 
 .remove-btn:hover {
   background-color: darkred;
 }
 
+/* Edit button (toggle editing mode) */
 .edit-btn {
-  width:fit-content;
+  width: fit-content;
   display: flex;
   flex-direction: row;
   padding: 0.5rem;
-  gap:.6rem;
+  gap: 0.6rem;
   border-radius: 5px;
   cursor: pointer;
-  margin-right:auto;
+  margin-right: auto;
 }
 
-.edit-btn span{
-margin-top: 1px;
-font-size: large;
+.edit-btn span {
+  margin-top: 1px;
+  font-size: large;
 }
 
+/* Clear favorites button */
 .clear-btn {
   background-color: red;
   padding: 0.6rem;
@@ -78,6 +85,7 @@ font-size: large;
   background-color: darkred;
 }
 
+/* Layout for favorite beach cards */
 .favorites-list {
   display: flex;
   flex-wrap: wrap;
@@ -85,6 +93,7 @@ font-size: large;
   justify-content: center;
 }
 
+/* Individual beach card */
 .favorite-item {
   display: flex;
   flex-direction: column;
@@ -93,21 +102,24 @@ font-size: large;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 275px;
-  height:360px;
+  height: 360px;
   text-align: center;
 }
 
+/* Wraps each card in a link */
 .favorite-item-link {
   text-decoration: none;
   color: inherit;
   display: block;
 }
 
+/* Hover effect for card */
 .favorite-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
 }
 
+/* Container for data blocks inside a card */
 .info-container {
   display: flex;
   flex-wrap: wrap;
@@ -116,44 +128,49 @@ font-size: large;
   margin-top: auto;
 }
 
-.favorites-list h3{
+/* Heading inside card */
+.favorites-list h3 {
   font-size: 1.3rem;
-  color: var(--primary-color)
+  color: var(--primary-color);
 }
 
-.favorites-list .location{
+.favorites-list .location {
   font-size: 0.9rem;
-  font-weight:400;
+  font-weight: 400;
 }
 
-.favorites-list .forecast{
+.favorites-list .forecast {
   font-size: 1.2rem;
   margin-top: auto;
 }
 
+/* Smaller data block */
 .favorites-list .data {
   width: fit-content;
   border-radius: 10px;
   padding: 0.6rem 1rem;
   background-color: #E8E8E8;
-  color:#6e6565;
+  color: #6e6565;
 }
 
-.favorites-list .data-big{
-  width:70%;
+/* Wider data block for items like wind or access */
+.favorites-list .data-big {
+  width: 70%;
   border-radius: 10px;
   padding: 0.6rem 1rem;
   background-color: #E8E8E8;
-  color:#6e6565;
+  color: #6e6565;
 }
 
+/* Inner text for all data blocks */
 .favorites-list .info-container p {
-  color:black;
-  font-weight:500;
+  color: black;
+  font-weight: 500;
   font-size: large;
   text-align: center;
 }
 
+/* Loading placeholder card */
 .loading-card {
   display: flex;
   flex-direction: column;
@@ -174,6 +191,7 @@ font-size: large;
   color: #333;
 }
 
+/* Spinner animation */
 .spinner {
   width: 36px;
   height: 36px;
@@ -189,6 +207,7 @@ font-size: large;
   }
 }
 
+/* Pulse effect for loading background */
 @keyframes pulse {
   0%, 100% {
     background-color: #f0f8ff;
@@ -198,6 +217,7 @@ font-size: large;
   }
 }
 
+/* Skeleton placeholder card */
 .skeleton-card {
   display: flex;
   flex-direction: column;
@@ -210,12 +230,14 @@ font-size: large;
   animation: pulse 1.2s infinite ease-in-out;
 }
 
+/* Skeleton block shared base */
 .skeleton {
   background: #ddd;
   border-radius: 8px;
   animation: shimmer 1.5s infinite linear;
 }
 
+/* Various skeleton sizes */
 .skeleton-title {
   width: 70%;
   height: 25px;
@@ -247,6 +269,7 @@ font-size: large;
   height: 64px;
 }
 
+/* Shimmer animation for skeletons */
 @keyframes shimmer {
   0% {
     background-position: -200px 0;
@@ -256,6 +279,7 @@ font-size: large;
   }
 }
 
+/* Overriding background for shimmer gradient */
 .skeleton {
   background: linear-gradient(
     to right,

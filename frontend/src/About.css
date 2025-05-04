@@ -1,42 +1,41 @@
-@import './colors.css'; /* Import the colors.css file */
+@import './colors.css'; /* Import shared color variables */
 
-/* General Styles for About Page */
 .about-container {
-    text-align: center;
-    padding: 20px;
-    background-color: var(--secondary-color); /* Tan beach background */
-    color: #0066cc; /* Blue text */
-    min-height: calc(100vh - 120px); /* Ensure at least 100vh space for the container */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-  }
+  text-align: center;
+  padding: 20px;
+  background-color: var(--secondary-color); /* Beach-themed background */
+  color: #0066cc; /* Primary text color */
+  min-height: calc(100vh - 120px); /* Full viewport height minus navbar/footer */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
 
 .about-title {
-  color: var(--primary-color); /* Use primary color for title */
+  color: var(--primary-color); /* Emphasize title using primary color */
   font-size: 2.5rem;
   margin-bottom: 10px;
 }
 
 .about-description {
-  color: #333;
+  color: #333; /* Standard body text color */
   font-size: 1.2rem;
   line-height: 1.6;
   margin-bottom: 20px;
-  max-width: 700px;
+  max-width: 700px; /* Limit width for readability */
   margin-left: auto;
   margin-right: auto;
 }
 
 .about-status {
-  color: #777;
+  color: #777; /* Muted gray for status messages */
   font-size: 1.1rem;
   margin-top: 10px;
 }
 
 .about-credits {
   font-size: 1rem;
-  color: #555;
+  color: #555; /* Slightly lighter than main text */
   margin-top: 20px;
 }

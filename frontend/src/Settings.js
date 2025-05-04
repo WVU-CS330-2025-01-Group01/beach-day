@@ -4,6 +4,13 @@ import { UserContext } from "./UserContext";
 import Cookies from "js-cookie";
 import { API } from "./api";
 
+/**
+ * Renders the user Settings page.
+ * Allows a user to view their profile, change their email or password, enable alerts, and delete their account.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Settings page UI.
+ */
 function Settings() {
   const {
     setAuthenticated,
@@ -11,19 +18,27 @@ function Settings() {
     jwtToken
   } = useContext(UserContext);
 
+  // Email management
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [alertEnabled, setAlertEnabled] = useState(false);
+
+  // Password change
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [deletePassword, setDeletePassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
 
+  // Account deletion
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+
+  // Alert preference
+  const [alertEnabled, setAlertEnabled] = useState(false);
+
+  // Fetch user's current email on mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -41,12 +56,19 @@ function Settings() {
     fetchProfile();
   }, [jwtToken]);
 
+  /**
+   * Logs out the user and clears local/session data.
+   */
   const handleLogout = () => {
     Cookies.remove("jwt");
     localStorage.clear();
     setAuthenticated(false);
   };
 
+  /**
+   * Validates and updates the user's email.
+   * @returns {Promise<void>}
+   */
   const handleUpdateEmail = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newEmail)) {
@@ -76,6 +98,10 @@ function Settings() {
     }
   };
 
+  /**
+   * Updates the user's password after validation.
+   * @returns {Promise<void>}
+   */
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
       setPasswordMessage("Passwords do not match.");
@@ -108,6 +134,10 @@ function Settings() {
     }
   };
 
+  /**
+   * Deletes the user account after confirmation.
+   * @returns {Promise<void>}
+   */
   const handleDeleteAccount = async () => {
     try {
       const response = await fetch(API.DELETE_ACCOUNT, {
@@ -128,61 +158,51 @@ function Settings() {
     }
   };
 
+  // ======== RENDER =========
   return (
     <div className="settings-page">
-      <h1 className="settings-title ">Account Settings</h1>
+      <h1 className="settings-title">Account Settings</h1>
 
       <div className="settings-grid fade-in">
         {/* Profile Section */}
         <div className="settings-card profile-card">
           <h2>Profile</h2>
-          <div>
-            <div className="form-row two-column">
-              <div className="form-group readonly-field">
-                <label>Username</label>
-                <div className="readonly-value">{username}</div>
-              </div>
+          <div className="form-row two-column">
+            <div className="form-group readonly-field">
+              <label>Username</label>
+              <div className="readonly-value">{username}</div>
+            </div>
 
-              <div className="form-group readonly-field email-field">
-                <label>Email for Notifications</label>
-                <div className="readonly-row">
-                  <div className="readonly-value">{email || "No Email Set"}</div>
-                  <button
-                    className="edit-inline"
-                    onClick={() => setShowEmailModal(true)}
-                  >
-                    {email ? "Change" : "Add"}
-                  </button>
-                </div>
-              </div>
-
-
-              <div className="form-group">
-                <label>Password</label>
-                <button
-                  type="button"
-                  className="settings-button small"
-                  onClick={() => setShowPasswordModal(true)}
-                >
-                  Change Password
+            <div className="form-group readonly-field email-field">
+              <label>Email for Notifications</label>
+              <div className="readonly-row">
+                <div className="readonly-value">{email || "No Email Set"}</div>
+                <button className="edit-inline" onClick={() => setShowEmailModal(true)}>
+                  {email ? "Change" : "Add"}
                 </button>
               </div>
+            </div>
 
-              <div className="form-group checkbox-row">
-                <div className="checkbox-title">Enable Weather Alerts</div>
-                <label className="checkbox-info">
-                  <span>Receive website and email notifications for weather alerts</span>
-                  <input
-                    type="checkbox"
-                    checked={alertEnabled}
-                    onChange={(e) => setAlertEnabled(e.target.checked)}
-                  />
-                </label>
-              </div>
+            <div className="form-group">
+              <label>Password</label>
+              <button className="settings-button small" onClick={() => setShowPasswordModal(true)}>
+                Change Password
+              </button>
+            </div>
+
+            <div className="form-group checkbox-row">
+              <div className="checkbox-title">Enable Weather Alerts</div>
+              <label className="checkbox-info">
+                <span>Receive website and email notifications for weather alerts</span>
+                <input
+                  type="checkbox"
+                  checked={alertEnabled}
+                  onChange={(e) => setAlertEnabled(e.target.checked)}
+                />
+              </label>
             </div>
           </div>
         </div>
-
 
         {/* Account Actions Section */}
         <div className="settings-card account-card">
@@ -196,33 +216,22 @@ function Settings() {
         </div>
       </div>
 
+      {/* Modals */}
       {showPasswordModal && (
         <div className="modal-overlay">
           <div className="modal">
             <h2>Change Password</h2>
             <div className="form-group">
               <label>Current Password</label>
-              <input
-                type="password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-              />
+              <input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
             </div>
             <div className="form-group">
               <label>New Password</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
+              <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
             </div>
             <div className="form-group">
               <label>Confirm New Password</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
+              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
             </div>
             {passwordMessage && <p className="password-message">{passwordMessage}</p>}
             <div className="modal-buttons">
@@ -288,7 +297,6 @@ function Settings() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

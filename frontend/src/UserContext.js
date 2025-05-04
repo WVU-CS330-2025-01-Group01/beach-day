@@ -1,11 +1,24 @@
 import React, { createContext, useState, useEffect } from 'react';
-import Cookies from 'js-cookie';  // Import js-cookie
+import Cookies from 'js-cookie';  // For managing JWT in cookies
 
+// Create global context
 export const UserContext = createContext();
 
+/**
+ * UserProvider
+ * Global provider to wrap app and supply authentication/user state via context
+ *
+ * @param {ReactNode} children - Components wrapped inside the provider
+ * @returns {JSX.Element} context provider with state values and setters
+ */
 export const UserProvider = ({ children }) => {
-  const [authenticated, setAuthenticated] = useState(() => JSON.parse(localStorage.getItem('authenticated')) || false);
-  const [username, setUsername] = useState(() => localStorage.getItem('username') || '');
+  // Initialize state from localStorage or cookies
+  const [authenticated, setAuthenticated] = useState(() =>
+    JSON.parse(localStorage.getItem('authenticated')) || false
+  );
+  const [username, setUsername] = useState(() =>
+    localStorage.getItem('username') || ''
+  );
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [jwtToken, setJwtToken] = useState(() => Cookies.get('jwt') || null);
@@ -14,6 +27,7 @@ export const UserProvider = ({ children }) => {
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
 
+  // Keep authenticated state in sync with localStorage
   useEffect(() => {
     localStorage.setItem('authenticated', JSON.stringify(authenticated));
   }, [authenticated]);
