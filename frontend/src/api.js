@@ -1,4 +1,4 @@
-const API_BASE = `https://${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}`;
+const API_BASE = `http://${process.env.REACT_APP_BACKEND_HOST}:${process.env.REACT_APP_BACKEND_PORT}`;
 
 export const API = {
     LOGIN: `${API_BASE}/login`,
