@@ -14,6 +14,16 @@ states_prefix = os.path.join(base_dir, "beach_data", "by_state", "states")
 
 # Search for beach by county and state
 def search_beach_by_county_state(county, state, start, stop):
+    """
+    Search for a beach by county and state. State must be one of the options documented in docs/data_interface.md. Results will be
+    sorted by edit distance from the inputted county. Respond with results `start`-`stop-1` from the full set
+
+    :param county: the county to search for
+    :param state: the enumerated state
+    :param start: the result to start at
+    :param stop: the result to stop before
+    :returns: JSON-compatible map that includes the order of the search results, as well as additional information about them
+    """
 
     if not state in ["AK", "AL", "AS", "CA", "CT", "DE", "FL", "GA", "GU", "HI", "IL", "IN", "LA", "MA", "MD", "ME", "MI", "MN", "MP", "MS", "NC", "NH", "NJ", "NY", "OH", "OR", "PA", "PR", "RI", "SC", "ST", "TX", "VA", "VI", "WA", "WI"]:
         result = {
@@ -59,6 +69,15 @@ def search_beach_by_county_state(county, state, start, stop):
 
 # Search for beach by latitude and longitude
 def search_beach_by_lat_lon(lat, lon, start, stop):
+    """
+    Search for a beach by latitude and longitude. Respond with results `start`-`stop-1` from the full set
+
+    :param lat: the latitude to search from
+    :param lon: the longitude to search from
+    :param start: the result to start at
+    :param stop: the result to stop before
+    :returns: JSON-compatible map that includes the order of the search results, as well as additional information about them
+    """
 
     beaches = {}
     with open(json_path, 'r') as beaches_file:
@@ -92,6 +111,14 @@ def search_beach_by_lat_lon(lat, lon, start, stop):
     return result
 
 def distance(a_lat, a_lon, other):
+    """
+    Get the distance between a latitude, longitude pair and a beach object
+
+    :param a_lat: the latitude to measure from
+    :param a_lon: the longitude to measure from
+    :param other: the beach object to measure to
+    :returns: the distance
+    """
 
     start_lat = other.get("START_LATITUDE_MEASURE", "")
     end_lat = other.get("END_LATITUDE_MEASURE", "")

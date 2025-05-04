@@ -1,19 +1,33 @@
 import json
 import os
-# ~~ ~~ ~~ ~~ ~~ ~~ ~~
 
 # Construct the correct absolute path
 base_dir = os.path.dirname(__file__)  # Get the directory of the current script
 json_path = os.path.join(base_dir, "beach_data", "beach_attributes.json")
 
-
+# All functions use this, and it never changes, so load it globally
 beaches = {}
 with open(json_path, 'r') as beaches_file:
     beaches = json.loads(beaches_file.read())
 
 
-# Get dummy beach info
 def get_beach_info_by_id(beach_id):
+    """
+    Get info about a beach by id
+
+    :param beach_id: the beach id to search for
+
+    :returns: JSON-compatible map with keys:
+    * beach_name
+    * beach_county
+    * beach_state
+    * beach_tribe
+    * beach_length
+    * beach_access
+    * latitude
+    * longitude
+    * joinkey
+    """
 
     try:
         beach_info = beaches[beach_id]
@@ -97,7 +111,7 @@ def get_beach_info_by_id(beach_id):
 
         return result
         
-
+    # If requested beach ID doest not exist, exit and respond with an error response
     except KeyError as e:
         result = {
             "code": "ERROR",
@@ -114,6 +128,23 @@ def get_beach_info_by_id(beach_id):
 
 # Get dummy beach info
 def get_dummy_beach_info_by_id(beach_id):
+    """
+    Original dummy function from before the ID system was finalized. Still compatible with many other components, so
+    it is left in to prevent breakage where new features are not required.
+
+    :param beach_id: the beach id to search for
+
+    :returns: JSON-compatible map with keys:
+    * beach_name
+    * beach_county
+    * beach_state
+    * beach_tribe
+    * beach_length
+    * beach_access
+    * latitude
+    * longitude
+    * joinkey
+    """
 
     try:
         beach_info = beaches[beach_id]
@@ -165,7 +196,7 @@ def get_dummy_beach_info_by_id(beach_id):
 
         return result
         
-
+    # If requested beach ID doesnt not exist, exit and respond with an error response
     except KeyError as e:
         result = {
             "code": "ERROR",

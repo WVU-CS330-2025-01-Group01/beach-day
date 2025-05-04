@@ -3,6 +3,14 @@ import json
 from datetime import datetime
 
 def check_event(time, beach_id, event_name):
+    """
+    Check an event for relevant alerts
+
+    :param time: the datetime object for the event
+    :param beach_id: the beach id for the event
+    :param event_name: user-specified name for the event
+    :returns: JSON-compatible object with the notifications or lack thereof
+    """
     import beaches
     import basic_forecast
 
@@ -52,6 +60,13 @@ def check_event(time, beach_id, event_name):
 
 
 def get_alerts(time, zone_id):
+    """
+    Check alerts in a zone at a given time
+
+    :param time: datetime object with the time to check
+    :param zone_id: the zone id of the beach that the event occurs at
+    :returns: features response for the alerts in the beach's zone at the given time
+    """
     alerts = requests.get(f"https://api.weather.gov/alerts/active?status=actual&message_type=alert,update,cancel&zone={zone_id}&urgency=Immediate,Expected,Future&severity=Extreme,Severe,Moderate,Minor&certainty=Observed,Likely,Possible,Unlikely&limit=500")
     # print(json.dumps(alerts.json(), indent=4))
     

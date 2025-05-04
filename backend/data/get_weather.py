@@ -8,6 +8,7 @@ from datetime import datetime
 # Handle json data
 import json
 
+# Entry point
 # Get the parameters as JSON from standard input
 # Then handle each request type
 input_params = json.loads(input())
@@ -22,6 +23,10 @@ except KeyError:
     print(json.dumps(result, indent=4))
     exit()
 
+# Check for each request type
+# Collect inputs for that request type
+# Redirect the response to one of the other data components
+# These requests are documented in docs/data_interface.md
 try:
     # Generic weather info, not meant for building a map
     if request_type == "current_basic_weather":
@@ -53,7 +58,7 @@ try:
         print(json.dumps(result, indent=4))
         exit()
 
-    # Beach info
+    # Beach info by id
     elif request_type == "get_beach_info_by_id":
         import beaches
         import basic_weather
@@ -89,7 +94,7 @@ try:
         exit()
     
     
-    # Beach info (batch mode)
+    # Beach info with weather included (batch mode)
     elif request_type == "get_beach_info_weather_by_id_batch":
         import beaches
         import basic_weather
@@ -205,6 +210,7 @@ try:
         exit()
 
 
+    # Check an event for relevant warnings and alerts
     elif request_type == "check_event":
         import events
         import beaches
