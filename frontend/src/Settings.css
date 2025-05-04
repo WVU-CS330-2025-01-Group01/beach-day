@@ -1,5 +1,6 @@
 @import './colors.css';
 
+/* Main container */
 .settings-page {
   background-color: var(--secondary-color);
   min-height: calc(100vh - 80px);
@@ -14,6 +15,7 @@
   color: #222;
 }
 
+/* Checkbox section */
 .checkbox-row {
   display: flex;
   align-items: flex-start;
@@ -37,13 +39,13 @@
 .checkbox-info input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  align-items:center;
   accent-color: var(--primary-color);
   cursor: pointer;
   margin-left: 0.7rem;
   flex-shrink: 0;
 }
 
+/* Layout for left (profile) and right (account) sections */
 .settings-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -56,9 +58,10 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.06);
-  height:fit-content;
+  height: fit-content;
 }
 
+/* Two-column row layout inside cards */
 .form-row.two-column {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -85,7 +88,7 @@
   max-width: 300px;
   max-height: 300px;
   margin: 0 auto;
-  gap:1.2rem;
+  gap: 1.2rem;
 }
 
 .profile-card form {
@@ -94,24 +97,21 @@
   gap: 1rem;
 }
 
+/* Form and read-only field styles */
 .form-group {
   display: flex;
   flex-direction: column;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  
-}
-
-.form-group label, .checkbox-title {
+.form-group label,
+.checkbox-title {
   font-weight: 600;
-  font-size:larger;
+  font-size: larger;
   margin-bottom: 0.4rem;
   color: #444;
 }
 
+/* Email field appearance */
 .email-field .readonly-row {
   display: flex;
   justify-content: space-between;
@@ -125,11 +125,20 @@
 .readonly-row .readonly-value {
   background-color: #f3f3f3;
   padding: 0;
-  border: none;
   font-weight: 500;
   color: #444;
 }
 
+.readonly-value {
+  background-color: #f3f3f3;
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-weight: 500;
+  color: #444;
+}
+
+/* Inline email change button */
 .edit-inline {
   background: none;
   border: none;
@@ -145,19 +154,11 @@
   background-color: #f3f3f3;
 }
 
-.readonly-value {
-  background-color: #f3f3f3;
-  padding: 0.7rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-weight: 500;
-  color: #444;
-}
-
 .password-message {
-  color:red;
+  color: red;
 }
 
+/* Inputs */
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="password"] {
@@ -173,6 +174,7 @@
   border-color: var(--primary-color);
 }
 
+/* General button styling */
 .settings-button {
   padding: 0.7rem 1.2rem;
   font-size: 1rem;
@@ -185,6 +187,7 @@
   transition: background 0.3s ease;
 }
 
+/* Logout and delete buttons */
 .logout {
   background-color: #ff5a5a;
 }
@@ -193,21 +196,20 @@
   background-color: #e04444;
 }
 
-/* === Modal Overlay === */
+/* === Modal Styling === */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* translucent dark background */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
 }
 
-/* === Modal Box === */
 .modal {
   background-color: #fff;
   padding: 2rem;
@@ -221,12 +223,11 @@
   gap: 1rem;
 }
 
-/* Delete-specific style */
 .modal.danger {
   border: 2px solid #e53935;
 }
 
-  p .error-message {
+p .error-message {
   font-size: 0.9rem;
   color: red;
   text-align: center;
@@ -237,24 +238,16 @@
   font-size: 1rem;
   color: red;
   text-align: center;
-  padding:0.5rem;
+  padding: 0.5rem;
 }
 
-.form-group.email {
-  display: flex;
-  flex-direction: column;
-}
 .modal h3 {
   margin: 0;
   font-size: 1.3rem;
   color: #333;
 }
 
-.modal.email .modal-buttons {
-  margin-top: 1rem;
-} 
-
-/* === Modal Buttons === */
+/* === Modal Button Groups === */
 .modal-buttons {
   display: flex;
   justify-content: space-between;
@@ -266,7 +259,7 @@
   padding: 10px;
 }
 
-/* Highlight delete button */
+/* Delete confirmation styling */
 .settings-button.delete-account {
   background-color: #e53935;
   color: white;
@@ -286,8 +279,7 @@
   background-color: #ccc;
 }
 
-
-/* === Modal Animation === */
+/* Entrance animation for modals */
 @keyframes popIn {
   from {
     transform: scale(0.9);
