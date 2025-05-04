@@ -36,6 +36,16 @@ This is the hostname of the backend. If this is not set, you will get weird erro
 This is the port the backend is hosted on. If this is not set, you will get weird errors. You need to make sure this is the same as `BEACH_DAY_BACKEND_PORT` in your `backend/.env` file.
 
 </details>
+<details>
+<summary>
+
+##### `REACT_APP_BACKEND_USE_HTTPS`
+
+</summary>
+
+If this variable is set, the header `Content-Security-Policy` will be set to `upgrade-insecure-requests`. This makes it so that all calls to the backend switch to https instead of http. This is required if the frontend is being served via https.
+
+</details>
 
 ## Backend
 In your `backend/` folder, you must make a `.env` file that contains the following entries.  Both the local DB and remote DB will have different credentials, your .env must reflect that to switch between DBs.
@@ -46,7 +56,17 @@ In your `backend/` folder, you must make a `.env` file that contains the followi
 
 </summary>
 
-This is the port the backend will be hosted on. If this is not set, the code will select 3010 by default. You must set `REACT_APP_BACKEND_PORT` to the same value.
+This is the port the http version of the backend will be hosted on. You must set `REACT_APP_BACKEND_PORT` to the same value if its using http.
+
+</details>
+<details>
+<summary>
+
+##### `BEACH_DAY_BACKEND_PORT_SECURE`
+
+</summary>
+
+This is the port the https version of the backend will be hosted on. You must set `REACT_APP_BACKEND_PORT` to the same value if its using https.
 
 </details>
 <details>
@@ -128,6 +148,26 @@ If this value has any valid value, preferably 1 for readability.  This will make
 </summary>
 
 If you would like to use a specific public key, you can include this field in your .env.  If it is not included, it will use your systems root authority automatically. Include double quotes around your key if provided.
+
+</details>
+<details>
+<summary>
+
+##### `BEACH_DAY_SSL_CERT`
+
+</summary>
+
+This is the value of `cert` being passed to express. This variable and `BEACH_DAY_SSL_KEY` must be set for the backend to use https.
+
+</details>
+<details>
+<summary>
+
+##### `BEACH_DAY_SSL_KEY`
+
+</summary>
+
+This is the value of `key` being passed to express. This variable and `BEACH_DAY_SSL_KEY` must be set for the backend to use https.
 
 </details>
 
