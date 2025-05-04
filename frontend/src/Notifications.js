@@ -146,53 +146,54 @@ function Notification() {
   return (
     <div className="notifications-container">
       <h2>Notifications ({notificationCount})</h2>
+      <div className="notifications-box fade-in">
+        {loading ? (
+          <p>Loading notifications...</p>
+        ) : notifications.length === 0 ? (
+          <p>No new notifications.</p>
+        ) : (
+          <ul className="notification-list">
+            {notifications.map((notif) => (
+              <li key={notif.notification_id} className="notification-item">
+                <strong className="notification-title">
+                  {notif.notification_title || 'No Title'}
+                </strong>
+                : {notif.message || 'No Message'}
+                <br />
+                <button onClick={() => handleMarkAsReceived(notif.notification_id)}>
+                  Mark as Received
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
 
-      {loading ? (
-        <p>Loading notifications...</p>
-      ) : notifications.length === 0 ? (
-        <p>No new notifications.</p>
-      ) : (
-        <ul className="notification-list">
-          {notifications.map((notif) => (
-            <li key={notif.notification_id} className="notification-item">
-              <strong className="notification-title">
-                {notif.notification_title || 'No Title'}
-              </strong>
-              : {notif.message || 'No Message'}
-              <br />
-              <button onClick={() => handleMarkAsReceived(notif.notification_id)}>
-                Mark as Received
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+        <form onSubmit={handleAddNotification} className="add-notification-form">
+          <h3>Add Notification</h3>
+          <input
+            type="text"
+            placeholder="Title"
+            value={titleInput}
+            onChange={(e) => setTitleInput(e.target.value)}
+          />
+          <br />
+          <input
+            type="text"
+            placeholder="Message"
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+          />
+          <br />
+          <button type="submit">Add Notification</button>
+        </form>
 
-      <form onSubmit={handleAddNotification} className="add-notification-form">
-        <h3>Add Notification</h3>
-        <input
-          type="text"
-          placeholder="Title"
-          value={titleInput}
-          onChange={(e) => setTitleInput(e.target.value)}
-        />
-        <br />
-        <input
-          type="text"
-          placeholder="Message"
-          value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
-        />
-        <br />
-        <button type="submit">Add Notification</button>
-      </form>
+        <hr />
 
-      <hr />
-
-      <h3>Manage</h3>
-      <button className="remove-all-button" onClick={handleRemoveAllNotifications}>
-        Remove All Notifications
-      </button>
+        <h3>Manage</h3>
+        <button className="remove-all-button" onClick={handleRemoveAllNotifications}>
+          Remove All Notifications
+        </button>
+      </div>
     </div>
   );
 }
