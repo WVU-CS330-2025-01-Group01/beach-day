@@ -105,7 +105,7 @@
   color: #333;
   outline: none;
   width: fit-content;
-  margin-right:10px;
+  margin-right: 10px;
 }
 
 .search-input {
@@ -124,20 +124,20 @@
 
 .search-icon-button {
   background: none;
-  padding:0;
+  padding: 0;
   border: none;
-  color:black;
+  color: black;
   cursor: pointer;
 }
 
 .search-icon {
-  margin-bottom:-4px;
+  margin-bottom: -4px;
 }
 
 .search-spinner {
   width: 26px;
   height: 26px;
-  size:26px;
+  size: 26px;
   border: 3px solid #ccc;
   border-top: 3px solid var(--primary-color);
   border-radius: 50%;
@@ -172,6 +172,7 @@
     transform: scaleY(0);
     opacity: 0;
   }
+
   to {
     transform: scaleY(1);
     opacity: 1;
@@ -193,12 +194,12 @@
   line-height: 1;
   padding: 0;
   appearance: none;
-  margin-right:10px;
+  margin-right: 10px;
 }
 
 .error-dismiss:hover {
   color: #ffdada;
-  background:none;
+  background: none;
 }
 
 /* PROFILE DROPDOWN STYLING */
@@ -242,7 +243,7 @@
   background-color: white;
   transform: rotate(45deg);
   border-radius: 2px;
-  
+
   z-index: 0;
 }
 
@@ -311,11 +312,15 @@
 }
 
 .notifications-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center; 
-  gap: 4px;                
-  position: relative;      
+  color: #0077cc;
+  display: flex;
+  flex-direction: row;
+  text-decoration: none;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 auto;
+  gap: 5px;
 }
 
 .notification-badge {
@@ -324,11 +329,6 @@
   font-size: 0.8rem;
   padding: 0.2rem 0.5rem;
   border-radius: 50%;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin: 0; 
-  top: auto;
-  left: auto;
-  right: auto;
 }
