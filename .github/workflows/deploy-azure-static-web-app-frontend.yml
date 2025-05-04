@@ -15,7 +15,7 @@ jobs:
     # Environment variables available during the build step
     env:
       CI: false
-      REACT_APP_BACKEND_HOST: localhost
+      REACT_APP_BACKEND_HOST: 172.191.98.242
       REACT_APP_BACKEND_PORT: 3010
 
     steps:
