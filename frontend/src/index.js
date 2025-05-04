@@ -3,21 +3,33 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { UserProvider } from './UserContext'; // import context provider
+import { UserProvider } from './UserContext'; // Context provider for global app state
+
+/**
+ * Entry point for the React application.
+ * Wraps the App component in React.StrictMode and UserProvider.
+ */
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
+    {/* Optional HTTPS upgrade policy for mixed content handling */}
     <div>
-      { process.env.REACT_APP_USE_HTTPS !== undefined && <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" /> }
+      {process.env.REACT_APP_USE_HTTPS !== undefined && (
+        <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+      )}
     </div>
+
+    {/* Global context provider for auth and shared state */}
     <UserProvider>
       <App />
     </UserProvider>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+/**
+ * Optional performance measuring utility.
+ * Replace with `reportWebVitals(console.log)` to log or send metrics.
+ */
 reportWebVitals();

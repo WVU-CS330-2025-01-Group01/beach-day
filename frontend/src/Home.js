@@ -3,6 +3,16 @@ import { UserContext } from './UserContext';
 import { Link, useLocation } from "react-router-dom";
 import "./Home.css";
 
+/**
+ * Home component displays a welcome message and search results.
+ * It receives weather data either via props or router state and shows
+ * a list of nearby beaches with links to detailed beach info.
+ *
+ * @component
+ * @param {object} props
+ * @param {object} props.weather - Optional weather data passed from parent
+ * @returns {JSX.Element}
+ */
 function Home({ weather: propWeather = {} }) {
   const location = useLocation();
   const {
@@ -11,31 +21,37 @@ function Home({ weather: propWeather = {} }) {
     latitude,
     longitude
   } = useContext(UserContext);
+
   const [weather, setWeather] = useState(null);
 
-
+  // Load weather data from props or routing state
   useEffect(() => {
-    // Prefer propWeather if it has content
     if (propWeather && Object.keys(propWeather).length > 0) {
-      setWeather(propWeather);
-    }
-    // Otherwise fall back to location.state.weather
-    else if (
+      setWeather(propWeather); // Use prop if available
+    } else if (
       location.state &&
       location.state.weather &&
       Object.keys(location.state.weather).length > 0
     ) {
-      setWeather(location.state.weather);
-    }
-    // If neither, clear out weather
-    else {
-      setWeather(null);
+      setWeather(location.state.weather); // Use router state if available
+    } else {
+      setWeather(null); // Clear if no weather info
     }
   }, [propWeather, location.state]);
 
+  /**
+   * Calculates the distance in miles between two coordinate points
+   * using the Haversine formula.
+   *
+   * @param {number} lat1 - Latitude of first point
+   * @param {number} lon1 - Longitude of first point
+   * @param {number} lat2 - Latitude of second point
+   * @param {number} lon2 - Longitude of second point
+   * @returns {number} Distance in miles, rounded to 1 decimal place
+   */
   function getDistanceInMiles(lat1, lon1, lat2, lon2) {
-    const R = 3958.8; // Earth radius in miles
-    const toRad = angle => angle * (Math.PI / 180);
+    const R = 3958.8; // Radius of Earth in miles
+    const toRad = angle => angle * (Math.PI / 180); // Convert degrees to radians
 
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
@@ -45,14 +61,14 @@ function Home({ weather: propWeather = {} }) {
       Math.sin(dLon / 2) ** 2;
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
     const distance = R * c;
 
-    return Math.round(distance * 10) / 10; // round to 1 decimal place
+    return Math.round(distance * 10) / 10; // Round to 1 decimal
   }
 
   return (
     <div className="home-container">
+      {/* Show welcome message if no weather data */}
       {!weather ? (
         <h1 className="home-header">
           {username ? `Welcome back, ${username}!` : 'Plan your next Beach Day'}
@@ -63,6 +79,8 @@ function Home({ weather: propWeather = {} }) {
         {weather ? (
           <>
             <h2 className="weather-results-header">Search Results</h2>
+
+            {/* Location context for search results */}
             <p className="weather-subtext">
               {weather.searchType === "latlon" &&
                 `Closest to: ${weather.latitude}°, ${weather.longitude}°`}
@@ -70,10 +88,12 @@ function Home({ weather: propWeather = {} }) {
                 `Near ${weather.county} County, ${weather.state}`}
             </p>
 
+            {/* List of matching beaches */}
             {weather.result && weather.order.length > 0 ? (
               weather.order.map((beachId) => {
                 const beach = weather.result[beachId];
                 const w = beach.weather;
+
                 return (
                   <div key={beachId} className="beach-box fade-in">
                     <Link
@@ -84,7 +104,14 @@ function Home({ weather: propWeather = {} }) {
                       <div className="beach-title">{beach.beach_name}</div>
                       <div className="beach-location">
                         {beach.beach_county ? `${beach.beach_county}, ` : ""}
-                        {beach.beach_state} {usingCurrentLocation ? `(~${getDistanceInMiles(beach.latitude, beach.longitude, latitude, longitude)} mi) ` : ""}
+                        {beach.beach_state}
+                        {usingCurrentLocation &&
+                          ` (~${getDistanceInMiles(
+                            beach.latitude,
+                            beach.longitude,
+                            latitude,
+                            longitude
+                          )} mi) `}
                       </div>
                       <div className="beach-access">
                         Beach Access: {beach.beach_access || "Unavailable"}
@@ -106,7 +133,5 @@ function Home({ weather: propWeather = {} }) {
     </div>
   );
 }
-
-
 
 export default Home;
