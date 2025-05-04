@@ -84,7 +84,7 @@ function Home({ weather: propWeather = {} }) {
                       <div className="beach-title">{beach.beach_name}</div>
                       <div className="beach-location">
                         {beach.beach_county ? `${beach.beach_county}, ` : ""}
-                        {beach.beach_state} {usingCurrentLocation ? `(${getDistanceInMiles(beach.latitude, beach.longitude, latitude, longitude)} mi) ` : ""}
+                        {beach.beach_state} {usingCurrentLocation ? `(~${getDistanceInMiles(beach.latitude, beach.longitude, latitude, longitude)} mi) ` : ""}
                       </div>
                       <div className="beach-access">
                         Beach Access: {beach.beach_access || "Unavailable"}
