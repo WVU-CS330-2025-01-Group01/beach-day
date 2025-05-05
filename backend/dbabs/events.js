@@ -287,6 +287,20 @@ module.exports = {
         }
     },
 
+    getAllEvents: async function() {
+        try {
+            const [events] = await connection.query(
+                `
+                    SELECT * FROM events;
+		`
+	    );
+
+            return events;
+	} catch (e) {
+            throw new dbErrors.ProblemWithDB();
+	}
+    },
+
     getEventFromID: getEventFromIDHelper,
     getUserEvents: getUserEventsHelper,
 }

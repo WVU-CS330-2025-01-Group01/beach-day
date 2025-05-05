@@ -93,7 +93,7 @@ This is the name of your MySQL connection HostName.  For your local development 
 <details>
 <summary>
 
-##### `BEACH_DAY_BD_USER`
+##### `BEACH_DAY_DB_USER`
 
 </summary>
 
@@ -167,7 +167,7 @@ This is the value of `cert` being passed to express. This variable and `BEACH_DA
 
 </summary>
 
-This is the value of `key` being passed to express. This variable and `BEACH_DAY_SSL_KEY` must be set for the backend to use https.
+This is the value of `key` being passed to express. This variable and `BEACH_DAY_SSL_CERT` must be set for the backend to use https.
 
 </details>
 

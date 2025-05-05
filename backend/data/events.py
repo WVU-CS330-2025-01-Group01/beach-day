@@ -20,8 +20,12 @@ def check_event(time, beach_id, event_name):
     lon = float(beach["longitude"])
 
     point_info = requests.get(f"https://api.weather.gov/zones?type=land&point={lat},{lon}&limit=500").json()
-
-    zone_id = point_info["features"][0]["properties"]["id"]
+    try:
+        zone_id = point_info["features"][0]["properties"]["id"]
+    except IndexError:
+        return {
+            "action": "none"
+        }
 
     alerts = get_alerts(time, zone_id)
 
