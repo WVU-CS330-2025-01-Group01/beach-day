@@ -31,7 +31,7 @@ Here is a list of features:
 - [X] Weather Notifications
 
 ## Link to Open App
-Check out the [beach day app] (https://green-ground-054bca00f.6.azurestaticapps.net/)
+Check out the [beach day app](https://green-ground-054bca00f.6.azurestaticapps.net/)
 
    
 ## For Developers
