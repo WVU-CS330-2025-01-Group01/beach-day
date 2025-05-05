@@ -199,6 +199,7 @@ module.exports = {
 	getUserData: dbHelper.getUserData,
 
 	getNotificationCount: dbNotifications.getNotificationCount,
+	setNotificationsEnabled: dbNotifications.setNotificationsEnabled,
 	receivedNotification: dbNotifications.receivedNotification,
 	getUserNotifications: dbNotifications.getUserNotifications,
 	addNotification: dbNotifications.addNotification,
