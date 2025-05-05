@@ -1,6 +1,6 @@
 # Data Interface
 
-There are a number of utilities available through the route "{todo}". These are accessed by constructing a JSON object and posting it to the aforementioned route. The response is another JSON object with the requested information. There is one key that every request must have: `"request_type"`, which identifies which kind of request you are making. This key determines which other keys are required, and which keys you can expect to receive. **Scroll to the bottom for possible error responses**
+There are a number of utilities available through the route "/weather". These are accessed by constructing a JSON object and posting it to the aforementioned route. The response is another JSON object with the requested information. There is one key that every request must have: `"request_type"`, which identifies which kind of request you are making. This key determines which other keys are required, and which keys you can expect to receive. **Scroll to the bottom for possible error responses**
 
 *In the below formatting, `{}` represent a piece of data that can be configured*
 
