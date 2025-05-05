@@ -7,6 +7,17 @@ Furthermore, users can enter personal events for which dynamic alerts will be se
 emails if there are any weather hazards. Using Beach Day, users will receive extensive 
 information on their favorite beaches in one place.
 
+## Highlights
+Some highlighted features include:
+- [X] A user-friendly interface.
+- [X] Personalizable list of beaches for easy access.
+- [X] Login/Register page for users.
+- [X] Personalized weather alerts sent to emails.
+- [X] About Page.
+
+## Images of Working UI
+
+
 ## Final State
 Here is a list of features:
 - [X] Account Creation
@@ -17,8 +28,11 @@ Here is a list of features:
 - [X] Checking Precipitation
 - [X] Checking Location 
 - [X] Checking Length and Beach Access
-- [X] Sending Weather Alerts to User Emails
+- [X] Weather Notifications
 
+## Link to Open App
+Check out the [beach day app] (https://green-ground-054bca00f.6.azurestaticapps.net/)
 
+   
 ## For Developers
 The documentation for developers can be found [here](docs/index.md).
