@@ -1,13 +1,24 @@
 # Beach Day
-This is Group 1's project for the Spring 2025 semester of CS 330. Beach Day is a webapp designed to allow users to determine how their day at the beach is going to go. Users can enter the location of the beach they plan to travel to, and Beach Day will aggregate data from NOAA to inform users about a number of factors that can impact their day at the beach. Using Beach Day, users will know what the weather is like, what the waves are like, what the UV index is, and other things.
+This is Group 1's project for the Spring 2025 semester of CS 330. Beach Day is a 
+webapp designed to allow users to effectively plan a trip to the beach. Users can enter
+a specified beach to retrieve data on its weather reports, forecasts, and beach information.
+The app is also personalizable as users can save a list of favorited beaches to their profile.
+Furthermore, users can enter personal events for which dynamic alerts will be sent to their 
+emails if there are any weather hazards. Using Beach Day, users will receive extensive 
+information on their favorite beaches in one place.
 
-## Current State
-Here is a list of planned features:
+## Final State
+Here is a list of features:
 - [X] Account Creation
 - [X] Bookmarking Beaches
-- [X] Checking Weather Conditions
-- [ ] Checking Wave Conditions
-- [ ] Checking UV Index
+- [X] Checking Weather Conditions and Forecasts
+- [X] Checking UV Index
+- [X] Checking Temperature and Wind Speed
+- [X] Checking Precipitation
+- [X] Checking Location 
+- [X] Checking Length and Beach Access
+- [X] Sending Weather Alerts to User Emails
+
 
 ## For Developers
 The documentation for developers can be found [here](docs/index.md).
