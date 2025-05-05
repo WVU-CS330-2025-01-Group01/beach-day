@@ -208,6 +208,95 @@ try:
 
         print(json.dumps(result, indent=4))
         exit()
+    
+    # Beach search by county and state without weather info
+    elif request_type == "search_beach_by_county_state_no_weather":
+        import beach_search
+
+        county = input_params["county"]
+        state = input_params["state"]
+
+        try:
+            start = int(str(input_params["start"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: start must be a valid integer",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+        
+        try:
+            stop = int(str(input_params["stop"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: stop must be a valid integer",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+
+        result = beach_search.search_beach_by_county_state_no_weather(county, state, start, stop)
+        result["code"] = "search_beach_by_county_state"
+
+        print(json.dumps(result, indent=4))
+        exit()
+
+    # Beach search by latitude and longitude without weather info
+    elif request_type == "search_beach_by_lat_lon_no_weather":
+        import beach_search
+
+        try:
+            latitude = float(str(input_params["latitude"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: latitude must be a valid float",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+        
+        try:
+            longitude = float(str(input_params["longitude"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: longitude must be a valid float",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+        
+        try:
+            start = int(str(input_params["start"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: start must be a valid integer",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+        
+        try:
+            stop = int(str(input_params["stop"]))
+        except ValueError:
+            result = {
+                "code": "ERROR",
+                "error_type": "malformed_request: stop must be a valid integer",
+                "message": f"Malformed request for request type '{request_type}'"
+            }
+            print(json.dumps(result, indent=4))
+            exit()
+        
+        result = beach_search.search_beach_by_lat_lon_no_weather(latitude, longitude, start, stop)
+        result["code"] = "search_beach_by_lat_lon"
+
+        print(json.dumps(result, indent=4))
+        exit()
 
 
     # Check an event for relevant warnings and alerts
@@ -217,8 +306,9 @@ try:
         time = datetime.strptime(input_params["time"].replace("Z", "+0000"),"%Y-%m-%dT%H:%M:%S%z")
         beach_id = input_params["beach_id"]
         event_name = input_params["event_name"]
+        email_address = input_params["email_address"]
 
-        result = events.check_event(time, beach_id, event_name)
+        result = events.check_event(time, beach_id, event_name, email_address)
 
         result["code"] = "check_event"
 

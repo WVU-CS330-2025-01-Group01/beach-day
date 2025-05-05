@@ -110,6 +110,92 @@ def search_beach_by_lat_lon(lat, lon, start, stop):
 
     return result
 
+# Search for beach by county and state WITHOUT weather
+def search_beach_by_county_state_no_weather(county, state, start, stop):
+    """
+    Search for a beach by county and state without weather info. State must be one of the options documented
+    in docs/data_interface.md. Results will be sorted by edit distance from the inputted county. Respond
+    with results `start`-`stop-1` from the full set
+
+    :param county: the county to search for
+    :param state: the enumerated state
+    :param start: the result to start at
+    :param stop: the result to stop before
+    :returns: JSON-compatible map that includes the order of the search results, as well as additional information about them
+    """
+
+    if not state in ["AK", "AL", "AS", "CA", "CT", "DE", "FL", "GA", "GU", "HI", "IL", "IN", "LA", "MA", "MD", "ME", "MI", "MN", "MP", "MS", "NC", "NH", "NJ", "NY", "OH", "OR", "PA", "PR", "RI", "SC", "ST", "TX", "VA", "VI", "WA", "WI"]:
+        result = {
+            "code": "ERROR",
+            "error_type": "invalid_state_in_search",
+            "message": "The provided state is not valid"
+        }
+        print(json.dumps(result, indent=4))
+        exit()
+
+    import beaches as beaches_info
+
+    path = os.path.join(states_prefix, f"{state}.json")
+    beaches = {}
+    with open(path, 'r') as beaches_file:
+        beaches = json.loads(beaches_file.read())
+
+    results = {key: val for key, val in sorted(beaches.items(), key=lambda item: edit_distance(county, item[1]["BEACH_COUNTY"]))}
+
+    results = list(results.keys())[start:stop]
+
+    beach_elements = {}
+
+    for key in results:
+        beach_info = beaches_info.get_beach_info_by_id(key)
+
+        beach_elements[key] = beach_info
+
+    result = {
+        "order": results,
+        "result": beach_elements
+    }
+
+    return result
+
+
+# Search for beach by latitude and longitude WITHOUT weather
+def search_beach_by_lat_lon_no_weather(lat, lon, start, stop):
+    """
+    Search for a beach by latitude and longitude without weather info. Respond with results `start`-`stop-1` from the full set
+
+    :param lat: the latitude to search from
+    :param lon: the longitude to search from
+    :param start: the result to start at
+    :param stop: the result to stop before
+    :returns: JSON-compatible map that includes the order of the search results, as well as additional information about them
+    """
+
+    beaches = {}
+    with open(json_path, 'r') as beaches_file:
+        beaches = json.loads(beaches_file.read())
+
+    import beaches as beaches_info
+    import basic_weather
+
+    results = {key: val for key, val in sorted(beaches.items(), key=lambda item: distance(float(lat), float(lon), item[1]))}
+    
+    results = list(results.keys())[start:stop]
+
+    beach_elements = {}
+
+    for key in results:
+        beach_info = beaches_info.get_beach_info_by_id(key)
+
+        beach_elements[key] = beach_info
+
+    result = {
+        "order": results,
+        "result": beach_elements
+    }
+
+    return result
+
 def distance(a_lat, a_lon, other):
     """
     Get the distance between a latitude, longitude pair and a beach object
