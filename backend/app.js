@@ -33,7 +33,8 @@ setInterval(async function() {
 			request_type: "check_event",
 			time: ev.event_time.getTime() / 1000,
 			beach_id: ev.beach_id,
-			event_name: ev.event_message
+			event_name: ev.event_message,
+			email_address: dbabs.getEmail(ev.username)
 		})).toString());
 
 		if (response.action === "notify")

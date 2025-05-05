@@ -1,5 +1,5 @@
 # Routing
-There are currently three files in the `backend/routes/` folder. The following sections are for each of these files.
+There are several files in the `backend/routes/` folder. The following sections are for each of the files which define routes.
 
 ## `routes/auth.js`
 This file contains the routing related to authentication and account management.
@@ -185,8 +185,8 @@ This file contains routing related to weather.
 ### `/weather`
 This is a POST route. It will always return a status of 200. The JSON sent to this route will be forwarded directly to the `get_weather.py` script. Caden intends to document the API of this file seperately because it will be rather complicated. This section will be revised to link to this file when it is completed.
 
-## `routes/notifications.js`
-This file contains routing related to notifications.
+## `routes/favorites.js`
+This file contains routing related to favorites.
 
 ### `/favorites`
 This is a POST route. It returns the ids of the beaches the user has favorited.
@@ -205,7 +205,7 @@ The response should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `message` | String describing if the registration succeeded or what went wrong. |
+| `message` | String describing if the operation succeeded or what went wrong. |
 | `favorites` | This member is only present in the event of a success. It is a list of strings containing the ids of the beaches the user has favorited. |
 
 The following are the status codes and `message`s of the possible outcomes.
@@ -235,7 +235,7 @@ The response should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `message` | String describing if the registration succeeded or what went wrong. |
+| `message` | String describing if the opeartion succeeded or what went wrong. |
 
 The following are the status codes and `message`s of the possible outcomes.
 
@@ -250,6 +250,9 @@ The following are the status codes and `message`s of the possible outcomes.
 | Beach Not Present | 500 | `Attempted to remove beach not in favorites.` |
 | Other Error | 500 | `Undefined error.` |
 
+## `routes/notifications.js`
+This file contains routing related to notifications.
+
 ### `/add_notification`
 This is a POST route. It allows frontend to add a new notification for a user.
 
@@ -259,7 +262,7 @@ The request should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `jwt` | The json web token of the user whose favorites to modify. |
+| `jwt` | The json web token of the user whose notification to add. |
 | `title` | The title of the notification. |
 | `message` | The body of the notification. |
 
@@ -269,7 +272,7 @@ The response should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `message` | String describing if the registration succeeded or what went wrong. |
+| `message` | String describing if the operation succeeded or what went wrong. |
 
 The following are the status codes and `message`s of the possible outcomes.
 
@@ -290,7 +293,7 @@ The request should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `jwt` | The json web token of the user whose favorites to modify. |
+| `jwt` | The json web token of the user whose notifications to count. |
 
 #### Response
 
@@ -298,7 +301,7 @@ The response should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `message` | String describing if the registration succeeded or what went wrong. |
+| `message` | String describing if the operation succeeded or what went wrong. |
 | `count` | Only present during success. Integer containing the amount of notifications a user has. |
 
 The following are the status codes and `message`s of the possible outcomes.
@@ -320,7 +323,7 @@ The request should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `jwt` | The json web token of the user whose favorites to modify. |
+| `jwt` | The json web token of the user whose notifications to mark as received. |
 | `id` | The id of the notification to be marked as received. |
 
 #### Response
@@ -329,7 +332,7 @@ The response should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `message` | String describing if the registration succeeded or what went wrong. |
+| `message` | String describing if the operation succeeded or what went wrong. |
 
 The following are the status codes and `message`s of the possible outcomes.
 
@@ -352,7 +355,7 @@ The request should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `jwt` | The json web token of the user whose favorites to modify. |
+| `jwt` | The json web token of the user whose notifications to get. |
 | `type` | The type of request. Should be one of `pending`, `all`, or `by_id`. |
 | `id` | The id of the notification. Only used if request type is `by_id`. |
 
@@ -362,7 +365,7 @@ The response should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `message` | String describing if the registration succeeded or what went wrong. |
+| `message` | String describing if the operation succeeded or what went wrong. |
 | `notifications` | An array of notifications. I don't really know what this will look like. |
 
 The following are the status codes and `message`s of the possible outcomes.
@@ -387,7 +390,7 @@ The request should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `jwt` | The json web token of the user whose favorites to modify. |
+| `jwt` | The json web token of the user whose notifications to remove. |
 | `type` | The type of request. Should be one of `received`, `all`, or `by_id`. |
 | `id` | The id of the notification. Only used if request type is `by_id`. |
 
@@ -397,7 +400,7 @@ The response should be a JSON object of the following form.
 
 | Key | Value |
 | --- | --- |
-| `message` | String describing if the registration succeeded or what went wrong. |
+| `message` | String describing if the operation succeeded or what went wrong. |
 
 The following are the status codes and `message`s of the possible outcomes.
 
@@ -409,5 +412,137 @@ The following are the status codes and `message`s of the possible outcomes.
 | Database Problem | 500 | `Trouble accessing database.` |
 | User Doesn't Exist | 500 | `This user does not exist.` |
 | User Doesn't Own Notification | 500 | `User does not own this notification.` |
+| Invalid Request | 500 | `Invalid request.` |
+| Other Error | 500 | `Undefined error.` |
+
+## `routes/events.js`
+This file contains routing related to events.
+
+### `/add_event`
+This is a POST route. It allows frontend to add a new event for a user.
+
+#### Request
+
+The request should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `jwt` | The json web token of the user whose event to add. |
+| `beach_id` | The id of the beach. |
+| `title` | The title of the event. |
+| `time` | The time of the event. A string of the form `YYYY-MM-DD hh:mm:ss`. |
+
+#### Response
+
+The response should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `message` | String describing if the operation succeeded or what went wrong. |
+
+The following are the status codes and `message`s of the possible outcomes.
+
+| Outcome | Status Code | `message` value |
+| --- | --- | --- |
+| Success | 200 | `Success.` |
+| Token Problem | 500 | `User authentication token absent or invalid.` |
+| Database Problem | 500 | `Trouble accessing database.` |
+| User Doesn't Exist | 500 | `This user does not exist.` |
+| Other Error | 500 | `Undefined error.` |
+
+### `/count_events`
+This is a POST route. It allows frontend to access the number of events for a user.
+
+#### Request
+
+The request should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `jwt` | The json web token of the user whose events to count. |
+
+#### Response
+
+The response should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `message` | String describing if the operation succeeded or what went wrong. |
+| `count` | Only present during success. Integer containing the amount of events a user has. |
+
+The following are the status codes and `message`s of the possible outcomes.
+
+| Outcome | Status Code | `message` value |
+| --- | --- | --- |
+| Success | 200 | `Success.` |
+| Token Problem | 500 | `User authentication token absent or invalid.` |
+| Database Problem | 500 | `Trouble accessing database.` |
+| User Doesn't Exist | 500 | `This user does not exist.` |
+| Other Error | 500 | `Undefined error.` |
+
+### `/get_events`
+This is a POST route. It allows frontend to get events. You can request either all future events, all events, or a single event by id.
+
+#### Request
+
+The request should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `jwt` | The json web token of the user whose events to get. |
+| `type` | The type of request. Should be one of `future`, `all`, or `by_id`. |
+| `id` | The id of the event. Only used if request type is `by_id`. |
+
+#### Response
+
+The response should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `message` | String describing if the operation succeeded or what went wrong. |
+| `notifications` | An array of events. I don't really know what this will look like. |
+
+The following are the status codes and `message`s of the possible outcomes.
+
+| Outcome | Status Code | `message` value |
+| --- | --- | --- |
+| Success | 200 | `Success.` |
+| Token Problem | 500 | `User authentication token absent or invalid.` |
+| Database Problem | 500 | `Trouble accessing database.` |
+| User Doesn't Exist | 500 | `This user does not exist.` |
+| User Doesn't Own Event | 500 | `User does not own this event.` |
+| Invalid Request | 500 | `Invalid request.` |
+| Other Error | 500 | `Undefined error.` |
+
+### `/remove_events`
+This is a POST route. It allows frontend to remove events. You can remove either all events or a single event by id.
+
+#### Request
+
+The request should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `jwt` | The json web token of the user whose events to remove. |
+| `type` | The type of request. Should be one of `all` or `by_id`. |
+| `id` | The id of the event. Only used if request type is `by_id`. |
+
+#### Response
+
+The response should be a JSON object of the following form.
+
+| Key | Value |
+| --- | --- |
+| `message` | String describing if the operation succeeded or what went wrong. |
+
+The following are the status codes and `message`s of the possible outcomes.
+
+| Outcome | Status Code | `message` value |
+| --- | --- | --- |
+| Success | 200 | `Success.` |
+| Token Problem | 500 | `User authentication token absent or invalid.` |
+| Database Problem | 500 | `Trouble accessing database.` |
+| User Doesn't Exist | 500 | `This user does not exist.` |
+| User Doesn't Own Event | 500 | `User does not own this event.` |
 | Invalid Request | 500 | `Invalid request.` |
 | Other Error | 500 | `Undefined error.` |

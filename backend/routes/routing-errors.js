@@ -4,8 +4,10 @@
 
 class InvalidRequest extends Error {}
 class UserDoesntOwnNotification extends Error {}
+class UserDoesntOwnEvent extends Error {}
 
 module.exports = {
 	InvalidRequest: InvalidRequest,
-	UserDoesntOwnNotification: UserDoesntOwnNotification
+	UserDoesntOwnNotification: UserDoesntOwnNotification,
+	UserDoesntOwnEvent: UserDoesntOwnEvent
 };
