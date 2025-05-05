@@ -1,6 +1,6 @@
 # Beach Day
 This is Group 1's project for the Spring 2025 semester of CS 330. Beach Day is a 
-webapp designed to allow users to effectively plan a trip to the beach. Users can enter
+web app designed to allow users to effectively plan a trip to the beach. Users can enter
 a specified beach to retrieve data on its weather reports, forecasts, and beach information.
 The app is also personalizable as users can save a list of favorited beaches to their profile.
 Furthermore, users can enter personal events for which dynamic alerts will be sent to their 
