@@ -27,6 +27,7 @@ This folder contains the main source code for the **Beach Day** frontend applica
 | `Login.js`           | Handles user login and session initialization.                              |
 | `Register.js`        | Handles user sign-up with password confirmation.                            |
 | `Settings.js`        | Manages user email, password, alert preferences, and account deletion.      |
+| `About.js`           | Displays information about the project and team as well as sources used.    |
 
 ---
 
@@ -51,6 +52,7 @@ This folder contains the main source code for the **Beach Day** frontend applica
 | `LogReg.css`         | Shared styles for login and registration forms.                             |
 | `Settings.css`       | Account settings layout, modals, form inputs, and checkbox sections.        |
 | `Notifications.css`  | Styling for notification lists, form inputs, and button layouts.            |
+| `About.css`          | Styles for the about page                                                   |
 
 ---
 
