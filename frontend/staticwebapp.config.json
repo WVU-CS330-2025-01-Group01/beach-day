@@ -9,5 +9,8 @@
       "Referrer-Policy":"no-referrer",
       "X-Content-Type-Options": "nosniff",
       "Permissions-Policy": "autoplay=()"
+  },
+  "navigationFallback": {
+    "rewrite": "/"
   }
 }
