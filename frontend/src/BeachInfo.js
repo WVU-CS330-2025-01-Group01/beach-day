@@ -241,10 +241,10 @@ function BeachInfo() {
             />
 
             <div className="modal-buttons">
-              <button onClick={addEvent} disabled={submitting}>
+              <button className="add-event-button"onClick={addEvent} disabled={submitting}>
                 {submitting ? "Creating..." : "Add Event"}
               </button>
-              <button onClick={() => setShowModal(false)}>Cancel</button>
+              <button className="cancel-event-add" onClick={() => setShowModal(false)}>Cancel</button>
             </div>
 
             {error && <p style={{ color: "red" }}>{error}</p>}
