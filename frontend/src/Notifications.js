@@ -9,13 +9,17 @@ import { API } from './api';
  * @returns {JSX.Element} Notification UI
  */
 function Notification() {
-  const { jwtToken, setGlobalError } = useContext(UserContext);
+  const {
+    jwtToken,
+    setGlobalError,
+    notificationCount,
+    setNotificationCount
+  } = useContext(UserContext);
 
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [titleInput, setTitleInput] = useState('');
   const [messageInput, setMessageInput] = useState('');
-  const [notificationCount, setNotificationCount] = useState(0);
 
   // Load notifications and count when component mounts
   useEffect(() => {
@@ -178,54 +182,54 @@ function Notification() {
 
   return (
     <div className="notifications-container">
-      <h2>Notifications ({notificationCount})</h2>
-      <div className="notifications-box fade-in">
-        {loading ? (
-          <p>Loading notifications...</p>
-        ) : notifications.length === 0 ? (
-          <p>No new notifications.</p>
-        ) : (
-          <ul className="notification-list">
-            {notifications.map((notif) => (
-              <li key={notif.notification_id} className="notification-item">
-                <strong className="notification-title">
-                  {notif.notification_title || 'No Title'}
-                </strong>
-                : {notif.message || 'No Message'}
-                <br />
-                <button onClick={() => handleMarkAsReceived(notif.notification_id)}>
-                  Mark as Received
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="notifications-box">
+        <div className="notifications-toolbar">
+          <h2>Notifications ({notificationCount})</h2>
+          <button className="remove-all-button" onClick={handleRemoveAllNotifications}>
+            Remove All Notifications
+          </button>
+        </div>
+        <div className="notifications-box fade-in">
+          {loading ? (
+            <p>Loading notifications...</p>
+          ) : notifications.length === 0 ? (
+            <p>No new notifications.</p>
+          ) : (
+            <div className="notification-cards">
+              {notifications.map((notif) => (
+                <div key={notif.notification_id} className="notification-card">
+                  <h3>{notif.notification_title || 'No Title'}</h3>
+                  <p>{notif.message || 'No Message'}</p>
+                  <button
+                    className="mark-received-button"
+                    onClick={() => handleMarkAsReceived(notif.notification_id)}
+                  >
+                    Mark as Received
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
-        <form onSubmit={handleAddNotification} className="add-notification-form">
-          <h3>Add Notification</h3>
-          <input
-            type="text"
-            placeholder="Title"
-            value={titleInput}
-            onChange={(e) => setTitleInput(e.target.value)}
-          />
-          <br />
-          <input
-            type="text"
-            placeholder="Message"
-            value={messageInput}
-            onChange={(e) => setMessageInput(e.target.value)}
-          />
-          <br />
-          <button type="submit">Add Notification</button>
-        </form>
-
-        <hr />
-
-        <h3>Manage</h3>
-        <button className="remove-all-button" onClick={handleRemoveAllNotifications}>
-          Remove All Notifications
-        </button>
+          <form onSubmit={handleAddNotification} className="add-notification-form">
+            <h3>Add Notification</h3>
+            <input
+              type="text"
+              placeholder="Title"
+              value={titleInput}
+              onChange={(e) => setTitleInput(e.target.value)}
+            />
+            <br />
+            <input
+              type="text"
+              placeholder="Message"
+              value={messageInput}
+              onChange={(e) => setMessageInput(e.target.value)}
+            />
+            <br />
+            <button type="submit">Add Notification</button>
+          </form>
+        </div>
       </div>
     </div>
   );

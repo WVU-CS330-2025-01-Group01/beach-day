@@ -50,14 +50,6 @@
   margin-bottom: 1rem;
 }
 
-.favorite-button {
-  cursor: pointer;
-}
-
-.favorite-button:hover {
-  background-color: #004999; /* Darker blue on hover */
-}
-
 .go-back-button {
   margin-top: 2rem;
   background-color: transparent;
@@ -70,30 +62,50 @@
   color: white; /* Invert colors on hover */
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
-
 .modal-content {
-  background: white;
+  background-color: #fff;
   padding: 2rem;
-  border-radius: 10px;
-  max-width: 400px;
+  border-radius: 12px;
   width: 100%;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  max-width: 250px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  animation: popIn 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
+.modal-content label {
+  font-weight: 600;
+  font-size: larger;
+  color: #444;
+}
+
+.modal-content input {
+  padding: 0.7rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border 0.2s;
+}
+
+.modal-buttons .cancel-event-add {
+  background-color: #ddd;
+  color: #333;
+}
+
+.modal-buttons .cancel-event-add:hover {
+  background-color: #ccc;
+}
+
+.modal-content h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #333;
+  margin-right:auto;
+}
+
+.modal-buttons .cancel-event-add, .add-event-button{
+  flex: 1;
+  padding: 10px;
 }
