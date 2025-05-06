@@ -80,7 +80,7 @@ router.post('/get_events', async function(req, res, next) {
 });
 
 /**
- * This route removes notifications.
+ * This route removes events.
  */
 router.post('/remove_events', async function(req, res, next) {
 	try {
