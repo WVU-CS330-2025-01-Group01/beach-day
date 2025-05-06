@@ -29,10 +29,11 @@ function Navbar({ onWeatherData }) {
     latitude,
     setLatitude,
     longitude,
-    setLongitude
+    setLongitude,
+    notificationCount,
+    setNotificationCount
   } = useContext(UserContext);
 
-  const [notificationCount, setNotificationCount] = useState(0);
   const [searchType, setSearchType] = useState("county_state");
   const [county, setCounty] = useState("");
   const [state, setState] = useState("");
@@ -278,10 +279,10 @@ function Navbar({ onWeatherData }) {
                     >
                       <option value="">Select State</option>
                       {[
-                        "AK","AL","AS","CA","CT","DE","FL","GA","GU","HI",
-                        "IL","IN","LA","MA","MD","ME","MI","MN","MP","MS",
-                        "NC","NH","NJ","NY","OH","OR","PA","PR","RI","SC",
-                        "ST","TX","VA","VI","WA","WI"
+                        "AK", "AL", "AS", "CA", "CT", "DE", "FL", "GA", "GU", "HI",
+                        "IL", "IN", "LA", "MA", "MD", "ME", "MI", "MN", "MP", "MS",
+                        "NC", "NH", "NJ", "NY", "OH", "OR", "PA", "PR", "RI", "SC",
+                        "ST", "TX", "VA", "VI", "WA", "WI"
                       ].map(abbr => (
                         <option key={abbr} value={abbr}>{abbr}</option>
                       ))}
@@ -355,7 +356,9 @@ function Navbar({ onWeatherData }) {
                           <Link to="/notifications" className="notifications-text" onClick={() => setDropdownOpen(false)}>
                             Notifications
                           </Link>
-                          <div className="notification-badge">{notificationCount}</div>
+                          {notificationCount > 0 && (
+                            <div className="notification-badge">{notificationCount}</div>
+                          )}
                         </div>
 
                         <button onClick={handleLogout} className="dropdown-logout">

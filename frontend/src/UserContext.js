@@ -26,6 +26,7 @@ export const UserProvider = ({ children }) => {
   const [usingCurrentLocation, setUsingCurrentLocation] = useState(false);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [notificationCount, setNotificationCount] = useState(0);
 
   // Keep authenticated state in sync with localStorage
   useEffect(() => {
@@ -52,7 +53,9 @@ export const UserProvider = ({ children }) => {
         latitude,
         setLatitude,
         longitude,
-        setLongitude
+        setLongitude,
+        notificationCount,
+        setNotificationCount
       }}
     >
       {children}

@@ -8,3 +8,62 @@
   flex-direction: column;
   align-items: center;
 }
+
+.notifications-box {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding-bottom: 2rem;
+  text-align: center;
+  width:100%
+}
+
+.notifications-toolbar {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1rem auto 2rem;
+  width: 100%;
+  padding: 1rem;
+  border-bottom: 2px black solid;
+}
+
+.remove-all-button {
+  background-color: red;
+  margin-left:auto;
+}
+
+.remove-all-button:hover {
+  background-color: darkred;
+}
+
+.notification-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.notification-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  transition: transform 0.2s ease;
+}
+
+.notification-card:hover {
+  transform: translateY(-4px);
+}
+
+.notification-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #004d99;
+}
+
+.notification-card p {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
