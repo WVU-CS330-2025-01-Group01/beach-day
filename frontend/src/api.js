@@ -53,4 +53,13 @@ export const API = {
 
     /** Endpoint to add a new event for a user at a specific beach with a title and timestamp */
     ADD_EVENT: `${API_BASE}/add_event`,
+
+    /** Endpoint to count all events for the current user */
+    COUNT_EVENTS: `${API_BASE}/count_events`,
+
+    /** Endpoint to retrieve events for the current user */
+    GET_EVENTS: `${API_BASE}/get_events`,
+ 
+    /** Endpoint to remove events for the current user */
+    REMOVE_EVENTS: `${API_BASE}/remove_events`
 };
