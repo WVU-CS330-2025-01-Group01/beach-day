@@ -294,7 +294,8 @@
   font-weight: 500;
 }
 
-.dropdown-body a:hover {
+.dropdown-body a:hover,
+.notifications-text:hover {
   text-decoration: underline;
 }
 
@@ -338,3 +339,4 @@
   align-items: center;
   justify-content: center;
 }
+

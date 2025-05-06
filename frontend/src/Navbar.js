@@ -346,10 +346,10 @@ function Navbar({ onWeatherData }) {
                         </div>
 
                         <div className="notifications-link">
-                          <Link to="/notifications" onClick={() => setDropdownOpen(false)}>
+                          <Link to="/notifications" className="notifications-text" onClick={() => setDropdownOpen(false)}>
                             Notifications
                           </Link>
-                          <span className="notification-badge">{notificationCount}</span>
+                          <div className="notification-badge">{notificationCount}</div>
                         </div>
 
                         <button onClick={handleLogout} className="dropdown-logout">
