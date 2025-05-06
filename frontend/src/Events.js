@@ -49,7 +49,7 @@ function Events() {
       }
     } catch (err) {
       setGlobalError('Failed to fetch events.');
-      console.error('Error fetching events:', err);  // Log the error for debugging
+      console.error('Error fetching events:', err);
     } finally {
       setLoading(false);
     }
@@ -77,13 +77,84 @@ function Events() {
       }
     } catch (err) {
       setGlobalError('Failed to fetch event count.');
-      console.error('Error fetching event count:', err);  // Log the error for debugging
+      console.error('Error fetching event count:', err);
     }
   }
+
+  /**
+   * Removes all events for the current user.
+   * @async
+   * @returns {Promise<void>}
+   */
+  async function removeAllEvents() {
+    try {
+      const response = await fetch(API.REMOVE_EVENTS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jwt: jwtToken,
+          type: 'all'
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.message === 'Success.') {
+        await fetchEvents();
+        await fetchEventCount();
+      } else {
+        setGlobalError(data.message || 'Failed to remove all events.');
+      }
+    } catch (err) {
+      console.error('Error removing all events:', err);
+      setGlobalError('Failed to remove all events.');
+    }
+  }
+
+  /**
+   * Removes a single event by its ID.
+   * @param {number} eventId - ID of the event to remove
+   * @async
+   * @returns {Promise<void>}
+   */
+  async function removeEventById(eventId) {
+    try {
+      console.log('Sending remove by ID request:', {
+        jwt: jwtToken,
+        type: 'by_id',
+        id: Number(eventId),
+      });
+  
+      const response = await fetch(API.REMOVE_EVENTS, {
+        method: 'POST',
+        headers: { 'Conten-Type': 'application/json' },
+        body: JSON.stringify({
+          jwt: jwtToken,
+          type: 'by_id',
+          id: Number(eventId),
+        }),
+      });
+  
+      const data = await response.json();
+      console.log('Remove by ID response:', data);
+  
+      if (response.ok && data.message === 'Success.') {
+        await fetchEvents();
+        await fetchEventCount();
+      } else {
+        setGlobalError(data.message || 'Failed to remove event.');
+      }
+    } catch (err) {
+      console.error('Error removing event:', err);
+      setGlobalError('Failed to remove event.');
+    }
+  }
+  
+  
 
   return (
     <div className="events-container">
       <h2>Events ({eventCount})</h2>
+      <button onClick={removeAllEvents}>Remove All Events</button>
       <div className="events-box fade-in">
         {loading ? (
           <p>Loading events...</p>
@@ -95,7 +166,9 @@ function Events() {
               <li key={event.event_id} className="event-item">
                 <strong className="event-title">{event.title || 'No Title'}</strong>
                 <br />
-                {new Date(event.time).toLocaleString()} {/* Format the date as needed */}
+                {new Date(event.time).toLocaleString()}
+                <br />
+                <button onClick={() => removeEventById(event.event_id)}>Remove</button>
               </li>
             ))}
           </ul>
