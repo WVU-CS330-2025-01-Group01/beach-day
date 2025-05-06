@@ -303,7 +303,7 @@ try:
     elif request_type == "check_event":
         import events
         import beaches
-        time = datetime.strptime(input_params["time"].replace("Z", "+0000"),"%Y-%m-%dT%H:%M:%S%z")
+        time = datetime.fromtimestamp(int(input_params["time"]))
         beach_id = input_params["beach_id"]
         event_name = input_params["event_name"]
         email_address = input_params["email_address"]

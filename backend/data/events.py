@@ -100,7 +100,6 @@ def get_alerts(time, zone_id):
 
     return alerts
 
-
 def send_email(address, subject, body):
     """
     Send an email from the beach day noreply address

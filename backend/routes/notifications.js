@@ -21,10 +21,11 @@ async function userOwnsNotification(username, id) {
 }
 
 /**
- * This route adds a notification.
+ * This route adds a notification. Details in the docs/routing.md file.
  */
 router.post('/add_notification', async function(req, res, next) {
 	try {
+		// Authenticate the user.
 		const payload = auth.verifyJWT(req.body.jwt);
 
 		await db.addNotification(payload.username, req.body.title, req.body.message);
@@ -36,10 +37,12 @@ router.post('/add_notification', async function(req, res, next) {
 });
 
 /**
- * This route gets the number of notifications a user has.
+ * This route gets the number of notifications a user has. Details in the
+ * docs/routing.md file.
  */
 router.post('/count_notifications', async function(req, res, next) {
 	try {
+		// Authenticate the user.
 		const payload = auth.verifyJWT(req.body.jwt);
 
 		const count = await db.getNotificationCount(payload.username);
@@ -51,12 +54,15 @@ router.post('/count_notifications', async function(req, res, next) {
 });
 
 /**
- * This route marks a notification as received.
+ * This route marks a notification as received. Details in the docs/routing.md
+ * file.
  */
 router.post('/receive_notification', async function(req, res, next) {
 	try {
+		// Authenticate the user.
 		const payload = auth.verifyJWT(req.body.jwt);
 
+		// Check if user owns notification.
 		if (req.body.id === undefined || !await userOwnsNotification(
 				payload.username, req.body.id))
 			throw new rterr.UserDoesntOwnNotification();
@@ -70,18 +76,21 @@ router.post('/receive_notification', async function(req, res, next) {
 });
 
 /**
- * This route gets notifications.
+ * This route gets notifications. Details in the docs/routing.md file.
  */
 router.post('/get_notifications', async function(req, res, next) {
 	try {
+		// Authenticate the user.
 		const payload = auth.verifyJWT(req.body.jwt);
 
 		let notifications;
+		// Call appropriate database function for each request.
 		if (req.body.type === 'pending') {
 			notifications = await db.getUserPendingNotifications(payload.username);
 		} else if (req.body.type === 'all') {
 			notifications = await db.getUserNotifications(payload.username);
 		} else if (req.body.type === 'by_id') {
+			// Check if user owns notification.
 			if (req.body.id === undefined || !await userOwnsNotification(
 					payload.username, req.body.id))
 				throw new rterr.UserDoesntOwnNotification();
@@ -98,17 +107,20 @@ router.post('/get_notifications', async function(req, res, next) {
 });
 
 /**
- * This route removes notifications.
+ * This route removes notifications. Details in the docs/routing.md file.
  */
 router.post('/remove_notifications', async function(req, res, next) {
 	try {
+		// Authenticate the user.
 		const payload = auth.verifyJWT(req.body.jwt);
 
+		// Call appropriate database function for each request.
 		if (req.body.type === 'received') {
 			await db.removeAllReceivedNotificationsFromUser(payload.username);
 		} else if (req.body.type === 'all') {
 			await db.removeAllNotificationsFromUser(payload.username);
 		} else if (req.body.type === 'by_id') {
+			// Check if user owns notification.
 			if (req.body.id === undefined || !await userOwnsNotification(
 					payload.username, req.body.id))
 				throw new rterr.UserDoesntOwnNotification();

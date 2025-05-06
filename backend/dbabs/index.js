@@ -216,6 +216,8 @@ module.exports = {
 	getUserEvents: dbEvents.getUserEvents,
 	getEventFromId: dbEvents.getEventFromID,
 	removeEventFromID: dbEvents.removeEventFromID,
+	addEvent: dbEvents.addEvent,
+	getAllEvents: dbEvents.getAllEvents,
 	
 	UserAlreadyExists: dbErrors.UserAlreadyExists,
 	ProblemWithDB: dbErrors.ProblemWithDB,

@@ -21,22 +21,38 @@ if (AUTO_UPDATE_CONDA == 1) {
 	wrapper.runScript("update conda env");
 }
 
+// Check for Events
+const dbabs = require("./dbabs/");
+const interval = process.env.BEACH_DAY_EVENT_INTERVAL || 7200000; // 2 hours
+setInterval(async function() {
+	await dbabs.clearPastEvents();
+
+	const events = await dbabs.getAllEvents();
+	for (const ev of events) {
+		const response = JSON.parse(wrapper.runScript("get weather", JSON.stringify({
+			request_type: "check_event",
+			time: ev.event_time.getTime() / 1000,
+			beach_id: ev.beach_id,
+			event_name: ev.event_message,
+			email_address: dbabs.getEmail(ev.username)
+		})).toString());
+
+		if (response.action === "notify")
+			dbabs.addNotification(ev.username, response.title, response.message);
+	}
+}, interval);
+
 // Add the Routes
 const authRoutes = require('./routes/auth');
+const eventsRoutes = require('./routes/events');
 const weatherRoutes = require('./routes/weather');
 const favoritesRoutes = require('./routes/favorites');
 const notificationsRoutes = require('./routes/notifications');
 app.use(authRoutes);
+app.use(eventsRoutes);
 app.use(weatherRoutes);
 app.use(favoritesRoutes);
 app.use(notificationsRoutes);
-
-// Start App
-/*
-app.listen(PORT, () => {
-	console.log(`Server started listening on port: ${PORT}`);
-});
-*/
 
 // Start App
 if (process.env.BEACH_DAY_SSL_KEY !== undefined &&
