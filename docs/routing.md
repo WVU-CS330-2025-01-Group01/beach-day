@@ -511,6 +511,7 @@ The following are the status codes and `message`s of the possible outcomes.
 | Database Problem | 500 | `Trouble accessing database.` |
 | User Doesn't Exist | 500 | `This user does not exist.` |
 | User Doesn't Own Event | 500 | `User does not own this event.` |
+| No Events | 500 | `No events of specified type.` |
 | Invalid Request | 500 | `Invalid request.` |
 | Other Error | 500 | `Undefined error.` |
 
@@ -544,5 +545,6 @@ The following are the status codes and `message`s of the possible outcomes.
 | Database Problem | 500 | `Trouble accessing database.` |
 | User Doesn't Exist | 500 | `This user does not exist.` |
 | User Doesn't Own Event | 500 | `User does not own this event.` |
+| No Events | 500 | `No events of specified type.` |
 | Invalid Request | 500 | `Invalid request.` |
 | Other Error | 500 | `Undefined error.` |

@@ -225,5 +225,6 @@ module.exports = {
 	IncorrectPassword: dbErrors.IncorrectPassword,
 	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
 	BeachNotPresent: dbErrors.BeachNotPresent,
-	ZeroNotifications: dbErrors.ZeroNotifications
+	ZeroNotifications: dbErrors.ZeroNotifications,
+	ZeroEvents: dbErrors.ZeroEvents
 };

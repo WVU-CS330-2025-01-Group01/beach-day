@@ -34,8 +34,8 @@ async function getUserEventsHelper(username) {
                 ORDER BY event_time ASC;
             `
             , [username]
-        );
-         // This query joins two tables (events and users) and prints out the attributes on the first line.  It is linked by username. It gets every event in the table at username, in order of soonest to happen.
+        ); // This query joins two tables (events and users) and prints out the attributes on the first line.  It is linked by username. It gets every event in the table at username, in order of soonest to happen.
+
         if (events.length <= 0) {
             throw new dbErrors.ZeroEvents();
         }
@@ -296,9 +296,17 @@ module.exports = {
 		`
 	    );
 
+            if (events.length <= 0) {
+                throw new dbErrors.ZeroEvents();
+            }
+
             return events;
 	} catch (e) {
-            throw new dbErrors.ProblemWithDB();
+            if(e instanceof dbErrors.ZeroEvents) {
+                throw new dbErrors.ZeroEvents();
+            } else {
+                throw new dbErrors.ProblemWithDB()
+            }
 	}
     },
 
