@@ -44,10 +44,12 @@ setInterval(async function() {
 
 // Add the Routes
 const authRoutes = require('./routes/auth');
+const eventsRoutes = require('./routes/events');
 const weatherRoutes = require('./routes/weather');
 const favoritesRoutes = require('./routes/favorites');
 const notificationsRoutes = require('./routes/notifications');
 app.use(authRoutes);
+app.use(eventsRoutes);
 app.use(weatherRoutes);
 app.use(favoritesRoutes);
 app.use(notificationsRoutes);
