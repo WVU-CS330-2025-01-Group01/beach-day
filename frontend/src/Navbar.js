@@ -345,6 +345,12 @@ function Navbar({ onWeatherData }) {
                           </Link>
                         </div>
 
+                        <div className="dropdown-body">
+                          <Link to="/events" onClick={() => setDropdownOpen(false)}>
+                            Events
+                          </Link>
+                        </div>
+
                         <div className="notifications-link">
                           <Link to="/notifications" className="notifications-text" onClick={() => setDropdownOpen(false)}>
                             Notifications
