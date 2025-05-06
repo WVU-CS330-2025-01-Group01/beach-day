@@ -49,5 +49,8 @@ export const API = {
     GET_NOTIFICATIONS: `${API_BASE}/get_notifications`,
 
     /** Endpoint to remove all notifications for the current user */
-    REMOVE_NOTIFICATIONS: `${API_BASE}/remove_notifications`
+    REMOVE_NOTIFICATIONS: `${API_BASE}/remove_notifications`,
+
+    /** Endpoint to add a new event for a user at a specific beach with a title and timestamp */
+    ADD_EVENT: `${API_BASE}/add_event`,
 };
