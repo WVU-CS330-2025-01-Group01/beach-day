@@ -1,5 +1,9 @@
 @import './colors.css'; /* Import global color variables */
 
+body {
+  overflow-x: hidden;
+}
+
 /* === Top Navigation Bar === */
 .navbar {
   background-color: var(--primary-color);
@@ -11,9 +15,12 @@
   position: relative;
   display: flex;
   justify-content: space-between;
+  flex-wrap:wrap;
   align-items: center;
   max-width: 1500px;
+  padding: 0 1rem; 
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* === Navbar Sections: Left, Center, Right === */
@@ -56,7 +63,7 @@
 .navbar-links {
   display: flex;
   align-items: center;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .navbar-link {
