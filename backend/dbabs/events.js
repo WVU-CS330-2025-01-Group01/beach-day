@@ -33,7 +33,7 @@ async function getUserEventsHelper(username) {
                 WHERE events.username = ?
                 ORDER BY event_time ASC;
             `
-            , [events]
+            , [username]
         ); // This query joins two tables (events and users) and prints out the attributes on the first line.  It is linked by username. It gets every event in the table at username, in order of soonest to happen.
         if (events.length <= 0) {
             throw new dbErrors.ZeroEvents();

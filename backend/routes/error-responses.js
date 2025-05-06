@@ -42,6 +42,8 @@ module.exports = {
 			res.status(ERR_CODE).json({ message: 'User does not own this notification.' });
 
 		// Event Errors
+		else if (err instanceof db.ZeroEvents)
+			res.status(ERR_CODE).json({ message: 'No events of specified type.' });
 		else if (err instanceof rterr.UserDoesntOwnEvent)
 			res.status(ERR_CODE).json({ message: 'User does not own this event.' });
 
