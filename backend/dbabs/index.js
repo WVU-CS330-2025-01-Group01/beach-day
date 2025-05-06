@@ -226,5 +226,5 @@ module.exports = {
 	BeachAlreadyFavorited: dbErrors.BeachAlreadyFavorited,
 	BeachNotPresent: dbErrors.BeachNotPresent,
 	ZeroNotifications: dbErrors.ZeroNotifications,
-	ZeroEvents: ZeroEvents
+	ZeroEvents: dbErrors.ZeroEvents
 };

@@ -295,9 +295,17 @@ module.exports = {
 		`
 	    );
 
+            if (events.length <= 0) {
+                throw new dbErrors.ZeroEvents();
+            }
+
             return events;
 	} catch (e) {
-            throw new dbErrors.ProblemWithDB();
+            if(e instanceof dbErrors.ZeroEvents) {
+                throw new dbErrors.ZeroEvents();
+            } else {
+                throw new dbErrors.ProblemWithDB()
+            }
 	}
     },
 
