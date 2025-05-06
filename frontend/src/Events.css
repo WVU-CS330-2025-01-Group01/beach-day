@@ -1,0 +1,11 @@
+.events-container {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--secondary-color); /* Beach-themed background */
+    color: #0066cc;
+    min-height: calc(100vh - 120px); /* Account for fixed navbar height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  

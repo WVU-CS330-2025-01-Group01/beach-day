@@ -65,10 +65,11 @@ select {
 button {
   font-size: 1rem;
   color: white;
-  background: #0066cc;
+  background: var(--primary-color);
   border-radius: 5px;
   cursor: pointer;
   border: none;
+  padding: 0.5rem 1rem;
   transition: background 0.3s ease;
 }
 

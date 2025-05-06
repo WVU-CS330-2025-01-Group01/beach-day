@@ -10,6 +10,7 @@ import Settings from './Settings';
 import BeachInfo from './BeachInfo';
 import Notifications from './Notifications';
 import About from './About';
+import Events from './Events';
 
 /**
  * Main application component responsible for routing and authentication logic.
@@ -73,6 +74,12 @@ function App() {
         <Route
           path="/notifications"
           element={<Notifications />}
+        />
+
+        {/* Public Events page */}
+        <Route
+          path="/events"
+          element={<Events />}
         />
       </Routes>
     </Router>

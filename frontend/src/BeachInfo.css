@@ -7,6 +7,23 @@
   color: #0066cc; /* Default text color */
 }
 
+.beach-info-toolbar {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1rem auto 2rem;
+  max-width: 1200px;
+  padding: 1rem;
+  border-bottom: 2px black solid;
+}
+
+.beach-info-buttons {
+  display: flex;
+  flex-direction: row;
+  margin-left: auto;
+  gap: 10px;
+}
+
 .beach-info-cards {
   display: flex;
   flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
@@ -33,32 +50,62 @@
   margin-bottom: 1rem;
 }
 
-.favorite-button {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.favorite-button:hover {
-  background-color: #004999; /* Darker blue on hover */
-}
-
 .go-back-button {
   margin-top: 2rem;
   background-color: transparent;
   border: 2px solid var(--primary-color);
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  border-radius: 8px;
   color: var(--primary-color);
-  cursor: pointer;
 }
 
 .go-back-button:hover {
   background-color: var(--primary-color);
   color: white; /* Invert colors on hover */
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 250px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  animation: popIn 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-content label {
+  font-weight: 600;
+  font-size: larger;
+  color: #444;
+}
+
+.modal-content input {
+  padding: 0.7rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border 0.2s;
+}
+
+.modal-buttons .cancel-event-add {
+  background-color: #ddd;
+  color: #333;
+}
+
+.modal-buttons .cancel-event-add:hover {
+  background-color: #ccc;
+}
+
+.modal-content h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #333;
+  margin-right:auto;
+}
+
+.modal-buttons .cancel-event-add, .add-event-button{
+  flex: 1;
+  padding: 10px;
 }

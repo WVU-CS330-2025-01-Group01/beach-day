@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { UserContext } from './UserContext';
-import { fetchBeachInfoWithWeather, refreshWeatherData } from './utils';
+import { refreshWeatherData } from './utils';
 import './Favorites.css';
 import { API } from './api';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -25,9 +25,6 @@ function Favorites() {
     setFavorites,
     setGlobalError
   } = useContext(UserContext);
-
-  const [error, setError] = useState(null); // Error state
-  const [newBeachId, setNewBeachId] = useState(''); // Beach ID for adding new favorites
   const [editing, setEditing] = useState(false); // Edit mode toggle
 
   // Ref to hold latest favorites list across intervals

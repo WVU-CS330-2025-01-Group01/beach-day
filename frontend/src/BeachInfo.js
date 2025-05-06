@@ -4,6 +4,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import { API } from './api';
 import { fetchBeachInfoWithWeather } from './utils';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 /**
  * BeachInfo component displays detailed information about a selected beach,
@@ -29,6 +31,10 @@ function BeachInfo() {
   const { beachId, beach, weather } = location.state || {};
   const [error, setError] = useState(null);
   const [adding, setAdding] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [eventTitle, setEventTitle] = useState("");
+  const [eventTime, setEventTime] = useState(new Date());
+  const [submitting, setSubmitting] = useState(false);
 
   /**
    * Handles adding the current beach to user's favorites.
@@ -84,6 +90,41 @@ function BeachInfo() {
     }
   };
 
+  const addEvent = async () => {
+    if (!eventTitle) {
+      setGlobalError("Event title is required.");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      const response = await fetch(API.ADD_EVENT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jwt: jwtToken,
+          title: eventTitle,
+          beach_id: beachId,
+          time: eventTime.toISOString().slice(0, 19).replace("T", " ")
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.message !== "Success.") {
+        setGlobalError(data.message || "Failed to add event.");
+      } else {
+        setShowModal(false);
+        setEventTitle("");
+        setGlobalError(null);
+      }
+    } catch (err) {
+      setGlobalError("Failed to add event. Try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   // Fallback for missing beach/weather data
   if (!beach || !weather) {
     return (
@@ -96,16 +137,23 @@ function BeachInfo() {
 
   return (
     <div className="beach-info-container">
-      <h2>{beach.beach_name}</h2>
+      <div className="beach-info-toolbar">
+        <h2>{beach.beach_name}</h2>
+        <div className="beach-info-buttons">
+          <button className="favorite-button" onClick={addFavorite} disabled={adding}>
+            {adding ? "Adding..." : "Add to Favorites"}
+          </button>
+          <button className="event-button" onClick={() => setShowModal(true)}>
+            Create Event
+          </button>
+        </div>
+      </div>
 
       <div className="beach-info-cards">
         {/* Beach Info Card */}
         <div className="info-card">
           <div className="card-header">
             <h3>Beach Info</h3>
-            <button className="favorite-button" onClick={addFavorite} disabled={adding}>
-              {adding ? "Adding..." : "Add to Favorites"}
-            </button>
           </div>
 
           <p><strong>Location:</strong> {beach.beach_county ? `${beach.beach_county}, ` : ''}{beach.beach_state}</p>
@@ -171,7 +219,41 @@ function BeachInfo() {
       <button className="go-back-button" onClick={() => navigate(-1)}>
         ← Go Back
       </button>
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Create Event</h3>
+            <label>Title</label>
+            <input
+              type="text"
+              value={eventTitle}
+              onChange={(e) => setEventTitle(e.target.value)}
+              placeholder="Enter event title"
+            />
+
+            <label>Time</label>
+            <DatePicker
+              selected={eventTime}
+              onChange={(date) => setEventTime(date)}
+              showTimeSelect
+              dateFormat="yyyy-MM-dd HH:mm:ss"
+            />
+
+            <div className="modal-buttons">
+              <button className="add-event-button"onClick={addEvent} disabled={submitting}>
+                {submitting ? "Creating..." : "Add Event"}
+              </button>
+              <button className="cancel-event-add" onClick={() => setShowModal(false)}>Cancel</button>
+            </div>
+
+            {error && <p style={{ color: "red" }}>{error}</p>}
+          </div>
+        </div>
+      )}
+
     </div>
+
   );
 }
 
