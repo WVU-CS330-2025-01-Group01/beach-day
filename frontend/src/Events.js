@@ -110,45 +110,37 @@ function Events() {
     }
   }
 
-  /**
-   * Removes a single event by its ID.
-   * @param {number} eventId - ID of the event to remove
-   * @async
-   * @returns {Promise<void>}
-   */
-  async function removeEventById(id) {
-    try {
-      console.log('Sending remove by ID request:', {
+/**
+ * Removes an event by its ID.
+ * @param {number} eventId - The ID of the event to remove.
+ * @async
+ */
+async function removeEventById(eventId) {
+  try {
+    const response = await fetch(API.REMOVE_EVENTS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         jwt: jwtToken,
         type: 'by_id',
-        id: id,
-      });
+        id: eventId,
+      }),
+    });
 
-      const response = await fetch(API.REMOVE_EVENTS, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jwt: jwtToken,
-          type: "by_id",
-          id: id,
-        }),
-      });
+    const data = await response.json();
+    console.log('Remove by ID response:', data);
 
-      const data = await response.json();
-      console.log('Remove by ID response:', data);
-
-      if (response.ok && data.message === 'Success.') {
-        await fetchEvents();
-        await fetchEventCount();
-      } else {
-        setGlobalError(data.message || 'Failed to remove event.');
-      }
-    } catch (err) {
-      console.error('Error removing event:', err);
-      setGlobalError('Failed to remove event.');
+    if (response.ok && data.message === 'Success.') {
+      await fetchEvents();
+      await fetchEventCount();
+    } else {
+      setGlobalError(`Remove by ID failed: ${data.message}`);
     }
+  } catch (err) {
+    console.error('Error removing event:', err);
+    setGlobalError('Failed to remove event.');
   }
-
+}
 
 
   return (
