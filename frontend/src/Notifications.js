@@ -210,25 +210,6 @@ function Notification() {
               ))}
             </div>
           )}
-
-          <form onSubmit={handleAddNotification} className="add-notification-form">
-            <h3>Add Notification</h3>
-            <input
-              type="text"
-              placeholder="Title"
-              value={titleInput}
-              onChange={(e) => setTitleInput(e.target.value)}
-            />
-            <br />
-            <input
-              type="text"
-              placeholder="Message"
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-            />
-            <br />
-            <button type="submit">Add Notification</button>
-          </form>
         </div>
       </div>
     </div>
