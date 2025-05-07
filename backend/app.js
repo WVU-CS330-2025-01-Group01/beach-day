@@ -25,20 +25,25 @@ if (AUTO_UPDATE_CONDA == 1) {
 const dbabs = require("./dbabs/");
 const interval = process.env.BEACH_DAY_EVENT_INTERVAL || 7200000; // 2 hours
 setInterval(async function() {
-	await dbabs.clearPastEvents();
+	try {
+		await dbabs.clearPastEvents();
 
-	const events = await dbabs.getAllEvents();
-	for (const ev of events) {
-		const response = JSON.parse(wrapper.runScript("get weather", JSON.stringify({
-			request_type: "check_event",
-			time: ev.event_time.getTime() / 1000,
-			beach_id: ev.beach_id,
-			event_name: ev.event_message,
-			email_address: dbabs.getEmail(ev.username)
-		})).toString());
+		const events = await dbabs.getAllEvents();
+		for (const ev of events) {
+			const response = JSON.parse(wrapper.runScript("get weather", JSON.stringify({
+				request_type: "check_event",
+				time: ev.event_time.getTime() / 1000,
+				beach_id: ev.beach_id,
+				event_name: ev.event_message,
+				email_address: await dbabs.getEmail(ev.username)
+			})).toString());
 
-		if (response.action === "notify")
-			dbabs.addNotification(ev.username, response.title, response.message);
+			if (response.action === "notify")
+				dbabs.addNotification(ev.username, response.title,
+						response.message);
+		}
+	} catch (e) {
+		console.log("Error notifying user of event.");
 	}
 }, interval);
 

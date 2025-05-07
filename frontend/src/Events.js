@@ -126,7 +126,7 @@ function Events() {
   
       const response = await fetch(API.REMOVE_EVENTS, {
         method: 'POST',
-        headers: { 'Conten-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           jwt: jwtToken,
           type: 'by_id',
