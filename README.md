@@ -21,42 +21,42 @@ Some highlighted features include:
 ### Home Page
 Here the user can search for beaches and navigate to the other utilities of the application.
 
-![Main](https://github.com/user-attachments/assets/92634a04-23bc-4657-92b3-c6807883b6b9)
+![BobHome](https://github.com/user-attachments/assets/2119e2fa-dc2a-499b-ad06-16777a572ee2)
 
 ---
 
 ### Favorites Page
 Here the user can view and manage their favorited beaches. They can compare conditions of each to decide where to go.
 
-![Favorites](https://github.com/user-attachments/assets/4142a3ec-9e76-4514-afdb-fe12fbd852e6)
+![BobFavorites](https://github.com/user-attachments/assets/cef24d15-d5b6-4225-82c8-d1aa7a916e82)
 
 ---
 
 ### Notifications Page
 Here the user can view and manage notifications related to their upcoming events.
 
-![New Notifications](https://github.com/user-attachments/assets/662b1351-90e6-44a8-862e-4596f1576bcd)
+![BobNotifications](https://github.com/user-attachments/assets/51e14ea6-870c-4147-9196-14cdf4311b6c)
 
 ---
 
 ### Events Page
 Here the user can view and manage their upcoming events.
 
-![Events](https://github.com/user-attachments/assets/4d3157c4-59c7-4b42-8411-d8e9d57684dd)
+![BobEvents](https://github.com/user-attachments/assets/70bf2f74-bab9-42e2-aabb-5dd69f7260fe)
 
 ---
 
 ### About Page
 Here the user can view more info about the project.
 
-![About](https://github.com/user-attachments/assets/8e90dc43-cc55-491a-8b9f-ac0ba7e70b5f)
+![BobAbout](https://github.com/user-attachments/assets/18cec351-e574-4f60-a098-040d1831a349)
 
 ---
 
 ### Settings Page
 Here the user can edit their account settings, including changing their password or setting their email for email notifications. They can also delete their account with this page.
 
-![Settings](https://github.com/user-attachments/assets/b5d3fc12-75af-475f-971f-86973def58c2)
+![BobSettings](https://github.com/user-attachments/assets/64ed2283-165a-4d6b-a9aa-1c600d85d1b5)
 
 ---
 
