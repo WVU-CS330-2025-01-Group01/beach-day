@@ -32,18 +32,19 @@ function Events() {
       const response = await fetch(API.GET_EVENTS, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jwt: jwtToken,
-          type: 'all',  // Adjust type as needed: 'future', 'all', etc.
-        }),
+        body: JSON.stringify({ jwt: jwtToken, type: 'all' }),
       });
-
+  
       const data = await response.json();
-
-      console.log('Fetched events:', data);  // Log the data for debugging
-
+  
       if (response.ok && data.message === 'Success.') {
-        setEvents(data.events);
+        const eventsWithBeachNames = await Promise.all(
+          data.events.map(async (event) => {
+            const beach_name = await fetchBeachName(event.beach_id);
+            return { ...event, beach_name };
+          })
+        );
+        setEvents(eventsWithBeachNames);
       } else {
         setGlobalError(data.message || 'Failed to fetch events.');
       }
@@ -52,6 +53,25 @@ function Events() {
       console.error('Error fetching events:', err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchBeachName(beach_id) {
+    try {
+      const response = await fetch(API.BEACHINFO, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          request_type: "get_beach_info_by_id",
+          beach_id: beach_id
+        })
+      });
+  
+      const data = await response.json();
+      return data.beach_name;
+    } catch (err) {
+      console.error(`Failed to fetch beach name for ID ${beach_id}:`, err);
+      return `Beach #${beach_id}`;
     }
   }
 
@@ -123,7 +143,7 @@ function Events() {
         type: 'by_id',
         id: Number(eventId),
       });
-  
+
       const response = await fetch(API.REMOVE_EVENTS, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -133,10 +153,10 @@ function Events() {
           id: Number(eventId),
         }),
       });
-  
+
       const data = await response.json();
       console.log('Remove by ID response:', data);
-  
+
       if (response.ok && data.message === 'Success.') {
         await fetchEvents();
         await fetchEventCount();
@@ -148,31 +168,62 @@ function Events() {
       setGlobalError('Failed to remove event.');
     }
   }
-  
-  
+
+  function getCountdown(eventTime) {
+    const now = new Date();
+    const eventDate = new Date(eventTime);
+    const diffMs = eventDate - now;
+
+    if (diffMs <= 0) return "Started";
+
+    const seconds = Math.floor(diffMs / 1000);
+    const minutes = Math.floor(seconds / 60) % 60;
+    const hours = Math.floor(seconds / 3600) % 24;
+    const days = Math.floor(seconds / 86400);
+
+    let parts = [];
+    if (days) parts.push(`${days}d`);
+    if (hours) parts.push(`${hours}h`);
+    if (minutes) parts.push(`${minutes}m`);
+
+    return parts.length ? `In ${parts.join(" ")}` : "Less than a minute";
+  }
 
   return (
     <div className="events-container">
-      <h2>Events ({eventCount})</h2>
-      <button onClick={removeAllEvents}>Remove All Events</button>
       <div className="events-box fade-in">
-        {loading ? (
-          <p>Loading events...</p>
-        ) : events.length === 0 ? (
-          <p>No events scheduled.</p>
-        ) : (
-          <ul className="event-list">
-            {events.map((event) => (
-              <li key={event.event_id} className="event-item">
-                <strong className="event-title">{event.title || 'No Title'}</strong>
-                <br />
-                {new Date(event.time).toLocaleString()}
-                <br />
-                <button onClick={() => removeEventById(event.event_id)}>Remove</button>
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="events-toolbar">
+          <h2>Events ({eventCount})</h2>
+          {events.length > 0 && (
+            <button className="remove-all-button" onClick={removeAllEvents}>
+              Remove All Events
+            </button>
+          )}
+        </div>
+        <div className="events-box fade-in">
+          {loading ? (
+            <p>Loading events...</p>
+          ) : events.length === 0 ? (
+            <p>No events scheduled.</p>
+          ) : (
+            <div className="event-cards">
+              {events.map((event) => (
+                <div key={event.event_id} className="event-card">
+                  <h3>{event.event_message || 'No Title'}</h3>
+                  <div className="event-countdown">{getCountdown(event.event_time)}</div>
+                  <p>{new Date(event.event_time).toLocaleString()}</p>
+                  <p>{event.beach_name}</p>
+                  <button
+                    className="remove-event-button"
+                    onClick={() => removeEventById(event.event_id)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
