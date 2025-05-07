@@ -35,7 +35,14 @@ Here the user can view and manage their favorited beaches. They can compare cond
 ### Notifications Page
 Here the user can view and manage notifications related to their upcoming events.
 
-![Notifications](https://github.com/user-attachments/assets/94288f6d-1f6e-49de-9c52-3cd80e6f5fe5)
+![New Notifications](https://github.com/user-attachments/assets/662b1351-90e6-44a8-862e-4596f1576bcd)
+
+---
+
+### Events Page
+Here the user can view and manage their upcoming events.
+
+![Events](https://github.com/user-attachments/assets/4d3157c4-59c7-4b42-8411-d8e9d57684dd)
 
 ---
 
