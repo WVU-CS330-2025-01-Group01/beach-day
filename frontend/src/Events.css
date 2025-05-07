@@ -9,3 +9,54 @@
     align-items: center;
   }
   
+  .events-box {
+    width: 100%;
+    max-width: 1200px;
+    padding-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .event-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    padding: 1rem 0;
+  }
+  
+  .event-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    text-align: left;
+    transition: transform 0.2s ease;
+  }
+  
+  .event-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .event-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #004d99;
+  }
+  
+  .event-card p {
+    margin: 0 0 1rem 0;
+    color: #333;
+  }
+  
+  .remove-event-button {
+    background-color: red;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .remove-event-button:hover {
+    background-color: darkred;
+  }

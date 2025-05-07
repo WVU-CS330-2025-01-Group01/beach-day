@@ -123,7 +123,7 @@ function Events() {
         type: 'by_id',
         id: id,
       });
-  
+
       const response = await fetch(API.REMOVE_EVENTS, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -133,10 +133,10 @@ function Events() {
           id: id,
         }),
       });
-  
+
       const data = await response.json();
       console.log('Remove by ID response:', data);
-  
+
       if (response.ok && data.message === 'Success.') {
         await fetchEvents();
         await fetchEventCount();
@@ -148,8 +148,8 @@ function Events() {
       setGlobalError('Failed to remove event.');
     }
   }
-  
-  
+
+
 
   return (
     <div className="events-container">
@@ -161,17 +161,20 @@ function Events() {
         ) : events.length === 0 ? (
           <p>No events scheduled.</p>
         ) : (
-          <ul className="event-list">
+          <div className="event-cards">
             {events.map((event) => (
-              <li key={event.event_id} className="event-item">
-                <strong className="event-title">{event.title || 'No Title'}</strong>
-                <br />
-                {new Date(event.time).toLocaleString()}
-                <br />
-                <button onClick={() => removeEventById(event.event_id)}>Remove</button>
-              </li>
+              <div key={event.event_id} className="event-card">
+                <h3>{event.event_message || 'No Title'}</h3>
+                <p>{new Date(event.event_time).toLocaleString()}</p>
+                <button
+                  className="remove-event-button"
+                  onClick={() => removeEventById(event.event_id)}
+                >
+                  Remove
+                </button>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>
