@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
 import './Navbar.css';
@@ -39,6 +39,7 @@ function Navbar({ onWeatherData }) {
   const [state, setState] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const dropdownRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -69,6 +70,23 @@ function Navbar({ onWeatherData }) {
 
     fetchNotificationCount();
   }, [authenticated, jwtToken, setGlobalError]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        !event.target.classList.contains("navbar-link")
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Handle user logout
   const handleLogout = () => {
@@ -329,10 +347,18 @@ function Navbar({ onWeatherData }) {
                 <>
                   <Link to="/favorites" className="navbar-link">Favorites</Link>
                   <div className="profile-dropdown">
-                    <span onClick={toggleDropdown} className="navbar-link">Profile</span>
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleDropdown();
+                      }}
+                      className="navbar-link"
+                    >
+                      Profile
+                    </span>
 
                     {dropdownOpen && (
-                      <div className="dropdown-box">
+                      <div className="dropdown-box" ref={dropdownRef}>
                         <div className="dropdown-header">
                           <div className="avatar">
                             {username ? username.charAt(0).toUpperCase() : "?"}
