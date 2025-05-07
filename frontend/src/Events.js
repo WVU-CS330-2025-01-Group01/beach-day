@@ -116,21 +116,21 @@ function Events() {
    * @async
    * @returns {Promise<void>}
    */
-  async function removeEventById(eventId) {
+  async function removeEventById(event_id) {
     try {
       console.log('Sending remove by ID request:', {
         jwt: jwtToken,
         type: 'by_id',
-        id: Number(eventId),
+        id: event_id,
       });
   
       const response = await fetch(API.REMOVE_EVENTS, {
         method: 'POST',
-        headers: { 'Conten-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           jwt: jwtToken,
           type: 'by_id',
-          id: Number(eventId),
+          id: event_id,
         }),
       });
   

@@ -110,7 +110,7 @@ function BeachInfo() {
       });
 
       const data = await response.json();
-
+      console.log("Add event response:", data); 
       if (data.message !== "Success.") {
         setGlobalError(data.message || "Failed to add event.");
       } else {
