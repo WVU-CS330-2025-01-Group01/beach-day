@@ -43,7 +43,7 @@ setInterval(async function() {
 						response.message);
 		}
 	} catch (e) {
-		console.log("Error notifying user of event.");
+		console.log("Error notifying the user of event.");
 	}
 }, interval);
 
