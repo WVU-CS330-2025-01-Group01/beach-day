@@ -15,29 +15,55 @@ Some highlighted features include:
 - [X] Personalized weather alerts sent to emails.
 - [X] About Page.
 
-## Images of Working UI
-Home Page - Here you can search for beaches, access your favorite beaches, or access your profile and profile settings.
+
+## Highlights
+
+### Home Page
+Here the user can search for beaches and navigate to the other utilities of the application.
+
 ![Main](https://github.com/user-attachments/assets/92634a04-23bc-4657-92b3-c6807883b6b9)
-Favorites Page - This page shows all your favorited beaches.
+
+---
+
+### Favorites Page
+Here the user can view and manage their favorited beaches. They can compare conditions of each to decide where to go.
+
 ![Favorites](https://github.com/user-attachments/assets/4142a3ec-9e76-4514-afdb-fe12fbd852e6)
-Notifications Page - The notifications page shows notifications regarding your upcoming events.
+
+---
+
+### Notifications Page
+Here the user can view and manage notifications related to their upcoming events.
+
 ![Notifications](https://github.com/user-attachments/assets/94288f6d-1f6e-49de-9c52-3cd80e6f5fe5)
-About Page - The about page tells you a bit about the website and our team.
+
+---
+
+### About Page
+Here the user can view more info about the project.
+
 ![About](https://github.com/user-attachments/assets/8e90dc43-cc55-491a-8b9f-ac0ba7e70b5f)
-Settings Page - The settings page is where you can change your username and password, set an email for notifications, or delete your account.
+
+---
+
+### Settings Page
+Here the user can edit their account settings, including changing their password or setting their email for email notifications. They can also delete their account with this page.
+
 ![Settings](https://github.com/user-attachments/assets/b5d3fc12-75af-475f-971f-86973def58c2)
 
+---
+
 ## Final State
-Here is a list of features:
+Here is a detailed list of features:
 - [X] Account Creation
-- [X] Bookmarking Beaches
+- [X] Favoriting Beaches
 - [X] Checking Weather Conditions and Forecasts
 - [X] Checking UV Index
 - [X] Checking Temperature and Wind Speed
 - [X] Checking Precipitation
 - [X] Checking Location 
 - [X] Checking Length and Beach Access
-- [X] Weather Notifications
+- [X] Weather alert Notifications
 
 ## Link to Open App
 Check out the [beach day app](https://green-ground-054bca00f.6.azurestaticapps.net/)!
