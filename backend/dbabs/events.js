@@ -65,7 +65,7 @@ async function getUserEventsHelper(username) {
 async function getEventFromIDHelper(eventID) {
     try {
 
-        const [event] = await connection.query(
+        const [ev] = await connection.query(
             `
                 SELECT * FROM events
                 WHERE event_id = ?
@@ -73,11 +73,11 @@ async function getEventFromIDHelper(eventID) {
             , [eventID]
         )
 
-        if(event.length <= 0) {
+        if(ev.length <= 0) {
             throw new dbErrors.ZeroEvents();
         }
 
-        return event[0];
+        return ev[0];
 
     } catch (e) {
         if(e instanceof dbErrors.ZeroEvents) {

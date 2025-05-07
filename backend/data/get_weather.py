@@ -4,6 +4,7 @@
 
 # Get current date and time
 from datetime import datetime
+import datetime as dt
 
 # Handle json data
 import json
@@ -303,10 +304,10 @@ try:
     elif request_type == "check_event":
         import events
         import beaches
-        time = datetime.fromtimestamp(int(input_params["time"]))
+        time = datetime.fromtimestamp(int(input_params["time"]), tz=dt.timezone.utc)
         beach_id = input_params["beach_id"]
         event_name = input_params["event_name"]
-        email_address = input_params["email_address"]
+        email_address = input_params.get("email_address", "")
 
         result = events.check_event(time, beach_id, event_name, email_address)
 

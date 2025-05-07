@@ -48,25 +48,26 @@ def check_event(time, beach_id, event_name, email_address):
         }
     
     else:
-        title = f"Your event '{event_name}' may be impacted by one or more National Weather Service alerts or advisories. Contact local authorities for accurate and up-to-date information. Advisories follow:\n"
-        subject = f"Event '{event_name}' impacted by NWS Alert"
+        if not (email_address == None or email_address == "null" or email_address == ""):
+            title = f"Your event '{event_name}' may be impacted by one or more National Weather Service alerts or advisories. Contact local authorities for accurate and up-to-date information. Advisories follow:\n"
+            subject = f"Event '{event_name}' impacted by NWS Alert"
 
-        body = ""
-        with open("./email_template.html", 'r') as f:
-            body = f.read()
-        
-        alert_template = ""
-        with open("./email_alert_template.html", 'r') as f:
-            alert_template = f.read()
-        
-        body = body.replace("%~^title^~%", title)
+            body = ""
+            with open("./email_template.html", 'r') as f:
+                body = f.read()
+            
+            alert_template = ""
+            with open("./email_alert_template.html", 'r') as f:
+                alert_template = f.read()
+            
+            body = body.replace("%~^title^~%", title)
 
-        message_alerts = ""
-        for m in messages:
-            message_alerts += alert_template.replace("%~^info^~%", m.strip())
-        
-        body = body.replace("%~^alerts^~%", message_alerts)
-        send_email(email_address, subject, body)
+            message_alerts = ""
+            for m in messages:
+                message_alerts += alert_template.replace("%~^info^~%", m.strip())
+            
+            body = body.replace("%~^alerts^~%", message_alerts)
+            send_email(email_address, subject, body)
 
 
         title = f"Event '{event_name}' impacted by NWS Alert"
