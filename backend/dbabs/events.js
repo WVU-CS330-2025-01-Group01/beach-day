@@ -273,7 +273,7 @@ module.exports = {
 
             await connection.query(
                 `
-                    INSERT INTO events (event_time, event_id, event_message, beach_id, username) 
+                    INSERT INTO events (event_time, event_message, beach_id, username) 
                     VALUES (?, ?, ?, ?)
                 `
                 , [eventTime, message, relevantBeachID, username]
