@@ -16,15 +16,15 @@ Some highlighted features include:
 - [X] About Page.
 
 ## Images of Working UI
-Main Page -
+Home Page - Here you can search for beaches, access your favorite beaches, or access your profile and profile settings.
 ![Main](https://github.com/user-attachments/assets/92634a04-23bc-4657-92b3-c6807883b6b9)
-Favorites Page -
+Favorites Page - This page shows all your favorited beaches.
 ![Favorites](https://github.com/user-attachments/assets/4142a3ec-9e76-4514-afdb-fe12fbd852e6)
-Notifications Page -
+Notifications Page - The notifications page shows notifications regarding your upcoming events.
 ![Notifications](https://github.com/user-attachments/assets/94288f6d-1f6e-49de-9c52-3cd80e6f5fe5)
-About Page -
+About Page - The about page tells you a bit about the website and our team.
 ![About](https://github.com/user-attachments/assets/8e90dc43-cc55-491a-8b9f-ac0ba7e70b5f)
-Settings Page - 
+Settings Page - The settings page is where you can change your username and password, set an email for notifications, or delete your account.
 ![Settings](https://github.com/user-attachments/assets/b5d3fc12-75af-475f-971f-86973def58c2)
 
 ## Final State
