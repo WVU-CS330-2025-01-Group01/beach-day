@@ -20,6 +20,17 @@ function About() {
           The app provides beach information, including weather conditions, and allows users to search for beaches by county and state, or coordinates.
         </p>
 
+        {/* Beach list source */}
+        <p className="beach-list-source">
+          Beach Day uses a publicly available list of beaches in the United States provided by the U.S. Environmental Protection Agency (EPA).
+          This list is provided to conform to the Beaches Environmental and Coastal Health Act (BEACH Act).
+        </p>
+
+        {/* Weather data source */}
+        <p className="weather-data-source">
+          Beach Day uses publicly available weather and UV index data provided by the U.S. National Weather Service (NWS) and the National Oceanic and Atmospheric Administration (NOAA).
+        </p>
+
         {/* Disclaimer / project status */}
         <p className="about-status">
           Please note that this project is currently in development as part of a school assignment. While we strive to provide accurate
