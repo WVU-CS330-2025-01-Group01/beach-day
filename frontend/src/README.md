@@ -23,11 +23,12 @@ This folder contains the main source code for the **Beach Day** frontend applica
 | `Home.js`            | Displays beach search results with dynamic distance info.                   |
 | `BeachInfo.js`       | Shows detailed info for a selected beach including weather and metadata.    |
 | `Favorites.js`       | Displays saved beaches with weather preview and editing options.            |
-| `Notifications.js`   | Manages weather alerts and manual notification creation.                    |
+| `Notifications.js`   | Manages weather alerts from events created                                  |
 | `Login.js`           | Handles user login and session initialization.                              |
 | `Register.js`        | Handles user sign-up with password confirmation.                            |
 | `Settings.js`        | Manages user email, password, alert preferences, and account deletion.      |
 | `About.js`           | Displays information about the project and team as well as sources used.    |
+| `Events.js`          | Allow users to see the events they made at certain beaches                  |
 
 ---
 
@@ -53,6 +54,7 @@ This folder contains the main source code for the **Beach Day** frontend applica
 | `Settings.css`       | Account settings layout, modals, form inputs, and checkbox sections.        |
 | `Notifications.css`  | Styling for notification lists, form inputs, and button layouts.            |
 | `About.css`          | Styles for the about page                                                   |
+| `Events.css`         | Styling for events page                                                     |
 
 ---
 

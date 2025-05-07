@@ -5,8 +5,15 @@ import { API } from './api';
 
 /**
  * Event component displays and manages user events.
+ * It allows authenticated users to:
+ *  - View upcoming scheduled events
+ *  - See time remaining until each event starts
+ *  - Remove individual events
+ *  - Remove all events at once
+ *  - Automatically fetch beach names by beach ID
+ * 
  * @component
- * @returns {JSX.Element} Event UI
+ * @returns {JSX.Element} Rendered event management UI
  */
 function Events() {
   const { jwtToken, setGlobalError } = useContext(UserContext);
@@ -22,10 +29,14 @@ function Events() {
   }, [jwtToken]);
 
   /**
-   * Fetches all events for the authenticated user.
-   * @async
-   * @returns {Promise<void>}
-   */
+  * Fetches all events for the authenticated user.
+  * Adds beach names to each event using their beach ID.
+  * Sets loading and error states as needed.
+  * 
+  * @async
+  * @function fetchEvents
+  * @returns {Promise<void>}
+  */
   async function fetchEvents() {
     setLoading(true);
     try {
@@ -34,9 +45,9 @@ function Events() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jwt: jwtToken, type: 'all' }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok && data.message === 'Success.') {
         const eventsWithBeachNames = await Promise.all(
           data.events.map(async (event) => {
@@ -56,6 +67,15 @@ function Events() {
     }
   }
 
+  /**
+ * Fetches the name of a beach given its ID.
+ * If the request fails, returns a fallback name with the beach ID.
+ * 
+ * @async
+ * @function fetchBeachName
+ * @param {number} beach_id - ID of the beach
+ * @returns {Promise<string>} The name of the beach or fallback label
+ */
   async function fetchBeachName(beach_id) {
     try {
       const response = await fetch(API.BEACHINFO, {
@@ -66,7 +86,7 @@ function Events() {
           beach_id: beach_id
         })
       });
-  
+
       const data = await response.json();
       return data.beach_name;
     } catch (err) {
@@ -76,8 +96,11 @@ function Events() {
   }
 
   /**
-   * Fetches the current count of events.
+   * Fetches the total number of scheduled events for the authenticated user.
+   * Sets the event count or global error message.
+   * 
    * @async
+   * @function fetchEventCount
    * @returns {Promise<void>}
    */
   async function fetchEventCount() {
@@ -102,8 +125,11 @@ function Events() {
   }
 
   /**
-   * Removes all events for the current user.
+   * Deletes all scheduled events for the authenticated user.
+   * Refreshes the event list and count upon success.
+   * 
    * @async
+   * @function removeAllEvents
    * @returns {Promise<void>}
    */
   async function removeAllEvents() {
@@ -131,9 +157,12 @@ function Events() {
   }
 
   /**
-   * Removes a single event by its ID.
-   * @param {number} eventId - ID of the event to remove
+   * Deletes a specific event by its ID.
+   * Refreshes the event list and count upon success.
+   * 
    * @async
+   * @function removeEventById
+   * @param {number} eventId - ID of the event to be removed
    * @returns {Promise<void>}
    */
   async function removeEventById(eventId) {
@@ -169,6 +198,14 @@ function Events() {
     }
   }
 
+  /**
+ * Calculates a countdown string from now until the event time.
+ * Formats the result in "Xd Yh Zm" style, or returns "Started" if in the past.
+ * 
+ * @function getCountdown
+ * @param {string} eventTime - ISO timestamp string of the event
+ * @returns {string} Human-readable countdown or "Started"
+ */
   function getCountdown(eventTime) {
     const now = new Date();
     const eventDate = new Date(eventTime);
