@@ -153,8 +153,12 @@ function Events() {
 
   return (
     <div className="events-container">
-      <h2>Events ({eventCount})</h2>
-      <button onClick={removeAllEvents}>Remove All Events</button>
+      <div className="events-toolbar">
+        <h2>Events ({eventCount})</h2>
+        <button className="remove-all-button" onClick={removeAllEvents}>
+          Remove All Events
+        </button>
+      </div>
       <div className="events-box fade-in">
         {loading ? (
           <p>Loading events...</p>
