@@ -1,6 +1,9 @@
 import requests
 import json
+import os
 from datetime import datetime
+
+base_dir = os.path.dirname(__file__)
 
 def check_event(time, beach_id, event_name, email_address):
     """
@@ -53,11 +56,11 @@ def check_event(time, beach_id, event_name, email_address):
             subject = f"Event '{event_name}' impacted by NWS Alert"
 
             body = ""
-            with open("./email_template.html", 'r') as f:
+            with open(os.path.join(base_dir, "email_template.html"), 'r') as f:
                 body = f.read()
             
             alert_template = ""
-            with open("./email_alert_template.html", 'r') as f:
+            with open(os.path.join(base_dir, "email_alert_template.html"), 'r') as f:
                 alert_template = f.read()
             
             body = body.replace("%~^title^~%", title)
@@ -95,7 +98,6 @@ def get_alerts(time, zone_id):
     :returns: features response for the alerts in the beach's zone at the given time
     """
     alerts = requests.get(f"https://api.weather.gov/alerts/active?status=actual&message_type=alert,update,cancel&zone={zone_id}&urgency=Immediate,Expected,Future&severity=Extreme,Severe,Moderate,Minor&certainty=Observed,Likely,Possible,Unlikely&limit=500")
-    # print(json.dumps(alerts.json(), indent=4))
     
     alerts = alerts.json()["features"]
 
@@ -112,7 +114,7 @@ def send_email(address, subject, body):
 
     from_address = ""
     app_pass = ""
-    with open("../.env", 'r') as f:
+    with open(os.path.join(base_dir, "..", ".env"), 'r') as f:
         for line in f.readlines():
             parts = line.split("=")
             if len(parts) == 2:
@@ -135,4 +137,3 @@ def send_email(address, subject, body):
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
         server.login(from_address, app_pass)
         server.sendmail(from_address, address, email.as_string())
-    print("Message sent!")
